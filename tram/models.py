@@ -1,0 +1,68 @@
+from djongo import models
+
+class Asset(models.Model):
+    assetnummer = models.CharField(max_length=10, primary_key=True)
+    beschrijving = models.CharField(null=True, max_length=70)
+    bevat_logo = models.BooleanField()
+    ip_adres = models.GenericIPAddressField(null=True)
+    logo_online = models.BooleanField()
+    telefoonnummer  = models.CharField(max_length=10, null=True)
+    configuratie = models.ForeignKey("ConfiguratieLijst", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.assetnummer
+    
+
+class Status(models.Model):
+    inputnummer = models.SmallIntegerField()
+    waarde = models.IntegerField()
+
+    class Meta:
+        abstract = True
+
+class Configuratie(models.Model):
+    ANALOOG = 'analoog'
+    PULSE = 'pulse'
+    DIGITAAL = 'digitaal'
+    SIGNAALTYPE_KEUZES = [
+        (ANALOOG, 'Analoog'),
+        (PULSE, 'Dig. pulse'),
+        (DIGITAAL, 'Digitaal')
+    ]
+
+    inputnummer = models.SmallIntegerField()
+    signaaltype = models.CharField(choices=SIGNAALTYPE_KEUZES, default=DIGITAAL, max_length=15)
+    beschrijving = models.CharField(max_length=50, null=True)
+    urgentieniveau = models.ForeignKey("Urgentieniveau", on_delete=models.CASCADE)
+
+
+
+
+class LogoMelding(models.Model):
+    _id = models.ObjectIdField()
+    assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
+    waarde = models.IntegerField()
+    tijdstip = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
+    
+
+
+class ConfiguratieLijst(models.Model):
+    _id = models.ObjectIdField()
+    naam = models.CharField(max_length=50)
+    config = models.ArrayModelField(model_container=Configuratie)
+
+    def __str__(self):
+        return self.naam
+    
+
+class Urgentieniveau(models.Model):
+    niveau = models.SmallIntegerField(primary_key=True)
+    beschrijving  = models.CharField(null=True, max_length=50)
+
+    def __str__(self):
+        return self.beschrijving
+    
+ 
