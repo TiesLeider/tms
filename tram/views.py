@@ -6,8 +6,5 @@ from .models import LogoMelding
 
 def index(request):
     context = LogoMelding.objects.all()
-    list = []
 
-    for item in context:
-        list.append(item.assetnummer)
-    return HttpResponse(list)
+    return HttpResponse(context)

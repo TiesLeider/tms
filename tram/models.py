@@ -41,7 +41,15 @@ class Configuratie(models.Model):
 class LogoMelding(models.Model):
     _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
-    waarde = models.IntegerField()
+    storing = models.IntegerField()
+    druk_a1 = models.IntegerField()
+    druk_a2 = models.IntegerField()
+    druk_b1 = models.IntegerField()
+    druk_b2 = models.IntegerField()
+    kracht_a = models.IntegerField()
+    kracht_b = models.IntegerField()
+    omloop_a = models.IntegerField()
+    omloop_b = models.IntegerField()
     tijdstip = models.DateTimeField(auto_now=True)
 
     def __str__(self):
