@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from tram import views as tram_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('tram/', include("tram.urls"))
+    path('tram/', include("tram.urls")),
+    path("", tram_views.index, name="index")
 
 ]

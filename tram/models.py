@@ -54,6 +54,32 @@ class LogoMelding(models.Model):
 
     def __str__(self):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
+
+
+    def get_bin_waarden(self):
+    #Het omzetten van de hex/int waarde naar binaire waarden
+        inputs = []
+        for pin in bin(self.storing)[2:]:
+            inputs.append(int(pin))
+        inputs.reverse()
+        return inputs
+
+    def get_hoge_inputs(self):
+    #Gebruikt de binaire waarden om te bepalen welke waarden hoog zijn.
+        hoge_inputs = []
+        for idx, val in enumerate(self.get_bin_waarden()):
+            if val != 0:
+                hoge_inputs.append(idx+1)
+        return hoge_inputs
+    
+    def get_storing_beschrijvingen(self):
+        beschrijvingen = []
+        try:
+            for hoog in self.get_hoge_inputs():
+                beschrijvingen.append(self.assetnummer.configuratie.config[hoog-1])
+                return beschrijvingen
+        except:
+            return
     
 
 

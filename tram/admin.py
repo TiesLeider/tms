@@ -7,7 +7,7 @@ class AssetAdmin(admin.ModelAdmin):
 
 @admin.register(LogoMelding)
 class LogoMeldingAdmin(admin.ModelAdmin):
-    list_display=("tijdstip", "assetnummer_id")
+    list_display=("assetnummer_id", "tijdstip", "storing")
     
 
 

@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+      <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>Title of the document</title>
+    <!-- Material Icon CDN -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Path of the materialize.min.css file -->
+        <link rel="stylesheet" href="{% static 'tram/css/materialize.min.css' %}">
+    <!-- Custom css file path -->
+        <link rel="stylesheet" href="{% static 'tram/css/style.css' %}">
+    <!-- Used as an example only to position the footer at the end of the page.
+      You can delete these styles or move it to your custom css file -->
+  </head>
+  <body>
+    <header>
+      <nav class="cyan">
+        <div class="nav-wrapper">
+          <div class="container">
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+    <div class="container">
+        {% block content %}{% endblock%}
+    </div>
+    </main>
+    <footer class="page-footer cyan">
+      <div class="container">
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+          © 2019 TMS
+        </div>
+      </div>
+    </footer>
+    <!-- The jQuery file path -->
+      <script src="{% static 'tram/js/jquery.min.js' %}"></script>
+    <!-- Path of the materialize.min.js file -->
+      <script src="{% static 'tram/js/materialize.min.js' %}"></script>
+    <script>
+      $("document").ready(function(){
+        $(".button-collapse").sideNav();
+      });
+    </script>
+  </body>
+</html>

@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import LogoMelding
+from .models import *
 
 # Create your views here.
 
 def index(request):
-    context = LogoMelding.objects.all()
-
-    return HttpResponse(context)
+    return render(request, "tram/index.html", {"meldingen": LogoMelding.objects.exclude(storing=0)})
