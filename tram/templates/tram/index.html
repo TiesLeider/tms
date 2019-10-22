@@ -6,19 +6,13 @@
                 Asset: {{melding.assetnummer_id}} <br>
                 storingscode: {{melding.storing}} <br>
                 Datum: {{melding.tijdstip}} <br>
-                binwaarde: 0010000000001 <br>
                 hoge inputs: {{melding.get_hoge_inputs}}
                 <ul>
-                        {% for besch in melding.get_storing_beschrijvingen %}
-                            <li>{{besch.beschrijving}}
-                        {% endfor %}
-                    </ul>
-                <ul>
-                    {% for input in melding.get_bin_waarden %}
-                        <li>{{forloop.counter}} -> {{input}}</li>
+                    {% for besch in melding.get_storing_beschrijvingen %}
+                        <li>{{besch}}
                     {% endfor %}
                 </ul>
             </span>
         </div>
-    {%endfor %}
+    {%endfor %}.
 {% endblock %}

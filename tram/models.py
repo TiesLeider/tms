@@ -74,12 +74,10 @@ class LogoMelding(models.Model):
     
     def get_storing_beschrijvingen(self):
         beschrijvingen = []
-        try:
-            for hoog in self.get_hoge_inputs():
-                beschrijvingen.append(self.assetnummer.configuratie.config[hoog-1])
-                return beschrijvingen
-        except:
-            return
+        for obj in self.assetnummer.configuratie.config:
+            if obj.inputnummer in self.get_hoge_inputs():
+                beschrijvingen.append(obj.beschrijving)
+        return beschrijvingen
     
 
 
