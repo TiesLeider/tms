@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
+from pprint import pprint
 
 # Create your views here.
 
@@ -12,6 +13,9 @@ def index(request):
 def insert_logo_data(request):
     try:
         data = request.POST
+        if (not data):
+            return JsonResponse({"response": False, "error":  "Empty post"})
+        print(data)
         record = LogoData(
             assetnummer_id = data.get("assetnummer"),
             storing = data.get("storing"),
