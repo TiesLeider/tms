@@ -14,5 +14,13 @@
                 </ul>
             </span>
         </div>
-    {%endfor %}.
-{% endblock %}
+    {%endfor %}
+{% endblock content%}
+
+{% block javascript%}
+    <script>
+        window.setInterval(function () {
+            location.href = window.location.href
+        }, 30000);
+    </script>
+{% endblock javascript%}

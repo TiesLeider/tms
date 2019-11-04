@@ -5,13 +5,13 @@ from .models import *
 class AssetAdmin(admin.ModelAdmin):
     list_display=("assetnummer", "beschrijving", "bevat_logo", "ip_adres", "logo_online", "telefoonnummer")
 
-@admin.register(LogoMelding)
-class LogoMeldingAdmin(admin.ModelAdmin):
+@admin.register(LogoData)
+class LogoDataAdmin(admin.ModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing")
     
 
 
 # Register your models here.
 # admin.site.register(LogoMelding)
-admin.site.register(ConfiguratieLijst)
+admin.site.register(Configuratie)
 admin.site.register(Urgentieniveau)

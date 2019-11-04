@@ -3,24 +3,21 @@ from djongo import models
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True)
     beschrijving = models.CharField(null=True, max_length=70)
-    bevat_logo = models.BooleanField()
+    bevat_logo = models.BooleanField(default=True)
     ip_adres = models.GenericIPAddressField(null=True)
-    logo_online = models.BooleanField()
+    logo_online = models.BooleanField(default=False)
     telefoonnummer  = models.CharField(max_length=10, null=True)
-    configuratie = models.ForeignKey("ConfiguratieLijst", on_delete=models.CASCADE)
+    configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE)
+    laatste_storing = models.IntegerField(default=0)
+    aantal_omlopen = models.IntegerField(default=0)
+    weging = models.IntegerField(default=1)
+    laatste_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.assetnummer
     
 
-class Status(models.Model):
-    inputnummer = models.SmallIntegerField()
-    waarde = models.IntegerField()
-
-    class Meta:
-        abstract = True
-
-class Configuratie(models.Model):
+class ConfiguratieElement(models.Model):
     ANALOOG = 'analoog'
     PULSE = 'pulse'
     DIGITAAL = 'digitaal'
@@ -38,7 +35,7 @@ class Configuratie(models.Model):
 
 
 
-class LogoMelding(models.Model):
+class LogoData(models.Model):
     _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
     storing = models.IntegerField()
@@ -78,13 +75,29 @@ class LogoMelding(models.Model):
             if obj.inputnummer in self.get_hoge_inputs():
                 beschrijvingen.append(obj.beschrijving)
         return beschrijvingen
-    
+
+class AbsoluteData(models.Model):
+    _id = models.ObjectIdField()
+    assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
+    storing = models.ListField()
+    druk_a1 = models.IntegerField()
+    druk_a2 = models.IntegerField()
+    druk_b1 = models.IntegerField()
+    druk_b2 = models.IntegerField()
+    kracht_a = models.IntegerField()
+    kracht_b = models.IntegerField()
+    omloop_a = models.IntegerField()
+    omloop_b = models.IntegerField()
+    tijdstip = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
 
 
-class ConfiguratieLijst(models.Model):
+class Configuratie(models.Model):
     _id = models.ObjectIdField()
     naam = models.CharField(max_length=50)
-    config = models.ArrayModelField(model_container=Configuratie)
+    config = models.ArrayModelField(model_container=ConfiguratieElement)
 
     def __str__(self):
         return self.naam
