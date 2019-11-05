@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
-from pprint import pprint
+import json
 
 # Create your views here.
 
@@ -41,7 +41,7 @@ def insert_logo_data(request):
 
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
-        return JsonResponse({"response": False, "error": str(ex), "json":json_data})
+        return JsonResponse({"response": False, "error": str(ex)})
 
 @csrf_exempt
 def insert_logo_online(request):
