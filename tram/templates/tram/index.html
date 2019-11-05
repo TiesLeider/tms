@@ -4,8 +4,8 @@
         <div class="card-panel white">
             <span class="">
                 Asset: {{melding.assetnummer}} <br>
-                storingscode: {{melding.laatste_storing}} <br>
-                Datum: {{melding.laatste_update}} <br>
+                storingscode: {{melding.storing}} <br>
+                Datum: {{melding.tijdstip}} <br>
                 hoge inputs: {{melding.get_hoge_inputs}}
                 <ul>
                     {% for besch in melding.get_storing_beschrijvingen %}

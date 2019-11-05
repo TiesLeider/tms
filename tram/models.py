@@ -8,7 +8,7 @@ class Asset(models.Model):
     logo_online = models.BooleanField(default=False)
     telefoonnummer  = models.CharField(max_length=10, null=True)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE)
-    laatste_storing = models.IntegerField(default=0)
+    laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None)
     aantal_omlopen = models.IntegerField(default=0)
     weging = models.IntegerField(default=1)
     disconnections = models.IntegerField(default=0)
@@ -17,29 +17,13 @@ class Asset(models.Model):
     def __str__(self):
         return self.assetnummer
 
-    def get_bin_waarden(self):
-    #Het omzetten van de hex/int waarde naar binaire waarden
-        inputs = []
-        for pin in bin(self.laatste_storing)[2:]:
-            inputs.append(int(pin))
-        inputs.reverse()
-        return inputs
-
-    def get_hoge_inputs(self):
-    #Gebruikt de binaire waarden om te bepalen welke waarden hoog zijn.
-        hoge_inputs = []
-        for idx, val in enumerate(self.get_bin_waarden()):
-            if val != 0:
-                hoge_inputs.append(idx+1)
-        return hoge_inputs
-    
-    def get_storing_beschrijvingen(self):
-        beschrijvingen = []
-        for obj in self.configuratie.config:
-            if obj.inputnummer in self.get_hoge_inputs():
-                beschrijvingen.append(obj.beschrijving)
-        return beschrijvingen
-    
+    def heeft_laatste_storing(self):
+        heeft_ls = False
+        try:
+            heeft_ls = (self.laatste_data is not None)
+        except LogoData.DoesNotExist:
+            pass
+        return heeft_ls
 
 class ConfiguratieElement(models.Model):
     ANALOOG = 'analoog'

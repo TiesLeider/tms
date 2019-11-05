@@ -7,7 +7,16 @@ import json
 # Create your views here.
 
 def index(request):
-    return render(request, "tram/index.html", {"meldingen": Asset.objects.exclude(laatste_storing=0).order_by('-laatste_update')})
+    # return render(request, "tram/index.html", {"meldingen": Asset.objects.exclude(storing=0).order_by('-tijdstip')})
+    laatste_storingen = []
+
+    for ls in Asset.objects.all():
+        if ls.heeft_laatste_storing():
+            if ls.laatste_data.storing > 0:
+                laatste_storingen.append(ls.laatste_data)
+        else:
+            pass
+    return render(request, "tram/index.html", {"meldingen": laatste_storingen})
 
 def requesthandler(request):
         if (request.body == "" or not request.body):
@@ -21,7 +30,6 @@ def insert_logo_data(request):
         requesthandler(request)
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
-        print(json_data)
         assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startswith("w") else json_data.get("assetnummer")
         record = LogoData(
             assetnummer_id = assetnummer,
@@ -41,7 +49,7 @@ def insert_logo_data(request):
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = True
         asset.disconnections = 0
-        asset.laatste_storing = json_data.get("storing")
+        asset.laatste_data = record
         asset.save()
 
 
