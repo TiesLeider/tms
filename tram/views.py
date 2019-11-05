@@ -18,8 +18,9 @@ def insert_logo_data(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         print(json_data)
+        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startsWith("w") else json_data.get("assetnummer")
         record = LogoData(
-            assetnummer_id = json_data.get("assetnummer"),
+            assetnummer_id = assetnummer,
             storing = json_data.get("storing"),
             druk_a1 = json_data.get("druk_a1"),
             druk_a2 = json_data.get("druk_a2"),
@@ -32,7 +33,7 @@ def insert_logo_data(request):
             )
         record.save()
         
-        asset = Asset().objects.get(assetnummer=json_data.get("assetnummer"))
+        asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = True
         asset.disconnections = 0
         asset.laatste_storing = json_data.get("storing")
@@ -52,10 +53,9 @@ def insert_logo_online(request):
         json_data = json.loads(data).get("ojson")
         print(json_data)
         
-        asset = Asset().objects.get(assetnummer=json_data.get("assetnummer"))
+        asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = False
         asset.disconnections += 1
-        asset.laatste_storing = json_data.get("storing")
         asset.save()
 
         return JsonResponse({"response": True, "error": None})
