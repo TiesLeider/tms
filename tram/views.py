@@ -60,6 +60,6 @@ def insert_logo_online(request):
 
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
-        return JsonResponse({"response": False, "error": str(ex), "json":json_data})
+        return JsonResponse({"response": False, "error": str(ex)})
 
 
