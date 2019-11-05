@@ -22,7 +22,7 @@ def insert_logo_data(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         print(json_data)
-        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startsWith("w") else json_data.get("assetnummer")
+        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startswith("w") else json_data.get("assetnummer")
         record = LogoData(
             assetnummer_id = assetnummer,
             storing = json_data.get("storing"),
@@ -56,7 +56,7 @@ def insert_logo_online(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         print(json_data)
-        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startsWith("w") else json_data.get("assetnummer")
+        assetnummer = json_data.get("assetnummer").upper() if (json_data.get("assetnummer").startswith("w")) else json_data.get("assetnummer")
         
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = False
