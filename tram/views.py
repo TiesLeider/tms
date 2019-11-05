@@ -7,14 +7,18 @@ import json
 # Create your views here.
 
 def index(request):
-    return render(request, "tram/index.html", {"meldingen": LogoData.objects.exclude(storing=0).order_by('-tijdstip')})
+    return render(request, "tram/index.html", {"meldingen": Asset.objects.exclude(laatste_storing=0).order_by('-laatste_update')})
 
+def requesthandler(request):
+        if (request.body == "" or not request.body):
+            return JsonResponse({"response": False, "error":  "Empty post"})
+        else:
+            return request
+        
 @csrf_exempt
 def insert_logo_data(request):
     try:
-
-        if (request.body == "" or not request.body):
-            return JsonResponse({"response": False, "error":  "Empty post"})
+        requesthandler(request)
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         print(json_data)
@@ -33,6 +37,7 @@ def insert_logo_data(request):
             )
         record.save()
         
+        #TODO Op termijn vervangen door een signal.
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = True
         asset.disconnections = 0
@@ -47,11 +52,11 @@ def insert_logo_data(request):
 @csrf_exempt
 def insert_logo_online(request):
     try:
-        if (request.body == "" or not request.body):
-            return JsonResponse({"response": False, "error":  "Empty post"})
+        requesthandler(request)
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         print(json_data)
+        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startsWith("w") else json_data.get("assetnummer")
         
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = False

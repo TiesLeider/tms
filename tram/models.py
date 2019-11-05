@@ -16,6 +16,29 @@ class Asset(models.Model):
 
     def __str__(self):
         return self.assetnummer
+
+    def get_bin_waarden(self):
+    #Het omzetten van de hex/int waarde naar binaire waarden
+        inputs = []
+        for pin in bin(self.laatste_storing)[2:]:
+            inputs.append(int(pin))
+        inputs.reverse()
+        return inputs
+
+    def get_hoge_inputs(self):
+    #Gebruikt de binaire waarden om te bepalen welke waarden hoog zijn.
+        hoge_inputs = []
+        for idx, val in enumerate(self.get_bin_waarden()):
+            if val != 0:
+                hoge_inputs.append(idx+1)
+        return hoge_inputs
+    
+    def get_storing_beschrijvingen(self):
+        beschrijvingen = []
+        for obj in self.configuratie.config:
+            if obj.inputnummer in self.get_hoge_inputs():
+                beschrijvingen.append(obj.beschrijving)
+        return beschrijvingen
     
 
 class ConfiguratieElement(models.Model):
