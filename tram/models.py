@@ -11,6 +11,7 @@ class Asset(models.Model):
     laatste_storing = models.IntegerField(default=0)
     aantal_omlopen = models.IntegerField(default=0)
     weging = models.IntegerField(default=1)
+    disconnections = models.IntegerField(default=0)
     laatste_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
