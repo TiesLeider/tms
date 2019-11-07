@@ -20,7 +20,7 @@ def index(request):
 
 def requesthandler(request):
         if (request.body == "" or not request.body):
-            return JsonResponse({"response": False, "error":  "Empty post"})
+            return JsonResponse({"response": False, "error":  "POST inhoud niet aangekomen."})
         else:
             return request
         
@@ -45,14 +45,6 @@ def insert_logo_data(request):
             )
         record.save()
         
-        #TODO Op termijn vervangen door een signal.
-        asset = Asset.objects.get(assetnummer=assetnummer)
-        asset.logo_online = True
-        asset.disconnections = 0
-        asset.laatste_data = record
-        asset.save()
-
-
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         return JsonResponse({"response": False, "error": str(ex)})

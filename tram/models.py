@@ -1,4 +1,6 @@
 from djongo import models
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True)
@@ -76,7 +78,7 @@ class LogoData(models.Model):
             if val != 0:
                 hoge_inputs.append(idx+1)
         return hoge_inputs
-    
+
     def get_storing_beschrijvingen(self):
         beschrijvingen = []
         for obj in self.assetnummer.configuratie.config:
@@ -84,10 +86,19 @@ class LogoData(models.Model):
                 beschrijvingen.append(obj.beschrijving)
         return beschrijvingen
 
+    def get_storings_score(self):
+        score = 0
+        for obj in self.assetnummer.configuratie.config:
+            if obj.inputnummer in self.get_hoge_inputs():
+                score += obj.urgentieniveau.niveau
+        return score
+        
+
 class AbsoluteData(models.Model):
     _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
-    storing = models.ListField()
+    storing = models.ForeignKey("Storing", on_delete=models.CASCADE, default=None, null=True)
+    storing_beschrijving = models.ListField(default=[])
     druk_a1 = models.IntegerField()
     druk_a2 = models.IntegerField()
     druk_b1 = models.IntegerField()
@@ -98,8 +109,23 @@ class AbsoluteData(models.Model):
     omloop_b = models.IntegerField()
     tijdstip = models.DateTimeField(auto_now=True)
 
+    def heeft_storing(self):
+        heeft_s = False
+        try:
+            heeft_s = (self.storing is not None)
+        except AbsoluteData.DoesNotExist:
+            pass
+        return heeft_s
+
     def __str__(self):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
+
+class Storing(models.Model):
+    _id = models.ObjectIdField()
+    assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
+    gezien = models.BooleanField()
+    actief = models.BooleanField()
+    score = models.IntegerField()
 
 
 class Configuratie(models.Model):
@@ -118,4 +144,66 @@ class Urgentieniveau(models.Model):
     def __str__(self):
         return self.beschrijving
     
- 
+@receiver(post_save, sender=LogoData) 
+def opslaan_logo_data(sender, instance, **kwargs):
+
+    def maak_nieuwe_storing(ins):
+        new_storing = Storing(
+            assetnummer = asset,
+            gezien = False,
+            actief = True,
+            score = ins.get_storings_score()
+        )
+        new_storing.save()
+        ad.storing = new_storing
+        ad.save()
+    
+    asset = Asset.objects.get(assetnummer=instance.assetnummer)
+    asset.logo_online = True
+    asset.disconnections = 0
+    asset.laatste_data = instance
+    asset.save()
+
+    ad = AbsoluteData(
+        assetnummer = asset,
+        storing_beschrijving = instance.get_storing_beschrijvingen() if (instance.storing != 0) else [],
+        storing = None,
+        druk_a1 = instance.druk_a1,
+        druk_a2 = instance.druk_a2,
+        druk_b1 = instance.druk_b1,
+        druk_b2 = instance.druk_b2,
+        kracht_a = instance.kracht_a,
+        kracht_b = instance.kracht_b,
+        omloop_a = instance.omloop_a,
+        omloop_b = instance.omloop_b,
+    )
+
+    vorige_ad = AbsoluteData.objects.filter(assetnummer=ad.assetnummer).order_by('-tijdstip').first()
+    if vorige_ad == None:
+        if len(ad.storing_beschrijving) > 0:
+            maak_nieuwe_storing(instance)
+        else:
+            ad.save()
+    
+    else:
+        if len(ad.storing_beschrijving) > 0 and vorige_ad.heeft_storing() == False:
+            maak_nieuwe_storing(instance)
+        elif len(ad.storing_beschrijving) > 0 and vorige_ad.heeft_storing() == True:
+            bestaande_storing = vorige_ad.storing
+            bestaande_storing.score += instance.get_storings_score()
+            bestaande_storing.save()
+            ad.storing = bestaande_storing
+            ad.save()
+
+        elif len(ad.storing_beschrijving) == 0 and vorige_ad.heeft_storing() == True:
+            bestaande_storing = vorige_ad.storing
+            bestaande_storing.actief = False
+            bestaande_storing.save()
+            ad.save()
+        else:
+            ad.save()
+
+# @receiver(pre_save, sender=AbsoluteData)
+# def opslaan_abs_data(sender, instance, **kwargs):
+#     if instance.storing_beschrijving.lenght == 0:
+#         instance.save()
