@@ -121,12 +121,23 @@ class AbsoluteData(models.Model):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
 
 class Storing(models.Model):
-    _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
     gezien = models.BooleanField()
     actief = models.BooleanField()
     score = models.IntegerField()
 
+    def gezien_melden(self):
+        self.gezien = True
+    
+    def deactiveer(self):
+        self.gezien = True
+        self.actief = False
+    
+    def get_data(self):
+        records = []
+        for record in AbsoluteData.objects.filter(storing=self).order_by("-tijdstip"):
+            records.append(record)
+        return records
 
 class Configuratie(models.Model):
     _id = models.ObjectIdField()

@@ -7,16 +7,16 @@ import json
 # Create your views here.
 
 def index(request):
-    # return render(request, "tram/index.html", {"meldingen": Asset.objects.exclude(storing=0).order_by('-tijdstip')})
-    laatste_storingen = []
+    return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-score')})
+    # laatste_storingen = []
 
-    for ls in Asset.objects.all():
-        if ls.heeft_laatste_storing():
-            if ls.laatste_data.storing > 0:
-                laatste_storingen.append(ls.laatste_data)
-        else:
-            pass
-    return render(request, "tram/index.html", {"meldingen": laatste_storingen})
+    # for ls in Asset.objects.all():
+    #     if ls.heeft_laatste_storing():
+    #         if ls.laatste_data.storing > 0:
+    #             laatste_storingen.append(ls.laatste_data)
+    #     else:
+    #         pass
+    # return render(request, "tram/index.html", {"meldingen": laatste_storingen})
 
 def requesthandler(request):
         if (request.body == "" or not request.body):

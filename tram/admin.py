@@ -11,7 +11,7 @@ class LogoDataAdmin(admin.ModelAdmin):
 
 @admin.register(AbsoluteData)
 class LogoDataAdmin(admin.ModelAdmin):
-    list_display=("assetnummer_id", "tijdstip", "storing")
+    list_display=("assetnummer_id", "tijdstip", "storing_beschrijving")
 
 @admin.register(Configuratie)
 class ConfiguratieAdmin(admin.ModelAdmin):
@@ -19,7 +19,7 @@ class ConfiguratieAdmin(admin.ModelAdmin):
 
 @admin.register(Storing)
 class StoringAdmin(admin.ModelAdmin):
-    list_display=("_id", "assetnummer", "actief", "gezien")
+    list_display=("id", "assetnummer", "actief", "gezien")
 
 # Register your models here.
 # admin.site.register(LogoMelding)

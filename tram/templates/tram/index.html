@@ -1,17 +1,19 @@
 {% extends "tram/base.html" %}
 {% block content %}
-    {% for melding in meldingen %}
+    {% for storing in storingen %}
         <div class="card-panel white">
             <span class="">
-                Asset: {{melding.assetnummer}} <br>
-                storingscode: {{melding.storing}} <br>
-                Datum: {{melding.tijdstip}} <br>
-                hoge inputs: {{melding.get_hoge_inputs}}
+                Asset: {{storing.assetnummer.assetnummer}} <br>
+                Score: {{storing.score}} <br>
+                ID: {{storing.id}} <br><br>
+
+                laatste data: 
                 <ul>
-                    {% for besch in melding.get_storing_beschrijvingen %}
-                        <li>{{besch}}
-                    {% endfor %}
+                     {% for b in storing.get_data.0.storing_beschrijving %}
+                        <li>{{b}}</li>
+                     {% endfor %}
                 </ul>
+                Laatste update: {{storing.get_data.0.tijdstip}} <br>
             </span>
         </div>
     {%endfor %}
