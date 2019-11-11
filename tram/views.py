@@ -1,22 +1,27 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
 import json
 
 # Create your views here.
 
+
 def index(request):
     return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-score')})
-    # laatste_storingen = []
 
-    # for ls in Asset.objects.all():
-    #     if ls.heeft_laatste_storing():
-    #         if ls.laatste_data.storing > 0:
-    #             laatste_storingen.append(ls.laatste_data)
-    #     else:
-    #         pass
-    # return render(request, "tram/index.html", {"meldingen": laatste_storingen})
+def storing_gezien(request, storing_id):
+    storing = get_object_or_404(Storing, pk = storing_id)
+    storing.gezien = True
+    storing.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+def deactiveer_storing(request, storing_id):
+    storing = get_object_or_404(Storing, pk = storing_id)
+    storing.gezien = True
+    storing.actief = False
+    storing.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def requesthandler(request):
         if (request.body == "" or not request.body):

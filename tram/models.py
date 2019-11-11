@@ -98,7 +98,7 @@ class AbsoluteData(models.Model):
     _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
     storing = models.ForeignKey("Storing", on_delete=models.CASCADE, default=None, null=True)
-    storing_beschrijving = models.ListField(default=[])
+    storing_beschrijving = models.ListField(default=[], editable=False)
     druk_a1 = models.IntegerField()
     druk_a2 = models.IntegerField()
     druk_b1 = models.IntegerField()
@@ -202,6 +202,8 @@ def opslaan_logo_data(sender, instance, **kwargs):
         elif len(ad.storing_beschrijving) > 0 and vorige_ad.heeft_storing() == True:
             bestaande_storing = vorige_ad.storing
             bestaande_storing.score += instance.get_storings_score()
+            if ad.storing_beschrijving != vorige_ad.storing_beschrijving:
+                bestaande_storing.gezien = False
             bestaande_storing.save()
             ad.storing = bestaande_storing
             ad.save()

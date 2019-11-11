@@ -1,28 +1,71 @@
 {% extends "tram/base.html" %}
 {% block content %}
     {% for storing in storingen %}
-        <div class="card-panel white">
-            <span class="">
-                Asset: {{storing.assetnummer.assetnummer}} <br>
-                Score: {{storing.score}} <br>
-                ID: {{storing.id}} <br><br>
-
-                laatste data: 
-                <ul>
-                     {% for b in storing.get_data.0.storing_beschrijving %}
-                        <li>{{b}}</li>
-                     {% endfor %}
-                </ul>
-                Laatste update: {{storing.get_data.0.tijdstip}} <br>
-            </span>
+        <div class="card white" id="storing_{{storing.id}}_card">
+            <div class="card-content">
+                <a href="#modal{{storing.id}}" class="modal-trigger">
+                    <span class="activator grey-text text-darken-4"><u>{{storing.assetnummer.assetnummer}}</u>: 
+                        {% for b in storing.get_data.0.storing_beschrijving %}
+                        {{b}}, 
+                        {% endfor %}
+                        Laatste update: {{storing.get_data.0.tijdstip}} 
+                    </span>
+                    <div style="float: right;">
+                        <a href="{% url 'storing_gezien' storing.id  %}">Gezien</a>
+                        {% url 'storing_deactiveren' storing.id as durl %}
+                        <a href="#" onclick="swalDeactiveerStoring('{{ durl }}')">Deactiveren</a>
+                    </div>
+                </a>
+            </div>
+            <div id="modal{{storing.id}}" class="modal">
+                <div class="modal-content">
+                    Asset: <a href="#">{{storing.assetnummer.assetnummer}}</a><br>
+                    Score: {{storing.score}} <br>
+                    ID: {{storing.id}} <br><br>
+                    {% for b in storing.get_data%}
+                    <div class="card-panel white">
+                        <span class="">
+                            {% for s in b.storing_beschrijving %}
+                                {{s}},
+                            {% endfor %}
+                            <br>
+                            Tijdstip: {{b.tijdstip}}
+                        </span>
+                    </div>
+                    {% endfor %}
+                    Laatste update: {{storing.get_data.0.tijdstip}} <br>
+                </div>
+            </div>
         </div>
     {%endfor %}
 {% endblock content%}
 
 {% block javascript%}
     <script>
-        window.setInterval(function () {
-            location.href = window.location.href
-        }, 30000);
+        function refresh(){
+            location.href = window.location.href;
+        }
+        var aInterval = setInterval(refresh, 30000);
+        window.onclick = function(){
+            clearInterval(aInterval)
+            aInterval = setInterval(refresh, 30000);;
+        };
+
+        function swalDeactiveerStoring(url){
+            Swal.fire({
+                title: 'Zeker weten?',
+                text: "Door de storing te deactiveren worden geen nieuwe updates van deze storing getoond.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ja, deactiveren!'
+              }).then((result) => {
+                if (result.value) {
+                        window.location = url;
+                    }
+                }
+            )
+        }
     </script>
 {% endblock javascript%}
