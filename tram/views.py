@@ -8,8 +8,8 @@ import json
 
 
 def index(request):
-    # return render(request, "tram/index .html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-score')})
-    return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("tijdstip")})
+    return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-som')})
+    # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
 
 def storing_gezien(request, storing_id):
     storing = get_object_or_404(Storing, pk = storing_id)

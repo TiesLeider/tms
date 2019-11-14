@@ -1,17 +1,24 @@
 {% extends "tram/base.html" %}
 {% block content %}
-    {% for storing in storingen %}
-        <div class="card white" id="storing_{{storing.id}}_card">
-            <div class="card-content">
-                <span class="activator grey-text text-darken-4"><u>{{storing.assetnummer.assetnummer}}</u>: 
-                    {% for b in storing.storing_beschrijving %}
-                    {{b}}, 
-                    {% endfor %}
-                    Tijdstip: {{storing.tijdstip}} 
-                </span>
-            </div>
-        </div>
-    {%endfor %}
+    <div class="card-panel white">
+        <table>
+            <tr>
+                <th>Assetnummer</th>
+                <th>Storing</th>
+                <th>Count</th>
+                <th>Tijdstip</th>
+            </tr>
+            {%for storing in storingen|dictsortreversed:"data.tijdstip"%}
+                <tr>
+                    <td>{{storing.assetnummer.assetnummer}}</td>
+                    <td>{{storing.bericht}}</td>
+                    <td>{{storing.som}}</td>
+                    <td>{{storing.data.tijdstip}}</td>
+                </tr>
+            {%endfor%}
+
+        </table>
+    </div>
 {% endblock content%}
 
 {% block javascript%}

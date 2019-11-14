@@ -1,6 +1,7 @@
 from djongo import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+import datetime
 
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True)
@@ -9,7 +10,7 @@ class Asset(models.Model):
     ip_adres = models.GenericIPAddressField(null=True)
     logo_online = models.BooleanField(default=False)
     telefoonnummer  = models.CharField(max_length=10, null=True)
-    configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE)
+    configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None)
     aantal_omlopen = models.IntegerField(default=0)
     weging = models.IntegerField(default=1)
@@ -97,7 +98,6 @@ class LogoData(models.Model):
 class AbsoluteData(models.Model):
     _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
-    storing = models.ForeignKey("Storing", on_delete=models.CASCADE, default=None, null=True)
     storing_beschrijving = models.ListField(default=[], editable=False)
     druk_a1 = models.IntegerField()
     druk_a2 = models.IntegerField()
@@ -124,7 +124,10 @@ class Storing(models.Model):
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
     gezien = models.BooleanField()
     actief = models.BooleanField()
-    score = models.IntegerField()
+    bericht = models.CharField(max_length=100, default="")
+    som = models.IntegerField(default=1)
+    score = models.IntegerField(default=0)
+    data = models.ForeignKey("AbsoluteData", on_delete=models.CASCADE, null=True)
 
     def gezien_melden(self):
         self.gezien = True
@@ -157,17 +160,18 @@ class Urgentieniveau(models.Model):
     
 @receiver(post_save, sender=LogoData) 
 def opslaan_logo_data(sender, instance, **kwargs):
-
-    def maak_nieuwe_storing(ins):
+    def maak_nieuwe_storing(absulute_data, bericht):
+        print("Nieuwe storing word aangemaakt")
         new_storing = Storing(
-            assetnummer = asset,
+            assetnummer = absulute_data.assetnummer,
             gezien = False,
             actief = True,
-            score = ins.get_storings_score()
+            bericht = bericht,
+            som = 1,
+            score = 0,
+            data = absulute_data
         )
         new_storing.save()
-        ad.storing = new_storing
-        ad.save()
     
     asset = Asset.objects.get(assetnummer=instance.assetnummer)
     asset.logo_online = True
@@ -178,7 +182,6 @@ def opslaan_logo_data(sender, instance, **kwargs):
     ad = AbsoluteData(
         assetnummer = asset,
         storing_beschrijving = instance.get_storing_beschrijvingen() if (instance.storing != 0) else [],
-        storing = None,
         druk_a1 = instance.druk_a1,
         druk_a2 = instance.druk_a2,
         druk_b1 = instance.druk_b1,
@@ -189,32 +192,64 @@ def opslaan_logo_data(sender, instance, **kwargs):
         omloop_b = instance.omloop_b,
     )
 
-    vorige_ad = AbsoluteData.objects.filter(assetnummer=ad.assetnummer).order_by('-tijdstip').first()
-    if vorige_ad == None:
-        if len(ad.storing_beschrijving) > 0:
-            maak_nieuwe_storing(instance)
-        else:
-            ad.save()
-    
-    else:
-        if len(ad.storing_beschrijving) > 0 and vorige_ad.heeft_storing() == False:
-            maak_nieuwe_storing(instance)
-        elif len(ad.storing_beschrijving) > 0 and vorige_ad.heeft_storing() == True:
-            bestaande_storing = vorige_ad.storing
-            bestaande_storing.score += instance.get_storings_score()
-            if ad.storing_beschrijving != vorige_ad.storing_beschrijving:
-                bestaande_storing.gezien = False
-            bestaande_storing.save()
-            ad.storing = bestaande_storing
-            ad.save()
 
-        elif len(ad.storing_beschrijving) == 0 and vorige_ad.heeft_storing() == True:
-            bestaande_storing = vorige_ad.storing
-            bestaande_storing.actief = False
-            bestaande_storing.save()
-            ad.save()
+    vorige_ad = AbsoluteData.objects.filter(assetnummer=ad.assetnummer).order_by('-tijdstip').first()
+    ad.save()
+    if vorige_ad == None:
+        #Er is geen vorige data van dit wisselnummer
+        if len(ad.storing_beschrijving) > 0:
+            for b in ad.storing_beschrijving:
+                maak_nieuwe_storing(ad, b)
         else:
-            ad.save()
+            pass
+    else:
+        #Er is een vorige polling geweest van deze asset
+        if len(ad.storing_beschrijving) > 0:
+            #Bij deze polling is een storing vastgelegd
+
+            if len(vorige_ad.storing_beschrijving) > 0:
+                #Bij de vorige polling is ook een storing vastgelegd
+                
+                for sb in ad.storing_beschrijving:
+                    if sb in vorige_ad.storing_beschrijving:
+                        
+                        #Deze storing was ook onderdeel van de vorige polling
+                        vorige_storing = Storing.objects.filter(data=vorige_ad)
+                        print(vorige_ad)
+                        print(vorige_storing)
+                        if len(vorige_storing) > 0:
+                            
+                            #Er is een storings-record gemaakt van de vorige data
+                            for vs in vorige_storing:
+                                print(sb + "  ___  " + vs.bericht)
+                                if (vs.bericht == sb):
+                                    print(0)
+                                    #Het storingsbericht zat in dat record
+                                    vs.som += 1
+                                    vs.data = ad
+                                else:
+                                    #Het storingsbericht zat niet in dat record
+                                    print(1)
+                                    pass
+                                vs.save()
+                        else:
+                            #Er zijn geen storings-records gevonden van de vorige data
+                            maak_nieuwe_storing(ad, sb)
+                            print(2)
+                    else:
+                        #Deze storing was niet onderdeel van de vorige polling
+                        maak_nieuwe_storing(ad, sb)
+                        print(3)
+            else:
+                #Bij de vorige data was er geen storing aanwezig
+                maak_nieuwe_storing(ad, sb)
+                print(4)
+        else:
+            #Er was geen storing bij deze polling
+            pass
+    print(ad.storing_beschrijving, 12)
+
+
 
 # @receiver(pre_save, sender=AbsoluteData)
 # def opslaan_abs_data(sender, instance, **kwargs):
