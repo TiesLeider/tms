@@ -11,7 +11,7 @@ class Asset(models.Model):
     logo_online = models.BooleanField(default=False)
     telefoonnummer  = models.CharField(max_length=10, null=True)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
-    laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None)
+    laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None, editable=False)
     aantal_omlopen = models.IntegerField(default=0)
     weging = models.IntegerField(default=1)
     disconnections = models.IntegerField(default=0)
@@ -127,7 +127,7 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=0)
-    data = models.ForeignKey("AbsoluteData", on_delete=models.CASCADE, null=True)
+    data = models.ForeignKey("AbsoluteData", on_delete=models.CASCADE, null=True, editable=False)
 
     def gezien_melden(self):
         self.gezien = True
