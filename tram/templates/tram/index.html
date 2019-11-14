@@ -14,6 +14,13 @@
                     <td>{{storing.bericht}}</td>
                     <td>{{storing.som}}</td>
                     <td>{{storing.data.tijdstip}}</td>
+                    <td>
+                            <a href="{% url 'storing_gezien' storing.id  %}">Gezien</a>
+                    </td>
+                    <!-- <td>
+                            {% url 'storing_deactiveren' storing.id as durl %}
+                            <a href="#" onclick="swalDeactiveerStoring('{{ durl }}')">Deactiveren</a>
+                    </td> -->
                 </tr>
             {%endfor%}
 
