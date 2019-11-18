@@ -10,7 +10,6 @@ class Asset(models.Model):
     online = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None, editable=False)
-    aantal_omlopen = models.IntegerField(default=0)
     weging = models.IntegerField(default=1)
     disconnections = models.IntegerField(default=0)
 
@@ -124,7 +123,7 @@ class Storing(models.Model):
     actief = models.BooleanField()
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
-    score = models.IntegerField(default=0)
+    score = models.IntegerField(default=1)
     data = models.ForeignKey("AbsoluteData", on_delete=models.CASCADE, null=True, editable=False)
 
     def gezien_melden(self):
@@ -139,6 +138,15 @@ class Storing(models.Model):
         for record in AbsoluteData.objects.filter(storing=self).order_by("-tijdstip"):
             records.append(record)
         return records
+
+    def get_score(self):
+        configs = self.assetnummer.configuratie.config
+        for c in configs:
+            if c.beschrijving == self.bericht:
+                niveau = c.urgentieniveau.niveau
+                break
+
+        return (self.som * niveau) * self.assetnummer.weging
 
 class Configuratie(models.Model):
     _id = models.ObjectIdField()
@@ -159,7 +167,6 @@ class Urgentieniveau(models.Model):
 @receiver(post_save, sender=LogoData) 
 def opslaan_logo_data(sender, instance, **kwargs):
     def maak_nieuwe_storing(absulute_data, bericht):
-        print("Nieuwe storing word aangemaakt")
         new_storing = Storing(
             assetnummer = absulute_data.assetnummer,
             gezien = False,
@@ -169,6 +176,7 @@ def opslaan_logo_data(sender, instance, **kwargs):
             score = 0,
             data = absulute_data
         )
+        new_storing.score = new_storing.get_score()
         new_storing.save()
     
     asset = Asset.objects.get(assetnummer=instance.assetnummer)
@@ -204,17 +212,18 @@ def opslaan_logo_data(sender, instance, **kwargs):
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
-
             for sb in ad.storing_beschrijving:
                 vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).first()
                 if vorige_storing:
                     if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
+                        vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.data = ad
                     elif (vorige_storing.actief == True) and (vorige_storing.gezien == True):
                         #De storing is actief en gezien gemeld
                         vorige_storing.som += 1
+                        vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.gezien = False
                         vorige_storing.data = ad
                     elif (vorige_storing.actief == False):
@@ -227,6 +236,7 @@ def opslaan_logo_data(sender, instance, **kwargs):
         else:
             #Er was geen storing bij deze polling
             pass
+
 
 
 

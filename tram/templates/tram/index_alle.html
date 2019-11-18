@@ -36,22 +36,10 @@
 
         </table>
     </div>
-    <div class="center-align">
-        <a class="waves-effect waves-light btn-large grey lighten-2 black-text" href="{% url 'alle_storingen'%}"><i class="material-icons left ">more_vert</i>Alle storingen</a>
-    </div>
 {% endblock content%}
 
 {% block javascript%}
     <script>
-        function refresh(){
-            location.href = window.location.href;
-        }
-        var aInterval = setInterval(refresh, 600000);
-        window.onclick = function(){
-            clearInterval(aInterval)
-            aInterval = setInterval(refresh, 600000);;
-        };
-
         function swalDeactiveerStoring(url){
             Swal.fire({
                 title: 'Zeker weten?',

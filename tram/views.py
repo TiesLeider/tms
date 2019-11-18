@@ -8,7 +8,11 @@ import json
 
 
 def index(request):
-    return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-som')})
+    return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-data__tijdstip')[:30]})
+    # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
+
+def alle_storingen(request):
+    return render(request, "tram/index_alle.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-data__tijdstip')})
     # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
 
 def storing_gezien(request, storing_id):
@@ -38,9 +42,11 @@ def insert_logo_data(request):
         json_data = json.loads(data).get("ojson")
         assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startswith("w") else json_data.get("assetnummer")
         print(assetnummer)
-        if assetnummer == "W2641" or assetnummer == "W2642":
+        if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
-            print(assetnummer)
+        # if assetnummer == "W2641" or assetnummer == "W2642":
+        #     assetnummer = assetnummer[1:]
+        #     print(assetnummer)
 
         record = LogoData(
             assetnummer_id = assetnummer,
