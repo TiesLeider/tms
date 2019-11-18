@@ -3,7 +3,7 @@ from .models import *
 
 @admin.register(Asset)
 class AssetAdmin(admin.ModelAdmin):
-    list_display=("assetnummer", "beschrijving", "ip_adres", "logo_online", "disconnections")
+    list_display=("assetnummer", "beschrijving", "ip_adres", "online", "disconnections")
 
 @admin.register(LogoData)
 class LogoDataAdmin(admin.ModelAdmin):

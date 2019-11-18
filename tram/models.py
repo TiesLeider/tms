@@ -6,16 +6,14 @@ import datetime
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True)
     beschrijving = models.CharField(null=True, max_length=70)
-    bevat_logo = models.BooleanField(default=True)
     ip_adres = models.GenericIPAddressField(null=True)
-    logo_online = models.BooleanField(default=False)
-    telefoonnummer  = models.CharField(max_length=10, null=True)
+    online = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None, editable=False)
     aantal_omlopen = models.IntegerField(default=0)
     weging = models.IntegerField(default=1)
     disconnections = models.IntegerField(default=0)
-    laatste_update = models.DateTimeField(auto_now=True)
+
 
     def __str__(self):
         return self.assetnummer
@@ -207,47 +205,28 @@ def opslaan_logo_data(sender, instance, **kwargs):
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
 
-            if len(vorige_ad.storing_beschrijving) > 0:
-                #Bij de vorige polling is ook een storing vastgelegd
-                
-                for sb in ad.storing_beschrijving:
-                    if sb in vorige_ad.storing_beschrijving:
-                        
-                        #Deze storing was ook onderdeel van de vorige polling
-                        vorige_storing = Storing.objects.filter(data=vorige_ad)
-                        print(vorige_ad)
-                        print(vorige_storing)
-                        if len(vorige_storing) > 0:
-                            
-                            #Er is een storings-record gemaakt van de vorige data
-                            for vs in vorige_storing:
-                                print(sb + "  ___  " + vs.bericht)
-                                if (vs.bericht == sb):
-                                    print(0)
-                                    #Het storingsbericht zat in dat record
-                                    vs.som += 1
-                                    vs.data = ad
-                                else:
-                                    #Het storingsbericht zat niet in dat record
-                                    print(1)
-                                    pass
-                                vs.save()
-                        else:
-                            #Er zijn geen storings-records gevonden van de vorige data
-                            maak_nieuwe_storing(ad, sb)
-                            print(2)
-                    else:
-                        #Deze storing was niet onderdeel van de vorige polling
+            for sb in ad.storing_beschrijving:
+                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).first()
+                if vorige_storing:
+                    if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
+                        #De storing is niet gezien gemeld
+                        vorige_storing.som += 1
+                        vorige_storing.data = ad
+                    elif (vorige_storing.actief == True) and (vorige_storing.gezien == True):
+                        #De storing is actief en gezien gemeld
+                        vorige_storing.som += 1
+                        vorige_storing.gezien = False
+                        vorige_storing.data = ad
+                    elif (vorige_storing.actief == False):
+                        #De storing is niet langer actief
                         maak_nieuwe_storing(ad, sb)
-                        print(3)
-            else:
-                #Bij de vorige data was er geen storing aanwezig
-                maak_nieuwe_storing(ad, sb)
-                print(4)
+                    vorige_storing.save()
+                else:
+                    #Er zijn geen storings-records gevonden van de vorige data
+                    maak_nieuwe_storing(ad, sb)
         else:
             #Er was geen storing bij deze polling
             pass
-    print(ad.storing_beschrijving, 12)
 
 
 

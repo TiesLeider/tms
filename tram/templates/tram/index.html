@@ -17,10 +17,10 @@
                     <td>
                             <a href="{% url 'storing_gezien' storing.id  %}">Gezien</a>
                     </td>
-                    <!-- <td>
+                    <td>
                             {% url 'storing_deactiveren' storing.id as durl %}
                             <a href="#" onclick="swalDeactiveerStoring('{{ durl }}')">Deactiveren</a>
-                    </td> -->
+                    </td>
                 </tr>
             {%endfor%}
 
