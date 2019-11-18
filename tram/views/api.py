@@ -1,39 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
-from .models import *
+from ..models import *
 import json
-
-# Create your views here.
-
-
-def index(request):
-    return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-data__tijdstip')[:30]})
-    # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
-
-def alle_storingen(request):
-    return render(request, "tram/index_alle.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-data__tijdstip')})
-    # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
-
-def storing_gezien(request, storing_id):
-    storing = get_object_or_404(Storing, pk = storing_id)
-    storing.gezien = True
-    storing.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-def deactiveer_storing(request, storing_id):
-    storing = get_object_or_404(Storing, pk = storing_id)
-    storing.gezien = True
-    storing.actief = False
-    storing.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def requesthandler(request):
         if (request.body == "" or not request.body):
             return JsonResponse({"response": False, "error":  "POST inhoud niet aangekomen."})
         else:
             return request
-        
+
+
 @csrf_exempt
 def insert_logo_data(request):
     try:
@@ -82,5 +59,3 @@ def insert_logo_online(request):
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         return JsonResponse({"response": False, "error": str(ex)})
-
-

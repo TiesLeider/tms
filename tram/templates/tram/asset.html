@@ -1,0 +1,60 @@
+{% extends "tram/base.html" %}
+{% block content %}
+    <div class="card-panel white">
+        <h1>{{asset.assetnummer}}</h1>
+        <div class="row">
+            <div class="col l5">
+                <div class="card-panel blue-grey lighten-2">
+                    <h3>Details</h3>
+                    <table>
+                        <tr>
+                            <td>Beschrijving:</td>
+                            <td>{{asset.beschrijving}}</td>
+                        </tr>
+                        <tr>
+                            <td>IP-Adres:</td>
+                            <td>{{asset.ip_adres}}</td>
+                        </tr>
+                        <tr>
+                            <td>Online:</td>
+                            <td>{{asset.online}}</td>
+                        </tr>
+                        <tr>
+                            <td>Weging:</td>
+                            <td>{{asset.weging}}x</td>
+                        </tr>
+                        <tr>
+                            <td>Aantal omlopen:</td>
+                            <td>Bak A:{{asset.laatste_data.omloop_a}}<br>Bak B:{{asset.laatste_data.omloop_b}}</td>
+                        </tr>
+                        <tr>
+                            <td>Laatste data ontvangen op:</td>
+                            <td>{{asset.laatste_data.tijdstip}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col l7">
+                <div class="card-panel  red lighten-1">
+                    <h3>Laatste storingen:</h3>
+                    <table>
+                        <tr>
+                            <th>Storing</th>
+                            <th>Count</th>
+                            <th>Score</th>
+                            <th>Tijdstip</th>
+                        </tr>
+                        {%for storing in storingen%}
+                            <tr>
+                                <td>{{storing.bericht}}</td>
+                                <td>{{storing.som}}</td>
+                                <td>{{storing.score}}</td>
+                                <td>{{storing.data.tijdstip}}</td>
+                            </tr>
+                        {%endfor%}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

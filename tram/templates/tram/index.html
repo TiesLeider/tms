@@ -14,14 +14,14 @@
             </tr>
             {%for storing in storingen%}
                 <tr>
-                    <td>{{storing.assetnummer.assetnummer}}</td>
+                    <td><a href="{% url 'asset_index' storing.assetnummer.assetnummer%}">{{storing.assetnummer.assetnummer}}</a></td>
                     <td>{{storing.bericht}}</td>
                     <td>{{storing.som}}</td>
                     <td>{{storing.score}}</td>
-                    {% if storing.assetnummer.laatste_data.omloop_b > 0 %}
-                        <td>A:{{storing.assetnummer.laatste_data.omloop_a}} - B: {{storing.assetnummer.laatste_data.omloop_b}}</td>
+                    {% if storing.data.omloop_b > 0 %}
+                        <td>A:{{storing.data.omloop_a}} - B: {{storing.data.omloop_b}}</td>
                     {% else %}
-                        <td>{{storing.assetnummer.laatste_data.omloop_a}}</td>   
+                        <td>{{storing.data.omloop_a}}</td>   
                     {% endif%}
                     <td>{{storing.data.tijdstip}}</td>
                     <td>
@@ -33,7 +33,6 @@
                     </td>
                 </tr>
             {%endfor%}
-
         </table>
     </div>
     <div class="center-align">

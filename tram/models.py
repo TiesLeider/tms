@@ -60,6 +60,8 @@ class LogoData(models.Model):
     def __str__(self):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
 
+    class Meta:
+        verbose_name_plural = "logo data"
 
     def get_bin_waarden(self):
     #Het omzetten van de hex/int waarde naar binaire waarden
@@ -106,6 +108,9 @@ class AbsoluteData(models.Model):
     omloop_b = models.IntegerField()
     tijdstip = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name_plural = "absolute data"
+
     def heeft_storing(self):
         heeft_s = False
         try:
@@ -125,6 +130,9 @@ class Storing(models.Model):
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
     data = models.ForeignKey("AbsoluteData", on_delete=models.CASCADE, null=True, editable=False)
+
+    class Meta:
+        verbose_name_plural = "storingen"
 
     def gezien_melden(self):
         self.gezien = True
@@ -163,84 +171,3 @@ class Urgentieniveau(models.Model):
 
     def __str__(self):
         return self.beschrijving
-    
-@receiver(post_save, sender=LogoData) 
-def opslaan_logo_data(sender, instance, **kwargs):
-    def maak_nieuwe_storing(absulute_data, bericht):
-        new_storing = Storing(
-            assetnummer = absulute_data.assetnummer,
-            gezien = False,
-            actief = True,
-            bericht = bericht,
-            som = 1,
-            score = 0,
-            data = absulute_data
-        )
-        new_storing.score = new_storing.get_score()
-        new_storing.save()
-    
-    asset = Asset.objects.get(assetnummer=instance.assetnummer)
-    asset.logo_online = True
-    asset.disconnections = 0
-    asset.laatste_data = instance
-    asset.save()
-
-    ad = AbsoluteData(
-        assetnummer = asset,
-        storing_beschrijving = instance.get_storing_beschrijvingen() if (instance.storing != 0) else [],
-        druk_a1 = instance.druk_a1,
-        druk_a2 = instance.druk_a2,
-        druk_b1 = instance.druk_b1,
-        druk_b2 = instance.druk_b2,
-        kracht_a = instance.kracht_a,
-        kracht_b = instance.kracht_b,
-        omloop_a = instance.omloop_a,
-        omloop_b = instance.omloop_b,
-    )
-
-
-    vorige_ad = AbsoluteData.objects.filter(assetnummer=ad.assetnummer).order_by('-tijdstip').first()
-    ad.save()
-    if vorige_ad == None:
-        #Er is geen vorige data van dit wisselnummer
-        if len(ad.storing_beschrijving) > 0:
-            for b in ad.storing_beschrijving:
-                maak_nieuwe_storing(ad, b)
-        else:
-            pass
-    else:
-        #Er is een vorige polling geweest van deze asset
-        if len(ad.storing_beschrijving) > 0:
-            #Bij deze polling is een storing vastgelegd
-            for sb in ad.storing_beschrijving:
-                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).first()
-                if vorige_storing:
-                    if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
-                        #De storing is niet gezien gemeld
-                        vorige_storing.som += 1
-                        vorige_storing.score = vorige_storing.get_score()
-                        vorige_storing.data = ad
-                    elif (vorige_storing.actief == True) and (vorige_storing.gezien == True):
-                        #De storing is actief en gezien gemeld
-                        vorige_storing.som += 1
-                        vorige_storing.score = vorige_storing.get_score()
-                        vorige_storing.gezien = False
-                        vorige_storing.data = ad
-                    elif (vorige_storing.actief == False):
-                        #De storing is niet langer actief
-                        maak_nieuwe_storing(ad, sb)
-                    vorige_storing.save()
-                else:
-                    #Er zijn geen storings-records gevonden van de vorige data
-                    maak_nieuwe_storing(ad, sb)
-        else:
-            #Er was geen storing bij deze polling
-            pass
-
-
-
-
-# @receiver(pre_save, sender=AbsoluteData)
-# def opslaan_abs_data(sender, instance, **kwargs):
-#     if instance.storing_beschrijving.lenght == 0:
-#         instance.save()

@@ -14,7 +14,7 @@
             </tr>
             {%for storing in storingen%}
                 <tr>
-                    <td>{{storing.assetnummer.assetnummer}}</td>
+                        <td><a href="{% url 'asset_index' storing.assetnummer.assetnummer%}">{{storing.assetnummer.assetnummer}}</a></td>
                     <td>{{storing.bericht}}</td>
                     <td>{{storing.som}}</td>
                     <td>{{storing.score}}</td>
