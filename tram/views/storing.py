@@ -44,6 +44,7 @@ def opslaan_logo_data(sender, instance, **kwargs):
     asset.disconnections = 0
     asset.laatste_data = instance
     asset.save()
+    asset = None
 
     ad = AbsoluteData(
         assetnummer = asset,

@@ -12,6 +12,7 @@ class LogoDataAdmin(admin.ModelAdmin):
 @admin.register(AbsoluteData)
 class LogoDataAdmin(admin.ModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing_beschrijving")
+    list_filter=("assetnummer_id")
 
 @admin.register(Configuratie)
 class ConfiguratieAdmin(admin.ModelAdmin):
