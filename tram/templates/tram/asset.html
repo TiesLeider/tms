@@ -25,7 +25,7 @@
                         </tr>
                         <tr>
                             <td>Aantal omlopen:</td>
-                            <td>Bak A:{{asset.laatste_data.omloop_a}}<br>Bak B:{{asset.laatste_data.omloop_b}}</td>
+                            <td>Bak A: {{asset.laatste_data.omloop_a}}<br>Bak B: {{asset.laatste_data.omloop_b}}</td>
                         </tr>
                         <tr>
                             <td>Laatste data ontvangen op:</td>
@@ -44,7 +44,7 @@
                             <th>Score</th>
                             <th>Tijdstip</th>
                         </tr>
-                        {%for storing in storingen%}
+                        {%for storing in storingen|dictsortreversed:"data.tijdstip"%}
                             <tr>
                                 <td>{{storing.bericht}}</td>
                                 <td>{{storing.som}}</td>

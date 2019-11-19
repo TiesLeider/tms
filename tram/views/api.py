@@ -21,9 +21,7 @@ def insert_logo_data(request):
         print(assetnummer)
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
-        # if assetnummer == "W2641" or assetnummer == "W2642":
-        #     assetnummer = assetnummer[1:]
-        #     print(assetnummer)
+
 
         record = LogoData(
             assetnummer_id = assetnummer,
