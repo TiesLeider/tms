@@ -39,14 +39,14 @@ def opslaan_logo_data(sender, instance, **kwargs):
         new_storing.score = new_storing.get_score()
         new_storing.save()
     
-    asset = Asset.objects.get(assetnummer=instance.assetnummer.assetnummer)
-    asset.logo_online = True
-    asset.disconnections = 0
-    asset.laatste_data = instance
-    asset.save()
+    # asset = Asset.objects.get(assetnummer=instance.assetnummer.assetnummer)
+    # asset.logo_online = True
+    # asset.disconnections = 0
+    # asset.laatste_data = instance
+    # asset.save()
 
     ad = AbsoluteData(
-        assetnummer = asset,
+        assetnummer = instance.assetnummer,
         storing_beschrijving = instance.get_storing_beschrijvingen() if (instance.storing != 0) else [],
         druk_a1 = instance.druk_a1,
         druk_a2 = instance.druk_a2,

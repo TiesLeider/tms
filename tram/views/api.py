@@ -36,6 +36,10 @@ def insert_logo_data(request):
             omloop_b = json_data.get("omloop_b"),
             )
         record.save()
+
+        asset = Asset.objects.get(assetnummer=assetnummer)
+        asset.laatste_data = record
+        asset.save()
         
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
