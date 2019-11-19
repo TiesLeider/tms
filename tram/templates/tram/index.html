@@ -4,6 +4,7 @@
         <div id="demo"></div>
         <table>
             <tr>
+                <th style="max-width: 5px;"></th>
                 <th>Assetnummer</th>
                 <th>Storing</th>
                 <th>Count</th>
@@ -13,32 +14,37 @@
                 <th>Negeren</th>
                 <th>Herstellen</th>
             </tr>
-            {%for storing in storingen%}
-                <tr>
-                    <td><a href="{% url 'asset_index' storing.assetnummer.assetnummer%}">{{storing.assetnummer.assetnummer}}</a></td>
-                    <td>{{storing.bericht}}</td>
-                    <td>{{storing.som}}</td>
-                    <td>{{storing.score}}</td>
-                    {% if storing.data.omloop_b > 0 %}
-                        <td>A:{{storing.data.omloop_a}} - B: {{storing.data.omloop_b}}</td>
-                    {% else %}
-                        <td>{{storing.data.omloop_a}}</td>   
-                    {% endif%}
-                    <td>{{storing.data.tijdstip}}</td>
-                    <td>
-                            <a href="{% url 'storing_gezien' storing.id  %}"><i class="material-icons small">visibility_off</i></a>
-                    </td>
-                    <td>
-                            {% url 'storing_deactiveren' storing.id as durl %}
-                            <a href="#" onclick="swalDeactiveerStoring('{{ durl }}')"><i class="material-icons small red-text">offline_pin</i></a>
-                    </td>
-                </tr>
-            {%endfor%}
+            <form action="storingen">
+                {%for storing in storingen%}
+                    <tr>
+                        <td><label><input name="geselecteerde_storingen" value="{{storing.id}}" type="checkbox" class="filled-in"/><span></span></label></td>
+                        <td><a href="{% url 'asset_index' storing.assetnummer.assetnummer%}">{{storing.assetnummer.assetnummer}}</a></td>
+                        <td>{{storing.bericht}}</td>
+                        <td>{{storing.som}}</td>
+                        <td>{{storing.score}}</td>
+                        {% if storing.data.omloop_b > 0 %}
+                            <td>A:{{storing.data.omloop_a}} - B: {{storing.data.omloop_b}}</td>
+                        {% else %}
+                            <td>{{storing.data.omloop_a}}</td>   
+                        {% endif%}
+                        <td>{{storing.data.tijdstip}}</td>
+                        <td>
+                                <a href="{% url 'storing_gezien' storing.id  %}"><i class="material-icons small">visibility_off</i></a>
+                        </td>
+                        <td>
+                                {% url 'storing_deactiveren' storing.id as durl %}
+                                <a href="#" onclick="swalDeactiveerStoring('{{ durl }}')"><i class="material-icons small red-text">offline_pin</i></a>
+                        </td>
+                    </tr>
+                {%endfor%}
+            </form>
         </table>
     </div>
-    <div class="center-align">
-        <a class="waves-effect waves-light btn-large grey lighten-2 black-text" href="{% url 'alle_storingen'%}"><i class="material-icons left ">more_vert</i>Alle storingen</a>
-    </div>
+    {% if storingen|length > 30 %}
+        <div class="center-align">
+            <a class="waves-effect waves-light btn-large grey lighten-2 black-text" href="{% url 'alle_storingen'%}"><i class="material-icons left ">more_vert</i>Alle storingen</a>
+        </div>
+    {% endif %}
 {% endblock content%}
 
 {% block javascript%}

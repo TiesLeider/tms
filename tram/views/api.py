@@ -27,7 +27,7 @@ def insert_logo_data(request):
             new_storing.score = new_storing.get_score()
             new_storing.save()
 
-        #Check of de requestdata ok is en manipuleer assetnummer
+        #Check of de requestdata ok is en manipuleer assetnummer:
         requesthandler(request)
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
@@ -36,7 +36,7 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-        #Maak record Logodata
+        #Maak record Logodata:
         record = LogoData(
             assetnummer_id = assetnummer,
             storing = json_data.get("storing"),
@@ -51,10 +51,10 @@ def insert_logo_data(request):
             )
         record.save()
 
-        #Wijzigingen in de assettabel
+        #Wijzigingen in de assettabel:
         asset = Asset.objects.get(assetnummer=assetnummer)
-        asset.laatste_data = record
-        asset.save()
+        # asset.laatste_data = record
+        # asset.save()
 
         #Maak Absolutedata tabel
         ad = AbsoluteData(
@@ -72,13 +72,14 @@ def insert_logo_data(request):
         asset = None
         ad.save()
 
-        #Logica storing
+        #Logica storing:
 
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
             for sb in ad.storing_beschrijving:
-                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).first()
+                vorige_storing = Storing.objects.filter(assetnummer_id=ad.assetnummer.assetnummer, bericht=sb).order_by('-data__tijdstip').first()
+                print(vorige_storing)
                 if vorige_storing:
                     if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
