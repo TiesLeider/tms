@@ -39,12 +39,11 @@ def opslaan_logo_data(sender, instance, **kwargs):
         new_storing.score = new_storing.get_score()
         new_storing.save()
     
-    asset = Asset.objects.get(assetnummer=instance.assetnummer.assetnummer)
+    asset = Asset.objects.get(assetnummer=instance.assetnummer)
     asset.logo_online = True
     asset.disconnections = 0
     asset.laatste_data = instance
     asset.save()
-    asset = None
 
     ad = AbsoluteData(
         assetnummer = asset,
@@ -101,7 +100,8 @@ def opslaan_logo_data(sender, instance, **kwargs):
 
 
 
-@receiver(pre_save, sender=AbsoluteData)
-def opslaan_abs_data(sender, instance, **kwargs):
-    print(f"AD {instance.assetnummer} opgeslagen")
+# @receiver(pre_save, sender=AbsoluteData)
+# def opslaan_abs_data(sender, instance, **kwargs):
+#     if instance.storing_beschrijving.lenght == 0:
+#         instance.save()
 
