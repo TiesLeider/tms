@@ -101,8 +101,7 @@ def opslaan_logo_data(sender, instance, **kwargs):
 
 
 
-# @receiver(pre_save, sender=AbsoluteData)
-# def opslaan_abs_data(sender, instance, **kwargs):
-#     if instance.storing_beschrijving.lenght == 0:
-#         instance.save()
+@receiver(pre_save, sender=AbsoluteData)
+def opslaan_abs_data(sender, instance, **kwargs):
+    print(f"AD {instance.assetnummer} opgeslagen")
 
