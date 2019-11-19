@@ -8,9 +8,10 @@ class AssetAdmin(admin.ModelAdmin):
 @admin.register(LogoData)
 class LogoDataAdmin(admin.ModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing")
+    list_filter=("assetnummer_id"),
 
 @admin.register(AbsoluteData)
-class LogoDataAdmin(admin.ModelAdmin):
+class AbsoluteDataAdmin(admin.ModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing_beschrijving")
     list_filter=("assetnummer_id"),
 

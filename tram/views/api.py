@@ -14,6 +14,20 @@ def requesthandler(request):
 @csrf_exempt
 def insert_logo_data(request):
     try:
+        def maak_nieuwe_storing(absulute_data, bericht):
+            new_storing = Storing(
+                assetnummer = absulute_data.assetnummer,
+                gezien = False,
+                actief = True,
+                bericht = bericht,
+                som = 1,
+                score = 0,
+                data = absulute_data
+            )
+            new_storing.score = new_storing.get_score()
+            new_storing.save()
+
+        #Check of de requestdata ok is en manipuleer assetnummer
         requesthandler(request)
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
@@ -22,7 +36,7 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-
+        #Maak record Logodata
         record = LogoData(
             assetnummer_id = assetnummer,
             storing = json_data.get("storing"),
@@ -37,10 +51,57 @@ def insert_logo_data(request):
             )
         record.save()
 
+        #Wijzigingen in de assettabel
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.laatste_data = record
         asset.save()
-        
+
+        #Maak Absolutedata tabel
+        ad = AbsoluteData(
+            assetnummer_id = assetnummer,
+            storing_beschrijving = record.get_storing_beschrijvingen() if (record.storing != 0) else [],
+            druk_a1 = record.druk_a1,
+            druk_a2 = record.druk_a2,
+            druk_b1 = record.druk_b1,
+            druk_b2 = record.druk_b2,
+            kracht_a = record.kracht_a,
+            kracht_b = record.kracht_b,
+            omloop_a = record.omloop_a,
+            omloop_b = record.omloop_b,
+        )
+        asset = None
+        ad.save()
+
+        #Logica storing
+
+        #Er is een vorige polling geweest van deze asset
+        if len(ad.storing_beschrijving) > 0:
+            #Bij deze polling is een storing vastgelegd
+            for sb in ad.storing_beschrijving:
+                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).first()
+                if vorige_storing:
+                    if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
+                        #De storing is niet gezien gemeld
+                        vorige_storing.som += 1
+                        vorige_storing.score = vorige_storing.get_score()
+                        vorige_storing.data = ad
+                    elif (vorige_storing.actief == True) and (vorige_storing.gezien == True):
+                        #De storing is actief en gezien gemeld
+                        vorige_storing.som += 1
+                        vorige_storing.score = vorige_storing.get_score()
+                        vorige_storing.gezien = False
+                        vorige_storing.data = ad
+                    elif (vorige_storing.actief == False):
+                        #De storing is niet langer actief
+                        maak_nieuwe_storing(ad, sb)
+                    vorige_storing.save()
+                else:
+                    #Er zijn geen storings-records gevonden van de vorige data
+                    maak_nieuwe_storing(ad, sb)
+        else:
+            #Er was geen storing bij deze polling
+            pass
+            
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         return JsonResponse({"response": False, "error": str(ex)})

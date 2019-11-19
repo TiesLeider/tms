@@ -40,6 +40,15 @@
 
 {% block javascript%}
     <script>
+        function refresh(){
+            location.href = window.location.href;
+        }
+        var aInterval = setInterval(refresh, 15000);
+        window.onclick = function(){
+            clearInterval(aInterval)
+            aInterval = setInterval(refresh, 15000);;
+        };
+
         function swalDeactiveerStoring(url){
             Swal.fire({
                 title: 'Zeker weten?',
