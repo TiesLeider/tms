@@ -1,6 +1,7 @@
 {% extends "tram/base.html" %}
 {% block content %}
     <div class="card-panel white">
+        <div id="demo"></div>
         <table>
             <tr>
                 <th>Assetnummer</th>
@@ -44,11 +45,12 @@
     <script>
         function refresh(){
             location.href = window.location.href;
+            M.toast({html: 'Refreshed'})
         }
-        var aInterval = setInterval(refresh, 600000);
+        var aInterval = setInterval(refresh, 5000);
         window.onclick = function(){
             clearInterval(aInterval)
-            aInterval = setInterval(refresh, 600000);;
+            aInterval = setInterval(refresh, 5000);;
         };
 
         function swalDeactiveerStoring(url){
