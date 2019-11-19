@@ -39,7 +39,7 @@ def opslaan_logo_data(sender, instance, **kwargs):
         new_storing.score = new_storing.get_score()
         new_storing.save()
     
-    asset = Asset.objects.get(assetnummer=instance.assetnummer)
+    asset = Asset.objects.get(assetnummer=instance.assetnummer.assetnummer)
     asset.logo_online = True
     asset.disconnections = 0
     asset.laatste_data = instance
@@ -59,6 +59,7 @@ def opslaan_logo_data(sender, instance, **kwargs):
     )
 
 
+    asset = None
     vorige_ad = AbsoluteData.objects.filter(assetnummer=ad.assetnummer).order_by('-tijdstip').first()
     ad.save()
     if vorige_ad == None:
