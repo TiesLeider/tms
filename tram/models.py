@@ -92,6 +92,9 @@ class LogoData(models.Model):
             if obj.inputnummer in self.get_hoge_inputs():
                 score += obj.urgentieniveau.niveau
         return score
+    
+    def check_storing(self, storing_beschrijving):
+        return storing_beschrijving in self.get_storing_beschrijvingen()
         
 
 class AbsoluteData(models.Model):

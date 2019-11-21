@@ -53,8 +53,6 @@ def insert_logo_data(request):
 
         #Wijzigingen in de assettabel:
         asset = Asset.objects.get(assetnummer=assetnummer)
-        # asset.laatste_data = record
-        # asset.save()
 
         #Maak Absolutedata tabel
         ad = AbsoluteData(
@@ -94,11 +92,13 @@ def insert_logo_data(request):
                         vorige_storing.data = ad
                     elif (vorige_storing.actief == False):
                         #De storing is niet langer actief
-                        maak_nieuwe_storing(ad, sb)
+                        if record.check_storing() == True:
+                            maak_nieuwe_storing(ad, sb)
                     vorige_storing.save()
                 else:
                     #Er zijn geen storings-records gevonden van de vorige data
-                    maak_nieuwe_storing(ad, sb)
+                    if record.check_storing(sb) == True:
+                        maak_nieuwe_storing(ad, sb)
         else:
             #Er was geen storing bij deze polling
             pass
