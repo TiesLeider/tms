@@ -9,7 +9,6 @@ class Asset(models.Model):
     ip_adres = models.GenericIPAddressField(null=True)
     online = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
-    laatste_data = models.ForeignKey("LogoData", on_delete=models.CASCADE, default=None, editable=False)
     weging = models.IntegerField(default=1)
     disconnections = models.IntegerField(default=0)
 

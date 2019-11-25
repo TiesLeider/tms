@@ -53,7 +53,7 @@ def insert_logo_data(request):
 
         #Wijzigingen in de assettabel:
         asset = Asset.objects.get(assetnummer=assetnummer)
-        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
+        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).order_by('-tijdstip').first()
         
         #Maak Absolutedata tabel
         ad = AbsoluteData(
@@ -65,8 +65,8 @@ def insert_logo_data(request):
             druk_b2 = record.druk_b2,
             kracht_a = record.kracht_a,
             kracht_b = record.kracht_b,
-            omloop_a = vorige_ad.omloop_a + record.omloop_a,
-            omloop_b = vorige_ad.omloop_b + record.omloop_b,
+            omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad) else record.omloop_a,
+            omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad) else record.omloop_b,
         )
         asset = None
         vorige_ad = None
@@ -107,7 +107,7 @@ def insert_logo_data(request):
             
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
-        return JsonResponse({"response": False, "error": str("Django_error: " + ex)})
+        return JsonResponse({"response": False, "error": str(ex)})
 
 @csrf_exempt
 def insert_logo_online(request):
