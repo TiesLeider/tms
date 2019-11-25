@@ -42,6 +42,7 @@
                             <th>Storing</th>
                             <th>Count</th>
                             <th>Score</th>
+                            <th>Omlopen</th>
                             <th>Tijdstip</th>
                         </tr>
                         {%for storing in storingen|dictsortreversed:"data.tijdstip"%}
@@ -49,6 +50,11 @@
                                 <td>{{storing.bericht}}</td>
                                 <td>{{storing.som}}</td>
                                 <td>{{storing.score}}</td>
+                                {% if storing.data.omloop_b > 0 %}
+                                    <td>A:{{storing.data.omloop_a}} <br> B: {{storing.data.omloop_b}}</td>
+                                {% else %}
+                                    <td>{{storing.data.omloop_a}}</td>   
+                                {% endif%}
                                 <td>{{storing.data.tijdstip}}</td>
                             </tr>
                         {%endfor%}

@@ -62,6 +62,7 @@ class LogoData(models.Model):
 
     class Meta:
         verbose_name_plural = "logo data"
+        get_latest_by = "tijdstip"
 
     def get_bin_waarden(self):
     #Het omzetten van de hex/int waarde naar binaire waarden
@@ -113,6 +114,7 @@ class AbsoluteData(models.Model):
 
     class Meta:
         verbose_name_plural = "absolute data"
+        get_latest_by = "tijdstip"
 
     def heeft_storing(self):
         heeft_s = False
