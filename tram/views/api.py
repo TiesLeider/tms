@@ -92,7 +92,7 @@ def insert_logo_data(request):
                         vorige_storing.data = ad
                     elif (vorige_storing.actief == False):
                         #De storing is niet langer actief
-                        if record.check_storing() == True:
+                        if record.check_storing(sb) == True:
                             maak_nieuwe_storing(ad, sb)
                     vorige_storing.save()
                 else:
