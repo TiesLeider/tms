@@ -123,8 +123,7 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
-    data = models.ArrayReferenceField(AbsoluteData, default=None, editable=False)
-    laatste_update = models.DateTimeField(auto_now=True)
+    laatste_data = models.ForeignKey(AbsoluteData, editable=False, default=None, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name_plural = "storingen"
