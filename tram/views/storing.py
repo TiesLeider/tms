@@ -3,11 +3,11 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from ..models import *
 
 def index(request):
-    return render(request, "tram/index.html", {"storingen": Storing.objects.select_related("data").exclude(actief=False, gezien=True).order_by("-laatste_update")[:30]})
+    return render(request, "tram/index.html", {"storingen": Storing.objects.exclude(actief=False, gezien=True).order_by("-laatste_update")[:30]})
     # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
 
 def alle_storingen(request):
-    return render(request, "tram/index_alle.html", {"storingen": Storing.objects.prefetch_related("data").filter(actief=True, gezien=False).order_by('-data__tijdstip')})
+    return render(request, "tram/index_alle.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).order_by('-data__tijdstip')})
     # return render(request, "tram/index.html", {"storingen": AbsoluteData.objects.exclude(storing_beschrijving=[]).order_by("-tijdstip")})
 
 def storing_gezien(request, storing_id):

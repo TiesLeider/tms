@@ -5,6 +5,7 @@
         <table>
             <tr>
                 <th style="max-width: 5px;"></th>
+                <th>ID</th>
                 <th>Assetnummer</th>
                 <th>Storing</th>
                 <th>Count</th>
@@ -18,6 +19,7 @@
                 {%for storing in storingen%}
                     <tr>
                         <td><label><input name="geselecteerde_storingen" value="{{storing.id}}" type="checkbox" class="filled-in"/><span></span></label></td>
+                        <td>{{storing.id}}</td>
                         <td><a href="{% url 'asset_index' storing.assetnummer.assetnummer%}">{{storing.assetnummer.assetnummer}}</a></td>
                         <td>{{storing.bericht}}</td>
                         <td>{{storing.som}}</td>
