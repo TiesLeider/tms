@@ -22,12 +22,12 @@
                         <td>{{storing.bericht}}</td>
                         <td>{{storing.som}}</td>
                         <td>{{storing.score}}</td>
-                        {% if storing.data.all.0.omloop_b > 0 %}
-                            <td>A:{{storing.data.all.0.omloop_a}} - B: {{storing.data.all.0.omloop_b}}</td>
+                        {% if storing.data.all.latest.omloop_b > 0 %}
+                            <td>A:{{storing.data.all.latest.omloop_a}} - B: {{storing.data.all.latest.omloop_b}}</td>
                         {% else %}
-                            <td>{{storing.data.all.0.omloop_a}}</td>   
+                            <td>{{storing.data.all.latest.omloop_a}}</td>   
                         {% endif%}
-                        <td>{{storing.data.all.0.tijdstip}}</td>
+                        <td>{{storing.data.all.latest.tijdstip}}</td>
                         <td>
                                 <a href="{% url 'storing_gezien' storing.id  %}"><i class="material-icons small">visibility_off</i></a>
                         </td>
