@@ -15,6 +15,7 @@ def requesthandler(request):
 def insert_logo_data(request):
     try:
         def maak_nieuwe_storing(absulute_data, bericht):
+            print("nieuwe_storing")
             new_storing = Storing(
                 assetnummer = absulute_data.assetnummer,
                 gezien = False,
@@ -22,10 +23,10 @@ def insert_logo_data(request):
                 bericht = bericht,
                 som = 1,
                 score = 0,
-                data = absulute_data
             )
             new_storing.score = new_storing.get_score()
             new_storing.save()
+            new_storing.data.add(ad)
 
         #Check of de requestdata ok is en manipuleer assetnummer:
         requesthandler(request)
@@ -85,21 +86,23 @@ def insert_logo_data(request):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
                         vorige_storing.score = vorige_storing.get_score()
-                        vorige_storing.data = ad
+                        vorige_storing.data.add(ad)
                     elif (vorige_storing.actief == True) and (vorige_storing.gezien == True):
                         #De storing is actief en gezien gemeld
                         vorige_storing.som += 1
                         vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.gezien = False
-                        vorige_storing.data = ad
+                        vorige_storing.data.add(ad)
                     elif (vorige_storing.actief == False):
                         #De storing is niet langer actief
                         if record.check_storing(sb) == True:
+                            print(2)
                             maak_nieuwe_storing(ad, sb)
                     vorige_storing.save()
                 else:
                     #Er zijn geen storings-records gevonden van de vorige data
                     if record.check_storing(sb) == True:
+                        print(1)
                         maak_nieuwe_storing(ad, sb)
         else:
             #Er was geen storing bij deze polling

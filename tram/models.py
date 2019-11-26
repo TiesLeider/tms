@@ -25,17 +25,7 @@ class Asset(models.Model):
         return heeft_ls
 
 class ConfiguratieElement(models.Model):
-    ANALOOG = 'analoog'
-    PULSE = 'pulse'
-    DIGITAAL = 'digitaal'
-    SIGNAALTYPE_KEUZES = [
-        (ANALOOG, 'Analoog'),
-        (PULSE, 'Dig. pulse'),
-        (DIGITAAL, 'Digitaal')
-    ]
-
     inputnummer = models.SmallIntegerField()
-    signaaltype = models.CharField(choices=SIGNAALTYPE_KEUZES, default=DIGITAAL, max_length=15)
     beschrijving = models.CharField(max_length=50, null=True)
     urgentieniveau = models.ForeignKey("Urgentieniveau", on_delete=models.CASCADE)
 
@@ -133,7 +123,8 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
-    data = models.ForeignKey("AbsoluteData", on_delete=models.CASCADE, null=True, editable=False)
+    data = models.ManyToManyField(AbsoluteData, editable=False)
+    laatste_update = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name_plural = "storingen"
