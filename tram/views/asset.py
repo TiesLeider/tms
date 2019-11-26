@@ -7,3 +7,11 @@ def asset_index(request, assetnummer):
     laatste_data = AbsoluteData.objects.filter(assetnummer=asset).exclude(storing_beschrijving=[]).order_by("-tijdstip")[:15]
     storingen = Storing.objects.filter(assetnummer=asset).order_by("-laatste_update")[:10]
     return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "storingen":storingen})
+
+def reset_teller_standen(request, assetnummer):
+    asset = get_object_or_404(Asset, assetnummer=assetnummer)
+    laatste_data = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
+    laatste_data.omloop_a = 0
+    laatste_data.omloop_b = 0
+    laatste_data.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
