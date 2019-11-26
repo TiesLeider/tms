@@ -123,7 +123,7 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
-    data = models.ManyToManyField(AbsoluteData, editable=False)
+    data = models.ArrayReferenceField(AbsoluteData, default=None, editable=False)
     laatste_update = models.DateTimeField(auto_now=True)
 
     class Meta:
