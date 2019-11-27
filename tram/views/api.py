@@ -37,6 +37,7 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
+        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
         #Maak record Logodata:
         record = LogoData(
             assetnummer_id = assetnummer,
@@ -54,7 +55,7 @@ def insert_logo_data(request):
 
         #Wijzigingen in de assettabel:
         asset = Asset.objects.get(assetnummer=assetnummer)
-        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).order_by('-tijdstip').first()
+        
         
         #Maak Absolutedata tabel
         ad = AbsoluteData(
