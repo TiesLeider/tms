@@ -15,3 +15,14 @@ def reset_teller_standen(request, assetnummer):
     laatste_data.omloop_b = 0
     laatste_data.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+def reset_teller_alle(request):
+    for asset in Asset.objects.all():
+        try:
+            laatste_data = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
+            laatste_data.omloop_a = 0
+            laatste_data.omloop_b = 0
+            laatste_data.save()
+        except:
+            pass
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

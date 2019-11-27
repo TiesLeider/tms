@@ -14,10 +14,10 @@ def requesthandler(request):
 @csrf_exempt
 def insert_logo_data(request):
     try:
-        def maak_nieuwe_storing(absulute_data, bericht):
+        def maak_nieuwe_storing(asset, absulute_data, bericht):
             print("nieuwe_storing")
             new_storing = Storing(
-                assetnummer = absulute_data.assetnummer,
+                assetnummer = asset,
                 gezien = False,
                 actief = True,
                 bericht = bericht,
@@ -96,12 +96,12 @@ def insert_logo_data(request):
                     elif (vorige_storing.actief == False):
                         #De storing is niet langer actief
                         if record.check_storing(sb) == True:
-                            maak_nieuwe_storing(ad, sb)
+                            maak_nieuwe_storing(record.assetnummer, ad, sb)
                     vorige_storing.save()
                 else:
                     #Er zijn geen storings-records gevonden van de vorige data
                     if record.check_storing(sb) == True:
-                        maak_nieuwe_storing(ad, sb)
+                        maak_nieuwe_storing(record.assetnummer, ad, sb)
         else:
             #Er was geen storing bij deze polling
             pass
