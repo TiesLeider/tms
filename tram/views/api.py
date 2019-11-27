@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 from ..models import *
 import json
 
@@ -37,7 +38,12 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
+        try:
+            vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
+            vorige_ad_bestaat = True
+        except ObjectDoesNotExist:
+            vorige_ad_bestaat = False
+        
         #Maak record Logodata:
         record = LogoData(
             assetnummer_id = assetnummer,
@@ -67,8 +73,8 @@ def insert_logo_data(request):
             druk_b2 = record.druk_b2,
             kracht_a = record.kracht_a,
             kracht_b = record.kracht_b,
-            omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad) else record.omloop_a,
-            omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad) else record.omloop_b,
+            omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad_bestaat) else record.omloop_a,
+            omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad_bestaat) else record.omloop_b,
         )
         asset = None
         vorige_ad = None
