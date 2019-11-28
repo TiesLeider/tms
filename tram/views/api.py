@@ -38,11 +38,8 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-        try:
-            vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
-            vorige_ad_bestaat = True
-        except ObjectDoesNotExist:
-            vorige_ad_bestaat = False
+        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
+        vorige_ad_bestaat = AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists()
         
         #Maak record Logodata:
         record = LogoData(

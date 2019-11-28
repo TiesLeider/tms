@@ -19,16 +19,20 @@
   <body>
     <header>
       <nav class="cyan">
-        <div class="nav-wrapper">
+        <div class="nav-wrapper" style="height: 100px;">
           <div class="container" style="margin-left: 30px">
             <ul>
-              <li class="brand-logo" style="position: relative; ; margin-right: 10px;">Tram Monitoring Systeem</li>
-              <li><a href="{% url 'index' %}" class="grey hoverable btn-large"><i class="small material-icons left">view_headline</i>Storingen</a></li>
+              <!-- <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_semi_transparant.png' %}" style="position: relative; ; margin-right: 10px; margin-top: 5px;" alt=""></li> -->
+              <!-- <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_75_transparant.png' %}" style="position: relative; ; margin-right: 10px; margin-top: 5px;" alt=""></li> -->
+              <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_87_transparant.png' %}" class="round" style="position: relative; ; margin-right: 10px; margin-top: 6px;" alt=""></li>
+              <!-- <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_wit.png' %}" style="position: relative; ; margin-right: 10px; margin-top: 5px;" alt=""></li> -->
+              <!-- <li class="brand-logo" style="position: relative; ; margin-right: 10px;">Tram Monitoring Systeem</li> -->
+              <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
               <li>
-                <a href="#" class="grey hoverable btn-large"><i class="large material-icons left">check</i>Alle logos verbonden</a>
+                <a href="#" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
                 <!-- <a href="#" class="waves-effect waves-light btn-large red"><i class="large material-icons left">warning</i>3 logos niet verbonden</a> -->
               </li>
-              <li><a href="#" class="grey hoverable btn-large"><i class="material-icons left">timeline</i>Analyse</a></li>
+              <li><a href="#" class="grey hoverable btn-large round"><i class="material-icons left">timeline</i>Analyse</a></li>
             </ul>
           </div>
           <div class="right-align">
