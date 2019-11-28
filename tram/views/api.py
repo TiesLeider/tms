@@ -86,8 +86,8 @@ def insert_logo_data(request):
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
             for sb in ad.storing_beschrijving:
-                vorige_storing = Storing.objects.filter(assetnummer_id=ad.assetnummer.assetnummer, bericht=sb).order_by('-laatste_data__tijdstip').first()
-                print(vorige_storing)
+                vorige_storing = Storing.objects.filter(assetnummer_id=ad.assetnummer.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                print(Storing.objects.filter(assetnummer_id=ad.assetnummer.assetnummer, bericht=sb).exists())
                 if vorige_storing:
                     if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
