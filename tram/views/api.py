@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from ..models import *
+import time
 import json
 
 def requesthandler(request):
@@ -14,6 +15,7 @@ def requesthandler(request):
 
 @csrf_exempt
 def insert_logo_data(request):
+    time.sleep(0.25)
     try:
         def maak_nieuwe_storing(asset, absulute_data, bericht):
             print("nieuwe_storing")
