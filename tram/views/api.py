@@ -60,6 +60,16 @@ def insert_logo_data(request):
 
         #Wijzigingen in de assettabel:
         asset = Asset.objects.get(assetnummer=assetnummer)
+
+        if (vorige_ad.assetnummer != asset):
+            for i in range (1,5):
+                asset = Asset.objects.get(assetnummer=assetnummer)
+                vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
+                vorige_ad_bestaat = AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists()
+                if (vorige_ad.assetnummer == asset):
+                    break
+                else:
+                    return JsonResponse({"response": False, "error": f"{assetnummer}: Fout bij het ophalen van data."})
         
         
         #Maak Absolutedata tabel
@@ -75,6 +85,7 @@ def insert_logo_data(request):
             omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad_bestaat) else record.omloop_a,
             omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad_bestaat) else record.omloop_b,
         )
+
         asset = None
         vorige_ad = None
         ad.save()
