@@ -63,5 +63,58 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col l12">
+                <div class="card-panel white">
+                    <canvas id="myChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        function maak_grafiek(labels, data){
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omlopen bak A',
+                        data: data[0],
+                        backgroundColor: 'rgb(135, 255, 221)',
+                        fill: false
+                    },
+                    {
+                        label: 'Omlopen bak B',
+                        data: data[1],
+                        backgroundColor: 'rgb(135, 235, 255)',
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+        $.ajax({
+            method: "GET",
+            url: "/tram/api/omlopen/{{asset.assetnummer}}",
+            success: function(response){
+                maak_grafiek(response.labels, response.data)
+            },
+            error: function(error_data){
+                console.log(error_data)
+            }
+
+        })
+    </script>
 {% endblock %}
