@@ -20,16 +20,20 @@
                             <td>{{asset.online}}</td>
                         </tr>
                         <tr>
+                            <td>Configuratie:</td>
+                            <td>{{asset.configuratie.naam}}</td>
+                        </tr>
+                        <tr>
                             <td>Weging:</td>
                             <td>{{asset.weging}}x</td>
                         </tr>
                         <tr>
                             <td>Aantal omlopen:</td>
-                            <td>Bak A: {{laatste_data.0.omloop_a}}<br>Bak B: {{laatste_data.0.omloop_b}}</td>
+                            <td>Bak A: {{laatste_polling.omloop_a}}<br>Bak B: {{laatste_polling.omloop_b}}</td>
                         </tr>
                         <tr>
                             <td>Laatste data ontvangen op:</td>
-                            <td>{{laatste_data.0.tijdstip}}</td>
+                            <td>{{laatste_polling.tijdstip}}</td>
                         </tr>
                     </table>
                     <br>

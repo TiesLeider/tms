@@ -4,9 +4,10 @@ from ..models import *
 
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
+    laatste_polling = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
     laatste_data = AbsoluteData.objects.filter(assetnummer=asset).exclude(storing_beschrijving=[]).order_by("-tijdstip")[:15]
     storingen = Storing.objects.filter(assetnummer=asset).order_by("-laatste_update")[:10]
-    return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "storingen":storingen})
+    return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "storingen":storingen, "laatste_polling": laatste_polling})
 
 def reset_teller_standen(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
