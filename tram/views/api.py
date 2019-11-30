@@ -40,9 +40,6 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-        vorige_ad_qs = AbsoluteData.objects.filter(assetnummer_id=assetnummer)
-        vorige_ad = vorige_ad_qs.latest("tijdstip")
-        vorige_ad_bestaat = vorige_ad_qs.exists()
         
         #Maak record Logodata:
         record = LogoData(
@@ -58,20 +55,10 @@ def insert_logo_data(request):
             omloop_b = json_data.get("omloop_b"),
             )
         record.save()
-
-        #Wijzigingen in de assettabel:
-        asset =  Asset.objects.get(assetnummer=assetnummer)
-
-        if (vorige_ad.assetnummer != asset):
-            for i in range (1,10):
-                asset = Asset.objects.get(assetnummer=assetnummer)
-                vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
-                vorige_ad_bestaat = AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists()
-                if (vorige_ad.assetnummer == asset):
-                    break
-                else:
-                    return JsonResponse({"response": False, "error": f"{assetnummer}: Fout bij het ophalen van data."})
         
+        vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
+        if created:
+            vorige_ad.laatste_data =  AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip") if AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists() else None
         
         #Maak Absolutedata tabel
         ad = AbsoluteData(
@@ -83,11 +70,12 @@ def insert_logo_data(request):
             druk_b2 = record.druk_b2,
             kracht_a = record.kracht_a,
             kracht_b = record.kracht_b,
-            omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad_bestaat) else record.omloop_a,
-            omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad_bestaat) else record.omloop_b,
+            omloop_a = vorige_ad.laatste_data.omloop_a + record.omloop_a if (not created) else record.omloop_a,
+            omloop_b = vorige_ad.laatste_data.omloop_b + record.omloop_b if (not created) else record.omloop_b,
         )
         ad.save()
-        
+        vorige_ad.laatste_data = ad
+        vorige_ad.save()
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
