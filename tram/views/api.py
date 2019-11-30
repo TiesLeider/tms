@@ -40,8 +40,9 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
-        vorige_ad_bestaat = AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists()
+        vorige_ad_qs = AbsoluteData.objects.filter(assetnummer_id=assetnummer)
+        vorige_ad = vorige_ad_qs.latest("tijdstip")
+        vorige_ad_bestaat = vorige_ad_qs.exists()
         
         #Maak record Logodata:
         record = LogoData(
@@ -59,10 +60,10 @@ def insert_logo_data(request):
         record.save()
 
         #Wijzigingen in de assettabel:
-        asset = Asset.objects.get(assetnummer=assetnummer)
+        asset =  Asset.objects.get(assetnummer=assetnummer)
 
         if (vorige_ad.assetnummer != asset):
-            for i in range (1,5):
+            for i in range (1,10):
                 asset = Asset.objects.get(assetnummer=assetnummer)
                 vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
                 vorige_ad_bestaat = AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists()
@@ -85,19 +86,14 @@ def insert_logo_data(request):
             omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad_bestaat) else record.omloop_a,
             omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad_bestaat) else record.omloop_b,
         )
-
-        asset = None
-        vorige_ad = None
         ad.save()
-
-        #Logica storing:
-
+        
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
             for sb in ad.storing_beschrijving:
-                vorige_storing = Storing.objects.filter(assetnummer_id=ad.assetnummer.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
-                print(Storing.objects.filter(assetnummer_id=ad.assetnummer.assetnummer, bericht=sb).exists())
+                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                print(Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).exists())
                 if vorige_storing:
                     if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
@@ -113,16 +109,16 @@ def insert_logo_data(request):
                     elif (vorige_storing.actief == False):
                         #De storing is niet langer actief
                         if record.check_storing(sb) == True:
-                            maak_nieuwe_storing(record.assetnummer, ad, sb)
+                            maak_nieuwe_storing(ad.assetnummer, ad, sb)
                     vorige_storing.save()
                 else:
                     #Er zijn geen storings-records gevonden van de vorige data
                     if record.check_storing(sb) == True:
-                        maak_nieuwe_storing(record.assetnummer, ad, sb)
+                        maak_nieuwe_storing(ad.assetnummer, ad, sb)
         else:
             #Er was geen storing bij deze polling
             pass
-            
+        assetnummer = None
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         return JsonResponse({"response": False, "error": str(ex)})
