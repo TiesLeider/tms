@@ -129,7 +129,7 @@ def insert_logo_online(request):
         return JsonResponse({"response": False, "error": str(ex)})
 
 def get_omlopen(request, assetnummer):
-    start_datum = datetime.date(2019, 11, 26)
+    start_datum = datetime.date(2019, 11, 30)
     eind_datum = datetime.datetime.now()
     data = list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values("tijdstip", "omloop_a", "omloop_b"))
     response = {
