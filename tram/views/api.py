@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from ..models import *
 import time
 import json
@@ -31,6 +32,26 @@ def insert_logo_data(request):
             new_storing.score = new_storing.get_score()
             new_storing.save()
 
+        def get_vorige_ad(assetnummer):
+            try:  
+                vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
+                if created:
+                    vorige_ad.laatste_data =  AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip") if AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists() else None
+            except IntegrityError:
+                for i in range(0, 10):
+                    vorige_ad, created = AssetLaatsteData.objects.get(assetnummer_id=assetnummer)
+                    if (assetnummer == vorige_ad.assetnummer.assetnummer):
+                        return [vorige_ad, created]
+                return None
+            if (assetnummer != vorige_ad.assetnummer.assetnummer):
+                for i in range(0, 10):
+                    vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
+                    if (assetnummer == vorige_ad.assetnummer):
+                        return [vorige_ad, created]
+                return None
+            
+            return [vorige_ad, created]
+
         #Check of de requestdata ok is en manipuleer assetnummer:
         requesthandler(request)
         data = str(request.body)[2:-1]
@@ -40,7 +61,7 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
 
-        
+
         #Maak record Logodata:
         record = LogoData(
             assetnummer_id = assetnummer,
@@ -55,11 +76,14 @@ def insert_logo_data(request):
             omloop_b = json_data.get("omloop_b"),
             )
         record.save()
+
         
-        vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
-        if created:
-            vorige_ad.laatste_data =  AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip") if AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists() else None
+        vorige_ad, created = get_vorige_ad(assetnummer)
+        if (vorige_ad == None):
+            return JsonResponse({"response": True, "error": "Fout bij het ophalen van de data"})
+        created = False
         
+
         #Maak Absolutedata tabel
         ad = AbsoluteData(
             assetnummer_id = assetnummer,
@@ -76,6 +100,8 @@ def insert_logo_data(request):
         ad.save()
         vorige_ad.laatste_data = ad
         vorige_ad.save()
+
+        
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
@@ -106,10 +132,9 @@ def insert_logo_data(request):
         else:
             #Er was geen storing bij deze polling
             pass
-        assetnummer = None
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
-        return JsonResponse({"response": False, "error": str(ex)})
+        return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
 @csrf_exempt
 def insert_logo_online(request):
