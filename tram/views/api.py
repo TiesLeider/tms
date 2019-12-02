@@ -83,20 +83,35 @@ def insert_logo_data(request):
             return JsonResponse({"response": True, "error": "Fout bij het ophalen van de data"})
         created = False
         
+        try:
+            #Maak Absolutedata tabel
+            ad = AbsoluteData(
+                assetnummer_id = assetnummer,
+                storing_beschrijving = record.get_storing_beschrijvingen() if (record.storing != 0) else [],
+                druk_a1 = record.druk_a1,
+                druk_a2 = record.druk_a2,
+                druk_b1 = record.druk_b1,
+                druk_b2 = record.druk_b2,
+                kracht_a = record.kracht_a,
+                kracht_b = record.kracht_b,
+                omloop_a = vorige_ad.laatste_data.omloop_a + record.omloop_a if (not created) else record.omloop_a,
+                omloop_b = vorige_ad.laatste_data.omloop_b + record.omloop_b if (not created) else record.omloop_b,
 
-        #Maak Absolutedata tabel
-        ad = AbsoluteData(
-            assetnummer_id = assetnummer,
-            storing_beschrijving = record.get_storing_beschrijvingen() if (record.storing != 0) else [],
-            druk_a1 = record.druk_a1,
-            druk_a2 = record.druk_a2,
-            druk_b1 = record.druk_b1,
-            druk_b2 = record.druk_b2,
-            kracht_a = record.kracht_a,
-            kracht_b = record.kracht_b,
-            omloop_a = vorige_ad.laatste_data.omloop_a + record.omloop_a if (not created) else record.omloop_a,
-            omloop_b = vorige_ad.laatste_data.omloop_b + record.omloop_b if (not created) else record.omloop_b,
-        )
+            )
+        except ObjectDoesNotExist:
+            ad = AbsoluteData(
+                assetnummer_id = assetnummer,
+                storing_beschrijving = record.get_storing_beschrijvingen() if (record.storing != 0) else [],
+                druk_a1 = record.druk_a1,
+                druk_a2 = record.druk_a2,
+                druk_b1 = record.druk_b1,
+                druk_b2 = record.druk_b2,
+                kracht_a = record.kracht_a,
+                kracht_b = record.kracht_b,
+                omloop_a = record.omloop_a,
+                omloop_b = record.omloop_b,
+
+            )
         ad.save()
         vorige_ad.laatste_data = ad
         vorige_ad.save()
