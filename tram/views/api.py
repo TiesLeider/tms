@@ -155,7 +155,7 @@ def insert_logo_online(request):
 
 def get_omlopen(request, assetnummer, van_datum, tot_datum):
     start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
-    eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y")
+    eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
     data = list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values("tijdstip", "omloop_a", "omloop_b"))
     response = {
         "labels": list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values_list("tijdstip", flat=True)),
