@@ -16,7 +16,6 @@ def requesthandler(request):
 
 @csrf_exempt
 def insert_logo_data(request):
-    time.sleep(0.25)
     try:
         def maak_nieuwe_storing(asset, absulute_data, bericht):
             print("nieuwe_storing")
@@ -36,13 +35,14 @@ def insert_logo_data(request):
             try:  
                 vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
                 if created:
-                    vorige_ad.laatste_data =  AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip") if AbsoluteData.objects.filter(assetnummer_id=assetnummer).exists() else None
+                    vorige_ad.laatste_data =  AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
             except IntegrityError:
                 for i in range(0, 10):
                     vorige_ad, created = AssetLaatsteData.objects.get(assetnummer_id=assetnummer)
                     if (assetnummer == vorige_ad.assetnummer.assetnummer):
                         return [vorige_ad, created]
                 return None
+        
             if (assetnummer != vorige_ad.assetnummer.assetnummer):
                 for i in range(0, 10):
                     vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
@@ -156,12 +156,13 @@ def insert_logo_online(request):
 def get_omlopen(request, assetnummer, van_datum, tot_datum):
     start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
     eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
-    data = list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values("tijdstip", "omloop_a", "omloop_b"))
+    ad_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
+    data = list(ad_qs.values("tijdstip", "omloop_a", "omloop_b"))
     response = {
-        "labels": list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values_list("tijdstip", flat=True)),
+        "labels": list(ad_qs.values_list("tijdstip", flat=True)),
         "data": [
-                list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values_list("omloop_a", flat=True)),
-                list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values_list("omloop_b", flat=True))
+                list(ad_qs.values_list("omloop_a", flat=True)),
+                list(ad_qs.values_list("omloop_b", flat=True))
         ]
         }
     return JsonResponse(response, safe=False)
