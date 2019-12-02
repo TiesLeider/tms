@@ -11,6 +11,6 @@ urlpatterns = [
     path("storingen", views.alle_storingen, name="alle_storingen"),
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
-    path("asset/alle/resetteller", views.asset.reset_teller_alle, name="asset_reset_alle"),
+    path("asset/resettelleralle", views.asset.reset_teller_alle, name="asset_reset_alle"),
     path("api/omlopen/<str:assetnummer>/<str:van_datum>/<str:tot_datum>", views.api.get_omlopen, name="get_omlopen")
 ]
