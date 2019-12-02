@@ -70,6 +70,17 @@
         <div class="row">
             <div class="col l12">
                 <div class="card-panel white">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input id="van_datum" type="text" class="datepicker">
+                            <label for="van_datum">Vanaf datum</label>
+                        </div>
+                        <div class="input-field col s5">
+                            <input id="tot_datum" type="text" class="datepicker">
+                            <label for="tot_datum">Tot datum</label>
+                        </div>
+                        <a onclick="getAjaxData()" class="waves-effect waves-light btn grey round" style="margin-top: 15px;"><i class="material-icons right">add</i> Send</a>
+                    </div>
                     <canvas id="myChart" width="400" height="200"></canvas>
                 </div>
             </div>
@@ -78,9 +89,30 @@
 {% endblock %}
 {% block javascript %}
     <script>
+        var chart;
+        $(document).ready(function(){
+
+            var vanDatumPicker = $('#van_datum').datepicker({
+                maxDate: new Date(),
+                format: "dd-mm-yyyy"
+                });
+
+            var totDatumPicker = $('#tot_datum').datepicker({
+                maxDate: new Date(),
+                defaultDate: new Date(),
+                setDefaultDate: true,
+                format: "dd-mm-yyyy",
+
+
+
+            });
+
+            
+        });
+
         function maak_grafiek(labels, data){
             var ctx = document.getElementById('myChart').getContext('2d');
-            var myChart = new Chart(ctx, {
+            var chart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -109,16 +141,22 @@
             });
         }
 
-        $.ajax({
-            method: "GET",
-            url: "/tram/api/omlopen/{{asset.assetnummer}}",
-            success: function(response){
-                maak_grafiek(response.labels, response.data)
-            },
-            error: function(error_data){
-                console.log(error_data)
+        function getAjaxData(){
+            if (chart){
+                chart.destroy()
             }
+            $.ajax({
+                method: "GET",
+                url: "/tram/api/omlopen/{{asset.assetnummer}}/"+ document.getElementById("van_datum").value+ "/" + document.getElementById("tot_datum").value,
+                success: function(response){
+                    maak_grafiek(response.labels, response.data)
+                },
+                error: function(error_data){
+                    console.log(error_data)
+                }
 
-        })
+            })
+    }
+
     </script>
 {% endblock %}

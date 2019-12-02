@@ -153,9 +153,9 @@ def insert_logo_online(request):
     except Exception as ex:
         return JsonResponse({"response": False, "error": str(ex)})
 
-def get_omlopen(request, assetnummer):
-    start_datum = datetime.date(2019, 11, 30)
-    eind_datum = datetime.datetime.now()
+def get_omlopen(request, assetnummer, van_datum, tot_datum):
+    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
+    eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y")
     data = list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values("tijdstip", "omloop_a", "omloop_b"))
     response = {
         "labels": list(AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).values_list("tijdstip", flat=True)),
