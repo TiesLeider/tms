@@ -1,8 +1,10 @@
 {% extends "tram/base.html" %}
 {% block content %}
     <div class="card-panel white">
-        <div id="demo"></div>
-        <table>
+        <div id="balk" class="progress grey lighten-4">
+            <div id="afteller" class="determinate" style="width: 0%"></div>
+        </div>
+        <table id="tabel">
             <tr>
                 <th style="max-width: 5px;"></th>
                 <th>ID</th>
@@ -15,31 +17,8 @@
                 <th>Negeren</th>
                 <th>Herstellen</th>
             </tr>
-            <form action="storingen">
-                {%for storing in storingen%}
-                    <tr>
-                        <td><label><input name="geselecteerde_storingen" value="{{storing.id}}" type="checkbox" class="filled-in"/><span></span></label></td>
-                        <td>{{storing.id}}</td>
-                        <td><a href="{% url 'asset_index' storing.laatste_data.assetnummer.assetnummer%}">{{storing.laatste_data.assetnummer.assetnummer}}</a></td>
-                        <td>{{storing.bericht}}</td>
-                        <td>{{storing.som}}</td>
-                        <td>{{storing.score}}</td>
-                        {% if storing.laatste_data.omloop_b > 0 %}
-                            <td>A:{{storing.laatste_data.omloop_a}} - B: {{storing.laatste_data.omloop_b}}</td>
-                        {% else %}
-                            <td>{{storing.laatste_data.omloop_a}}</td>   
-                        {% endif%}
-                        <td>{{storing.laatste_data.tijdstip}}</td>
-                        <td>
-                                <a href="{% url 'storing_gezien' storing.id  %}"><i class="material-icons small">visibility_off</i></a>
-                        </td>
-                        <td>
-                                {% url 'storing_deactiveren' storing.id as durl %}
-                                <a href="#" onclick="swalDeactiveerStoring('{{ durl }}')"><i class="material-icons small red-text">offline_pin</i></a>
-                        </td>
-                    </tr>
-                {%endfor%}
-            </form>
+            <tbody id="tabelInhoud">
+            </tbody>
         </table>
     </div>
     {% if storingen|length > 30 %}
@@ -51,6 +30,7 @@
 
 {% block javascript%}
     <script>
+        /*
         function refresh(){
             location.href = window.location.href;
         }
@@ -58,9 +38,9 @@
         window.onclick = function(){
             clearInterval(aInterval)
             aInterval = setInterval(refresh, 15000);;
-        };
+        }; */
 
-        function swalDeactiveerStoring(url){
+        function swalDeactiveerStoring(id){
             Swal.fire({
                 title: 'Zeker weten?',
                 text: "De storing wordt nu afgesloten. Bij nieuwe updates word een nieuwe storing aangemaakt.",
@@ -71,10 +51,51 @@
                 confirmButtonText: 'Ja, Herstel!'
               }).then((result) => {
                 if (result.value) {
-                        window.location = url;
+                        window.location = "/tram/storing/"+ id +"/deactiveer";
                     }
                 }
             )
         }
+
+        function getAjaxData(){
+            $.ajax({
+                method: "GET",
+                url: "tram/api/alle_actieve_storingen",
+                success: function(response){
+                    updateTabel(response)
+                },
+                error: function(error_data){
+                    console.log(error_data)
+                },
+            })
+        }
+
+        function updateTabel(data){
+            $('#balk').hide();
+
+            var inhoud = ""
+            var omloop_cel
+            for (storing of data){
+                if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td>A:${storing.laatste_data__omloop_a} <br> B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td>${storing.laatste_data__omloop_a}</td>`}
+                regel = '<tr>' +
+                `<td><label><input name="geselecteerde_storingen" value="${storing.id}" type="checkbox" class="filled-in"/><span></span></label></td>` +
+                `<td>${storing.id}</td>`+
+                `<td><a href="/tram/asset/${storing.laatste_data__assetnummer__assetnummer}">${storing.laatste_data__assetnummer__assetnummer}</a></td>` +
+                `<td>${storing.bericht}</td>` +
+                `<td>${storing.som}</td>` +
+                `<td>${storing.score}</td>` +
+                omloop_cel +
+                `<td>${storing.laatste_data__tijdstip}</td>` +
+                `<td><a href="storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
+                `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
+                inhoud += regel
+            }
+            $('#tabelInhoud').html(inhoud);
+            console.log("refresh");
+            $('#balk').show();
+        }
+    
+    getAjaxData();
+    document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
     </script>
 {% endblock javascript%}

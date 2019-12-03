@@ -13,3 +13,19 @@ body {
 .round {
   border-radius: 25px;
 }
+
+#afteller {
+  animation-name: afteller;
+  animation-duration: 20s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes afteller{
+  0% {width: 0%; background-color:rgb(32,189,103);}
+  33% {background-color: rgb(32,189,103);;}
+  35% {background-color: rgb(231,130,0);}
+  66% {background-color: rgb(231,130,0);}
+  68% {background-color:  rgb(76,150,215);}
+  100% {width: 100%; background-color: rgb(76,150,215);}
+}

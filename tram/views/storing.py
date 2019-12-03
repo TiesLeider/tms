@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from ..models import *
 
 def index(request):
-    return render(request, "tram/index.html", {"storingen": Storing.objects.exclude(actief=False, gezien=True).select_related("laatste_data").order_by("-laatste_data__tijdstip")[:30]})
+    return render(request, "tram/index.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).select_related("laatste_data").order_by("-laatste_data__tijdstip")[:30]})
 
 def alle_storingen(request):
     return render(request, "tram/index_alle.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).select_related("laatste_data").order_by('-data__tijdstip')})
