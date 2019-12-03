@@ -94,7 +94,10 @@
 
             var vanDatumPicker = $('#van_datum').datepicker({
                 maxDate: new Date(),
-                format: "dd-mm-yyyy"
+                format: "dd-mm-yyyy",
+                onClose: function(){
+                    getAjaxData()
+                }
                 });
 
             var totDatumPicker = $('#tot_datum').datepicker({
@@ -102,6 +105,9 @@
                 defaultDate: new Date(),
                 setDefaultDate: true,
                 format: "dd-mm-yyyy",
+                onClose: function(){
+                    getAjaxData()
+                }
 
 
 
@@ -141,13 +147,13 @@
             });
         }
 
-        function getAjaxData(){
+        function getAjaxData(vanDatum=document.getElementById("van_datum").value, totDatum=document.getElementById("tot_datum").value){
             if (chart){
                 chart.destroy()
             }
             $.ajax({
                 method: "GET",
-                url: "/tram/api/omlopen/{{asset.assetnummer}}/"+ document.getElementById("van_datum").value+ "/" + document.getElementById("tot_datum").value,
+                url: "/tram/api/omlopen/{{asset.assetnummer}}/"+ vanDatum + "/" + totDatum,
                 success: function(response){
                     maak_grafiek(response.labels, response.data)
                 },
