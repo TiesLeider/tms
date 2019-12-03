@@ -79,9 +79,55 @@
                             <input id="tot_datum" type="text" class="datepicker">
                             <label for="tot_datum">Tot en met datum</label>
                         </div>
-                        <a onclick="getAjaxData()" class="waves-effect waves-light btn grey round" style="margin-top: 15px;"><i class="material-icons right">add</i> Send</a>
                     </div>
-                    <canvas id="myChart" width="400" height="200"></canvas>
+                    <div class="row">
+                        <a onclick="getAjaxData(vandaagDate(), vandaagDate())" class="waves-effect waves-light btn grey round"><i class="material-icons right">add</i> vandaag</a>
+                        <a onclick="getAjaxData(vorigeMaandDate(), vandaagDate())" class="waves-effect waves-light btn grey round"><i class="material-icons right">add</i> afgelopen maand</a>
+                    </div>
+                    <div id="grafiek" class="center-align">
+                        <div id="loader" class="preloader-wrapper big active">
+                                <div class="spinner-layer spinner-blue">
+                                    <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                    </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                    </div>
+                                </div>
+                            
+                                <div class="spinner-layer spinner-red">
+                                    <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                    </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                    </div>
+                                </div>
+                            
+                                <div class="spinner-layer spinner-yellow">
+                                    <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                    </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                    </div>
+                                </div>
+                            
+                                <div class="spinner-layer spinner-green">
+                                    <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                    </div><div class="gap-patch">
+                                    <div class="circle"></div>
+                                    </div><div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <canvas id="myChart" width="400" height="200"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,6 +137,8 @@
     <script>
         var chart;
         $(document).ready(function(){
+            $('#myChart').hide();
+            $('#loader').hide();
 
             var vanDatumPicker = $('#van_datum').datepicker({
                 maxDate: new Date(),
@@ -108,15 +156,12 @@
                 onClose: function(){
                     getAjaxData()
                 }
-
-
-
             });
-
-            
         });
 
         function maak_grafiek(labels, data){
+            $('#myChart').show();
+            $('#loader').hide();
             var ctx = document.getElementById('myChart').getContext('2d');
             var chart = new Chart(ctx, {
                 type: 'line',
@@ -147,21 +192,61 @@
             });
         }
 
+        function laadGrafiek(){
+            $('#myChart').hide();
+            $('#loader').show();
+        }
+
         function getAjaxData(vanDatum=document.getElementById("van_datum").value, totDatum=document.getElementById("tot_datum").value){
             if (chart){
                 chart.destroy()
             }
             $.ajax({
                 method: "GET",
-                url: "/tram/api/omlopen/{{asset.assetnummer}}/"+ vanDatum + "/" + totDatum,
+                url: "/tram/api/omlopen/{{asset.assetnummer}}/"+ vanDatum + "/" + totDatum,              
                 success: function(response){
-                    maak_grafiek(response.labels, response.data)
+                    maak_grafiek(response.labels, response.data);
                 },
                 error: function(error_data){
                     console.log(error_data)
+                },
+                beforeSend: function(response){
+                    laadGrafiek()
                 }
-
             })
+        }
+
+        function vandaagDate(){
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+            dd = '0' + dd;
+            } 
+            if (mm < 10) {
+            mm = '0' + mm;
+            } 
+            var today = dd + '-' + mm + '-' + yyyy;
+            return today;  
+        }
+
+        function vorigeMaandDate(){
+            var today = new Date();
+            var dd = today.getDate();
+            var mm
+            if ( today.getMonth() == 0)  { mm = 12} else { mm = today.getMonth()} 
+
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+            dd = '0' + dd;
+            } 
+            if (mm < 10) {
+            mm = '0' + mm;
+            } 
+            var today = dd + '-' + mm + '-' + yyyy;
+            return today;  
     }
 
     </script>

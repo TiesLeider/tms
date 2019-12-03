@@ -82,7 +82,7 @@ def insert_logo_data(request):
         if (vorige_ad == None):
             return JsonResponse({"response": True, "error": "Fout bij het ophalen van de data"})
         created = False
-        
+
         #Maak Absolutedata tabel
         ad = AbsoluteData(
             assetnummer_id = assetnummer,
@@ -165,3 +165,8 @@ def get_omlopen(request, assetnummer, van_datum, tot_datum):
         ]
         }
     return JsonResponse(response, safe=False)
+
+def get_actieve_storingen(request):
+    storingen_qs = Storing.objects.filter(actief=True, gezien=False).order_by("laatste_data__tijdstip")[:3]
+    data = list(storingen_qs.values("id", "laatste_data__assetnummer__assetnummer", "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
+    return JsonResponse(data, safe=False) 
