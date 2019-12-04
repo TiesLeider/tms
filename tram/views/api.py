@@ -99,7 +99,7 @@ def insert_logo_data(request):
             # omloop_b = vorige_ad.laatste_data.omloop_b + record.omloop_b if (not created) else record.omloop_b,
             )
         ad.save()
-        vorige_ad.laatste_data = ad
+        # vorige_ad.laatste_data = ad
         # vorige_ad.save()
 
         
