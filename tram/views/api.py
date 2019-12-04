@@ -167,7 +167,7 @@ def get_omlopen(request, assetnummer, van_datum, tot_datum):
     return JsonResponse(response, safe=False)
 
 def get_actieve_storingen(request):
-    storingen_qs = Storing.objects.filter(actief=True, gezien=False).order_by("laatste_data__tijdstip")
+    storingen_qs = Storing.objects.filter(actief=True, gezien=False).order_by("-laatste_data__tijdstip")
     data = list(storingen_qs.values("id", "laatste_data__assetnummer__assetnummer", "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
     for item in data:
         item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime("%d %b %Y, %H:%M")
