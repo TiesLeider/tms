@@ -16,7 +16,7 @@ body {
 
 #afteller {
   animation-name: afteller;
-  animation-duration: 20s;
+  animation-duration: 30s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
