@@ -78,10 +78,10 @@ def insert_logo_data(request):
         record.save()
 
         
-        vorige_ad, created = get_vorige_ad(assetnummer)
-        if (vorige_ad == None):
-            return JsonResponse({"response": True, "error": "Fout bij het ophalen van de data"})
-        created = False
+        # vorige_ad, created = get_vorige_ad(assetnummer)
+        # if (vorige_ad == None):
+        #     return JsonResponse({"response": True, "error": "Fout bij het ophalen van de data"})
+        # created = False
 
         #Maak Absolutedata tabel
         ad = AbsoluteData(
@@ -93,12 +93,14 @@ def insert_logo_data(request):
             druk_b2 = record.druk_b2,
             kracht_a = record.kracht_a,
             kracht_b = record.kracht_b,
-            omloop_a = vorige_ad.laatste_data.omloop_a + record.omloop_a if (not created) else record.omloop_a,
-            omloop_b = vorige_ad.laatste_data.omloop_b + record.omloop_b if (not created) else record.omloop_b,
+            omloop_a = record.omloop_a,
+            omloop_b = record.omloop_b 
+            # omloop_a = vorige_ad.laatste_data.omloop_a + record.omloop_a if (not created) else record.omloop_a,
+            # omloop_b = vorige_ad.laatste_data.omloop_b + record.omloop_b if (not created) else record.omloop_b,
             )
         ad.save()
         vorige_ad.laatste_data = ad
-        vorige_ad.save()
+        # vorige_ad.save()
 
         
         #Er is een vorige polling geweest van deze asset
