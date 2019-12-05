@@ -103,8 +103,6 @@ def insert_logo_data(request):
         # vorige_ad.save()
 
 
-        Taak.objects.filter(project__id=Pid)
-
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
