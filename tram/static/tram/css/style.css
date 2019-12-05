@@ -21,6 +21,23 @@ body {
   animation-iteration-count: infinite;
 }
 
+.zoekBalkClass{
+  animation-name: zoekBalkAni;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+
+@keyframes zoekBalkAni{
+  0% {color:rgb(32,189,103); border-bottom-color:rgb(32,189,103);}
+  33% {color: rgb(32,189,103); border-bottom-color:rgb(32,189,103);}
+  35% {color: rgb(231,130,0); border-bottom-color:rgb(231,130,0);}
+  66% {color: rgb(231,130,0); border-bottom-color:rgb(231,130,0);}
+  68% {color:  rgb(76,150,215) ;border-bottom-color:rgb(76,150,215);}
+  100% {color: rgb(76,150,215); border-bottom-color:rgb(76,150,215);}
+}
+
 @keyframes afteller{
   0% {width: 0%; background-color:rgb(32,189,103);}
   33% {background-color: rgb(32,189,103);;}
@@ -28,4 +45,32 @@ body {
   66% {background-color: rgb(231,130,0);}
   68% {background-color:  rgb(76,150,215);}
   100% {width: 100%; background-color: rgb(76,150,215);}
+}
+
+ /* label color */
+ .input-field label {
+  color: #000;
+}
+/* label focus color */
+/* .input-field input[type=text]:focus + label {
+  color: rgb(76,150,215);
+} */
+/* label underline focus color */
+/* .input-field input[type=text]:focus {
+  border-bottom: 1px solid rgb(76,150,215);
+  box-shadow: 0 1px 0 0 rgb(76,150,215);
+} */
+/* valid color */
+.input-field input[type=text].valid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+/* invalid color */
+.input-field input[type=text].invalid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+/* icon prefix focus color */
+.input-field .prefix.active {
+  color: rgb(76,150,215);
 }

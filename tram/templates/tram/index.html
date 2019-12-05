@@ -1,9 +1,20 @@
 {% extends "tram/base.html" %}
 {% block content %}
     <div class="card-panel white">
-        <div id="balk" class="progress grey lighten-4">
-            <div id="afteller" class="determinate" style="width: 0%"></div>
-        </div>
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s3">
+                    <i id="zbIcon" class="material-icons prefix zoekBalkClass">search</i>
+                    <input id="zoekBalk" type="text" class="validate zoekBalkClass">
+                    <label for="zoekBalk">Zoeken</label>
+                </div>
+                <div class="col s9">
+                    <div id="balk" class="progress grey lighten-4" style="margin-top: 30px;">
+                        <div id="afteller" class="determinate" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
         <table id="tabel">
             <tr>
                 <th style="max-width: 5px;"></th>
@@ -30,16 +41,6 @@
 
 {% block javascript%}
     <script>
-        /*
-        function refresh(){
-            location.href = window.location.href;
-        }
-        var aInterval = setInterval(refresh, 15000);
-        window.onclick = function(){
-            clearInterval(aInterval)
-            aInterval = setInterval(refresh, 15000);;
-        }; */
-
         function swalDeactiveerStoring(id){
             Swal.fire({
                 title: 'Zeker weten?',
@@ -94,8 +95,26 @@
             console.log("refresh");
             $('#balk').show();
         }
-    
-    getAjaxData();
-    document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
+
+        $(document).ready(function(){
+          $("#zoekBalk").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            document.getElementById("afteller").style.animationPlayState = "paused";
+            document.getElementById("zbIcon").style.animationPlayState = "paused";
+            document.getElementById("zoekBalk").style.animationPlayState = "paused";
+            $("#tabelInhoud tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+            if (value == ""){
+                document.getElementById("afteller").style.animationPlayState = "running";
+                document.getElementById("zbIcon").style.animationPlayState = "running";
+                document.getElementById("zoekBalk").style.animationPlayState = "running";
+            }
+          });
+
+          getAjaxData();
+          document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
+
+        });
     </script>
 {% endblock javascript%}
