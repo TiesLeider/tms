@@ -70,6 +70,21 @@
             )
         }
 
+        function pauzeerAnimatie(){
+            document.getElementById("afteller").style.animationPlayState = "paused";
+            document.getElementById("zbIcon").style.animationPlayState = "paused";
+            document.getElementById("zoekBalk").style.animationPlayState = "paused";
+        }
+
+    
+        function hervatAnimatie(){
+            if ($('input:checkbox').is(':checked') == false && $('#zoekBalk').val().toLowerCase() == ""){
+                document.getElementById("afteller").style.animationPlayState = "running";
+                document.getElementById("zbIcon").style.animationPlayState = "running";
+                document.getElementById("zoekBalk").style.animationPlayState = "running";
+            }
+        }
+
         function getAjaxData(){
             $.ajax({
                 method: "GET",
@@ -84,8 +99,6 @@
         }
 
         function updateTabel(data){
-            $('#balk').hide();
-
             var inhoud = ""
             var omloop_cel
             for (storing of data){
@@ -104,23 +117,17 @@
                 inhoud += regel
             }
             $('#tabelInhoud').html(inhoud);
-            console.log("refresh");
-            $('#balk').show();
         }
 
         $(document).ready(function(){
           $("#zoekBalk").on("keyup", function() {
             var value = $(this).val().toLowerCase();
-            document.getElementById("afteller").style.animationPlayState = "paused";
-            document.getElementById("zbIcon").style.animationPlayState = "paused";
-            document.getElementById("zoekBalk").style.animationPlayState = "paused";
+            pauzeerAnimatie();
             $("#tabelInhoud tr").filter(function() {
               $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
             if (value == ""){
-                document.getElementById("afteller").style.animationPlayState = "running";
-                document.getElementById("zbIcon").style.animationPlayState = "running";
-                document.getElementById("zoekBalk").style.animationPlayState = "running";
+                hervatAnimatie();
             }
           });
 
@@ -196,9 +203,11 @@
             isChecked =  $('input:checkbox').is(':checked')
             if (isChecked){
                 $('#actieknoppen').show()
+                pauzeerAnimatie();
             }
             else{
                 $('#actieknoppen').hide()
+                hervatAnimatie();
             }
         }
 
