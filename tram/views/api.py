@@ -64,11 +64,15 @@ def insert_logo_data(request):
         try:
             vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
             if (vorige_ad.assetnummer.assetnummer != assetnummer):
-                print(f"{vorige_ad.assetnummer} was niet {assetnummer}")
-                for i in range(0, 20):
+                print(f"{vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
+                for i in range(0, 21):
                     vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
-                    if(vorige_ad.assetnummer == assetnummer):
+                    if (vorige_ad.assetnummer.assetnummer == assetnummer):
                         break
+                    if (vorige_ad.assetnummer.assetnummer == assetnummer):
+                        print(f"pogin {i}: {vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
+                    if (i == 20):
+                        return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
         except ObjectDoesNotExist:
             vorige_ad = None
 
