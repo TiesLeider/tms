@@ -64,9 +64,10 @@ def insert_logo_data(request):
         try:
             vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
             if (vorige_ad.assetnummer != assetnummer):
+                print(f"{vorige_ad.assetnummer} was niet {assetnummer}")
                 for i in range(0, 20):
                     vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
-                    if vorige_ad.assetnummer == assetnummer:
+                    if(vorige_ad.assetnummer == assetnummer):
                         break
         except ObjectDoesNotExist:
             vorige_ad = None
