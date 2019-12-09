@@ -15,9 +15,17 @@
                 </div>
             </div>
         </form>
+        <div class="card-panel white" id="actieknoppen">
+            <button class="btn waves-effect waves-light blue round" type="submit" onclick="sendGeselecteerdeStoringen('negereren')">Geselecteerde storingen negeren
+                <i class="material-icons right">visibility_off</i>
+            </button>
+            <button class="btn waves-effect waves-light red round" type="submit" onclick="sendGeselecteerdeStoringen('herstellen')">Gelesecteerde storingen herstellen
+                <i class="material-icons right">offline_pin</i>
+            </button>        
+        </div>
         <table id="tabel">
             <tr>
-                <th style="max-width: 5px;"></th>
+                <th style="max-width: 5px;"><label><input id="selectAlle" type="checkbox" class="filled-in" onclick="selecteerAlle(this)"/><span></span></label></th>
                 <th>ID</th>
                 <th>Assetnummer</th>
                 <th>Storing</th>
@@ -40,7 +48,11 @@
 {% endblock content%}
 
 {% block javascript%}
+    {% csrf_token %}
     <script>
+        $('#actieknoppen').hide()
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
         function swalDeactiveerStoring(id){
             Swal.fire({
                 title: 'Zeker weten?',
@@ -77,9 +89,9 @@
             var inhoud = ""
             var omloop_cel
             for (storing of data){
-                if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td>A:${storing.laatste_data__omloop_a} <br> B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td>${storing.laatste_data__omloop_a}</td>`}
-                regel = '<tr>' +
-                `<td><label><input name="geselecteerde_storingen" value="${storing.id}" type="checkbox" class="filled-in"/><span></span></label></td>` +
+                if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td>A:${storing.laatste_data__omloop_a} - B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td>${storing.laatste_data__omloop_a}</td>`}
+                regel = `<tr>` +
+                `<td><label><input id="select_${storing.id}" value="${storing.id}" name="storingCheckbox" type="checkbox" class="filled-in" onclick="addToSelectedList(${storing.id})"/><span></span></label></td>` +
                 `<td>${storing.id}</td>`+
                 `<td><a href="/tram/asset/${storing.laatste_data__assetnummer__assetnummer}">${storing.laatste_data__assetnummer__assetnummer}</a></td>` +
                 `<td>${storing.bericht}</td>` +
@@ -116,5 +128,79 @@
           document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
 
         });
+        var geselecteerde_storingen = []
+
+        function addToSelectedList(storing_ID){
+            if (document.getElementById(`select_${storing_ID}`).checked == true){
+                geselecteerde_storingen.push(storing_ID)
+            }
+            else {
+                geselecteerde_storingen.pop(storing_ID)
+            }
+            
+        }
+
+        function sendGeselecteerdeStoringen(methode){
+            postData = [...new Set(geselecteerde_storingen)]
+            if (postData.length > 0){
+                $.ajax({
+                    method: "POST",
+                    url: "tram/index_form",
+                    data: JSON.stringify({geselecteerde_storingen: postData, method: methode}),
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    },
+                    success: function(response, data){
+                        getAjaxData();
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        $('#actieknoppen').hide();
+                    },
+                    error: function(error_data){
+                        Swal.fire("Error", `${error_data}`, "error")
+                    }   
+                })
+            }
+            else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: '',
+                    text:'selecteer eerst een storing',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+            }
+        }
+
+        function selecteerAlle(source){
+            boxen = document.getElementsByName("storingCheckbox");
+            console.log(boxen)
+            for(box of boxen){
+                box.checked = source.checked;
+                if (box.checked == true){
+                    geselecteerde_storingen.push(box.value)
+                }
+                else {
+                    geselecteerde_storingen.pop(box.value)
+                }
+            }
+        }
+
+        window.onclick = () => {
+            isChecked =  $('input:checkbox').is(':checked')
+            if (isChecked){
+                $('#actieknoppen').show()
+            }
+            else{
+                $('#actieknoppen').hide()
+            }
+        }
+
     </script>
 {% endblock javascript%}

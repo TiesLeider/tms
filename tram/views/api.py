@@ -174,3 +174,19 @@ def get_actieve_storingen(request):
     for item in data:
         item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime("%d %b %Y, %H:%M")
     return JsonResponse(data, safe=False)
+
+def index_form(request):
+    if request.method == "POST":
+        data = str(request.body)[2:-1]
+        json_data = json.loads(data).get("geselecteerde_storingen")
+        
+        for sid in json_data:
+                storing = get_object_or_404(Storing, pk = sid)
+                storing.gezien = True
+                if json.loads(data).get("method") == "herstellen":
+                    storing.actief = False
+                storing.save()
+
+        return HttpResponse(request.POST.dict())
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

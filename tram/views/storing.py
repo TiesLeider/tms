@@ -8,6 +8,7 @@ def index(request):
 def alle_storingen(request):
     return render(request, "tram/index_alle.html", {"storingen": Storing.objects.filter(actief=True, gezien=False).select_related("laatste_data").order_by('-data__tijdstip')})
 
+
 def storing_gezien(request, storing_id):
     storing = get_object_or_404(Storing, pk = storing_id)
     storing.gezien = True
