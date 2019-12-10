@@ -19,7 +19,6 @@ def requesthandler(request):
 def insert_logo_data(request):
     try:
         def maak_nieuwe_storing(asset, absulute_data, bericht, counter=1):
-            print("nieuwe_storing")
             new_storing = Storing(
                 assetnummer = asset,
                 gezien = False,
@@ -138,15 +137,11 @@ def insert_logo_data(request):
                     
                     if timeout > 0:
                         recente_ads = AbsoluteData.objects.exclude(storing_beschrijving=[]).filter(assetnummer=ad.assetnummer, tijdstip__range=(datetime.datetime.now() - datetime.timedelta(hours=timeout), datetime.datetime.now()))
-                        print(recente_ads)
                         counter = 0
                         if recente_ads:
                             for rad in recente_ads:
-                                print(rad.storing_beschrijving)
-                                print(sb in rad.storing_beschrijving)
                                 if sb in rad.storing_beschrijving:
                                     counter += 1
-                                    print(counter)
                                     if counter > 1 and record.check_storing(sb) == True:
                                         maak_nieuwe_storing(ad.assetnummer, ad, sb, counter)
                                         break
@@ -167,7 +162,6 @@ def insert_logo_online(request):
         requesthandler(request)
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
-        print(json_data)
         assetnummer = json_data.get("assetnummer").upper() if (json_data.get("assetnummer").startswith("w")) else json_data.get("assetnummer")
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.logo_online = False
