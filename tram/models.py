@@ -40,6 +40,7 @@ class ConfiguratieElement(models.Model):
     inputnummer = models.SmallIntegerField()
     beschrijving = models.CharField(max_length=50, null=True)
     urgentieniveau = models.ForeignKey("Urgentieniveau", on_delete=models.CASCADE)
+    timeout = models.IntegerField(default=24)
 
 
 

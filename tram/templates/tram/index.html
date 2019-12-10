@@ -101,27 +101,26 @@
         function updateTabel(data){
 
             function color(score, melding){
-                if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden" || melding == "Verzamelmelding deksels, water in bak"){
+                if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden"){
                     return "purple lighten-2"
                 }
-
-                else if (score < 20){
-                    return "white"
-                }
-                else if(score >= 20 && score < 40){
-                    return "yellow lighten-2"
-                }
-                else if(score >= 40 && score < 60){
-                    return "amber lighten-2"
-                }
-                else if(score >= 60 && score < 80){
-                    return "orange lighten-2"
-                }
-                else if(score >= 80 && score < 100){
+                else if(score >= 80 && score < 100 || melding == "WSA Defect"){
                     return "red lighten-2"
                 }
                 else if(score >= 100 && score < 120){
                     return "pink lighten-2"
+                }
+                else if(score >= 60 && score < 80){
+                    return "orange lighten-2"
+                }
+                else if(score >= 40 && score < 60){
+                    return "amber lighten-2"
+                }
+                else if(score >= 20 && score < 40){
+                    return "yellow lighten-2"
+                }
+                else if (score < 20){
+                    return "white"
                 }
 
             }
