@@ -57,7 +57,6 @@ def insert_logo_data(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startswith("w") else json_data.get("assetnummer")
-        print(assetnummer)
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
         
@@ -72,7 +71,8 @@ def insert_logo_data(request):
                     if (vorige_ad.assetnummer.assetnummer == assetnummer):
                         print(f"pogin {i}: {vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
                     if (i == 20):
-                        return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
+                        print(f"Polling dropped: {assetnummer}")
+                        return JsonResponse({"response": False, "error": "Fout bij het ophalen van de data"})
         except ObjectDoesNotExist:
             vorige_ad = None
 
@@ -115,8 +115,21 @@ def insert_logo_data(request):
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
             for sb in ad.storing_beschrijving:
-                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
-                print(Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).exists())
+                try:
+                    vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                    if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
+                        print(f"{vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
+                        for i in range(0, 21):
+                            vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                            if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
+                                break
+                            if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
+                                print(f"pogin {i}: {vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
+                            if (i == 20):
+                                print(f"Polling dropped: {assetnummer}")
+                                return JsonResponse({"response": False, "error": "Fout bij het ophalen van de storing data"})
+                except ObjectDoesNotExist:
+                    vorige_storing = None
                 if vorige_storing:
                     if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
