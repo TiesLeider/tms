@@ -26,3 +26,7 @@ def reset_teller_alle(request):
         except:
             pass
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+def asset_chart(request, assetnummer):
+    asset = get_object_or_404(Asset, assetnummer=assetnummer)
+    return render(request, "tram/chart.html", {"asset": asset})

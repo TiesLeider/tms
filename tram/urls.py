@@ -12,7 +12,9 @@ urlpatterns = [
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
     path("api/resettelleralle", views.asset.reset_teller_alle, name="asset_reset_alle"),
-    path("api/omlopen/<str:assetnummer>/<str:van_datum>/<str:tot_datum>", views.api.get_omlopen, name="get_omlopen"),
+    path("api/omlopen_totaal/<str:assetnummer>/<str:van_datum>/<str:tot_datum>", views.api.get_omlopen_totaal, name="get_omlopen_totaal"),
+    path("api/omlopen_freq/<str:assetnummer>/<str:van_datum>/<str:tot_datum>", views.api.get_omlopen_freq, name="get_omlopen_freq"),
     path("api/alle_actieve_storingen/", views.get_actieve_storingen, name="alle_actieve_storingen"),
-    path("index_form", views.index_form, name="index_form")
+    path("index_form", views.index_form, name="index_form"),
+    path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
 ]

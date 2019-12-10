@@ -175,7 +175,7 @@ def insert_logo_online(request):
     except Exception as ex:
         return JsonResponse({"response": False, "error": str(ex)})
 
-def get_omlopen(request, assetnummer, van_datum, tot_datum):
+def get_omlopen_totaal(request, assetnummer, van_datum, tot_datum):
     start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
     eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
     ad_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
@@ -185,6 +185,20 @@ def get_omlopen(request, assetnummer, van_datum, tot_datum):
         "data": [
                 list(ad_qs.values_list("omloop_a", flat=True)),
                 list(ad_qs.values_list("omloop_b", flat=True))
+        ]
+        }
+    return JsonResponse(response, safe=False)
+
+def get_omlopen_freq(request, assetnummer, van_datum, tot_datum):
+    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
+    eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
+    ld_qs = LogoData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
+    data = list(ld_qs.values("tijdstip", "omloop_a", "omloop_b"))
+    response = {
+        "labels": list(ld_qs.values_list("tijdstip", flat=True)),
+        "data": [
+                list(ld_qs.values_list("omloop_a", flat=True)),
+                list(ld_qs.values_list("omloop_b", flat=True))
         ]
         }
     return JsonResponse(response, safe=False)

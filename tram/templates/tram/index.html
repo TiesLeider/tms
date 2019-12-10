@@ -100,7 +100,7 @@
 
         function updateTabel(data){
 
-            function color(score){
+            function color(score, melding){
                 if (score < 20){
                     return "white"
                 }
@@ -119,7 +119,7 @@
                 else if(score >= 100 && score < 120){
                     return "pink lighten-2"
                 }
-                else if(score >= 120){
+                else if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden" || melding == "Verzamelmelding deksels, water in bak"){
                     return "purple lighten-2"
                 }
 
@@ -129,7 +129,7 @@
             var omloop_cel
             for (storing of data){
                 if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td>A:${storing.laatste_data__omloop_a} - B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td>${storing.laatste_data__omloop_a}</td>`}
-                regel = `<tr class="${color(storing.score)}">` +
+                regel = `<tr class="${color(storing.score, storing.bericht)}">` +
                 `<td class="white"><label><input id="select_${storing.id}" value="${storing.id}" name="storingCheckbox" type="checkbox" class="filled-in" onclick="addToSelectedList(${storing.id})"/><span></span></label></td>` +
                 `<td>${storing.id}</td>`+
                 `<td><a href="/tram/asset/${storing.laatste_data__assetnummer__assetnummer}"><button class=" white blue-text btn waves-effect waves-light">${storing.laatste_data__assetnummer__assetnummer}</button</a></td>` +
@@ -139,7 +139,7 @@
                 omloop_cel +
                 `<td>${storing.laatste_data__tijdstip}</td>` +
                 `<td><a href="tram/storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
-                `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
+                `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
                 inhoud += regel
             }
             $('#tabelInhoud').html(inhoud);
