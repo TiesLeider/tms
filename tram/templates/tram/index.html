@@ -101,7 +101,11 @@
         function updateTabel(data){
 
             function color(score, melding){
-                if (score < 20){
+                if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden" || melding == "Verzamelmelding deksels, water in bak"){
+                    return "purple lighten-2"
+                }
+
+                else if (score < 20){
                     return "white"
                 }
                 else if(score >= 20 && score < 40){
@@ -118,9 +122,6 @@
                 }
                 else if(score >= 100 && score < 120){
                     return "pink lighten-2"
-                }
-                else if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden" || melding == "Verzamelmelding deksels, water in bak"){
-                    return "purple lighten-2"
                 }
 
             }
