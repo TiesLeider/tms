@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from ..models import *
+import traceback
 import datetime
 import json
 
@@ -17,7 +18,7 @@ def requesthandler(request):
 @csrf_exempt
 def insert_logo_data(request):
     try:
-        def maak_nieuwe_storing(asset, absulute_data, bericht):
+        def maak_nieuwe_storing(asset, absulute_data, bericht, counter=1):
             print("nieuwe_storing")
             new_storing = Storing(
                 assetnummer = asset,
@@ -25,32 +26,12 @@ def insert_logo_data(request):
                 actief = True,
                 bericht = bericht,
                 laatste_data = absulute_data,
-                som = 1,
+                som = counter,
                 score = 0,
             )
             new_storing.score = new_storing.get_score()
             new_storing.save()
 
-        def get_vorige_ad(assetnummer):
-            try:  
-                vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
-                if created:
-                    vorige_ad.laatste_data =  AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest("tijdstip")
-            except IntegrityError:
-                for i in range(0, 10):
-                    vorige_ad, created = AssetLaatsteData.objects.get(assetnummer_id=assetnummer)
-                    if (assetnummer == vorige_ad.assetnummer.assetnummer):
-                        return [vorige_ad, created]
-                return None
-        
-            if (assetnummer != vorige_ad.assetnummer.assetnummer):
-                for i in range(0, 10):
-                    vorige_ad, created = AssetLaatsteData.objects.get_or_create(assetnummer_id=assetnummer, defaults={"laatste_data": None})
-                    if (assetnummer == vorige_ad.assetnummer):
-                        return [vorige_ad, created]
-                return None
-            
-            return [vorige_ad, created]
 
         #Check of de requestdata ok is en manipuleer assetnummer:
         requesthandler(request)
@@ -68,8 +49,8 @@ def insert_logo_data(request):
                     vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
                     if (vorige_ad.assetnummer.assetnummer == assetnummer):
                         break
-                    if (vorige_ad.assetnummer.assetnummer == assetnummer):
-                        print(f"pogin {i}: {vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
+                    if (vorige_ad.assetnummer.assetnummer != assetnummer):
+                        print(f"poging {i}: {vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
                     if (i == 20):
                         print(f"Polling dropped: {assetnummer}")
                         return JsonResponse({"response": False, "error": "Fout bij het ophalen van de data"})
@@ -115,47 +96,69 @@ def insert_logo_data(request):
         if len(ad.storing_beschrijving) > 0:
             #Bij deze polling is een storing vastgelegd
             for sb in ad.storing_beschrijving:
+                #Check of dezelfde storing actief is
+                #Zo ja: kijk huidige procedure
+                #Zo niet: kijk of de deze beschrijving voorkwam in de afgelopen x (configuratie.timeout) uur of storing is voorgekomen
+                    #Ja: maak nieuwe storing aan
+                    #Nee: skip
                 try:
-                    vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
-                    if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
-                        print(f"{vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
-                        for i in range(0, 21):
-                            vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
-                            if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
-                                break
-                            if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
-                                print(f"pogin {i}: {vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
-                            if (i == 20):
-                                print(f"Polling dropped: {assetnummer}")
-                                return JsonResponse({"response": False, "error": "Fout bij het ophalen van de storing data"})
+                    vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                    if vorige_storing:
+                        if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
+                            print(f"{vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
+                            for i in range(0, 21):
+                                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                                if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
+                                    break
+                                if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
+                                    print(f"poging {i}: {vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
+                                if (i == 20):
+                                    print(f"Polling dropped: {assetnummer}")
+                                    return JsonResponse({"response": False, "error": "Fout bij het ophalen van de storing data"})
                 except ObjectDoesNotExist:
                     vorige_storing = None
                 if vorige_storing:
-                    if (vorige_storing.actief == True) and (vorige_storing.gezien == False):
+                    if (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
                         vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.laatste_data = ad
-                    elif (vorige_storing.actief == True) and (vorige_storing.gezien == True):
+                    elif (vorige_storing.gezien == True):
                         #De storing is actief en gezien gemeld
                         vorige_storing.som += 1
                         vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.gezien = False
                         vorige_storing.laatste_data = ad
-                    elif (vorige_storing.actief == False):
-                        #De storing is niet langer actief
-                        if record.check_storing(sb) == True:
-                            maak_nieuwe_storing(ad.assetnummer, ad, sb)
                     vorige_storing.save()
                 else:
-                    #Er zijn geen storings-records gevonden van de vorige data
-                    if record.check_storing(sb) == True:
-                        maak_nieuwe_storing(ad.assetnummer, ad, sb)
+                    #Check of storing voorkwam in de afgelopen x uur
+                    for obj in ad.assetnummer.configuratie.config:
+                        if obj.beschrijving == sb:
+                            timeout = obj.timeout
+                    
+                    if timeout > 0:
+                        recente_ads = AbsoluteData.objects.exclude(storing_beschrijving=[]).filter(assetnummer=ad.assetnummer, tijdstip__range=(datetime.datetime.now() - datetime.timedelta(hours=timeout), datetime.datetime.now()))
+                        print(recente_ads)
+                        counter = 0
+                        if recente_ads:
+                            for rad in recente_ads:
+                                print(rad.storing_beschrijving)
+                                print(sb in rad.storing_beschrijving)
+                                if sb in rad.storing_beschrijving:
+                                    counter += 1
+                                    print(counter)
+                                    if counter > 1 and record.check_storing(sb) == True:
+                                        maak_nieuwe_storing(ad.assetnummer, ad, sb, counter)
+                                        break
+                    else:
+                        if record.check_storing(sb) == True:
+                            maak_nieuwe_storing(ad.assetnummer, ad, sb)
         else:
             #Er was geen storing bij deze polling
             pass
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
+        traceback.print_exc()
         return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
 @csrf_exempt
