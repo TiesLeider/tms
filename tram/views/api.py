@@ -7,6 +7,9 @@ from ..models import *
 import traceback
 import datetime
 import json
+import logging
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
 
 def requesthandler(request):
         if (request.body == "" or not request.body):
@@ -19,6 +22,7 @@ def requesthandler(request):
 def insert_logo_data(request):
     try:
         def maak_nieuwe_storing(asset, absulute_data, bericht, counter=1):
+            logging.info("Nieuwe storing aangemaakt: %s: %s", asset, bericht)
             new_storing = Storing(
                 assetnummer = asset,
                 gezien = False,
@@ -43,15 +47,16 @@ def insert_logo_data(request):
         try:
             vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
             if (vorige_ad.assetnummer.assetnummer != assetnummer):
-                print(f"{vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
-                for i in range(0, 21):
+                logging.info("Verkeerde data opgehaald: %s. Verwacht was: %s", vorige_ad.assetnummer.assetnummer, assetnummer)
+                for i in range(2, 21):
                     vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
                     if (vorige_ad.assetnummer.assetnummer == assetnummer):
+                        logging.info("Data komt weer overeen met assetnummer: %s-%s", vorige_ad.assetnummer.assetnummer, assetnummer)
                         break
                     if (vorige_ad.assetnummer.assetnummer != assetnummer):
-                        print(f"poging {i}: {vorige_ad.assetnummer.assetnummer} was niet {assetnummer}")
+                        logging.info("Poging %s: Verkeerde data opgehaald: %s. Verwacht was: %s", i, vorige_ad.assetnummer.assetnummer, assetnummer)
                     if (i == 20):
-                        print(f"Polling dropped: {assetnummer}")
+                        logging.warning("Polling dropped: %s", assetnummer)
                         return JsonResponse({"response": False, "error": "Fout bij het ophalen van de data"})
         except ObjectDoesNotExist:
             vorige_ad = None
@@ -74,6 +79,8 @@ def insert_logo_data(request):
 
 
         #Maak Absolutedata tabel
+        if not vorige_ad:
+            logging.warning("Geen vorige data gevonden van assetnummer: %s", assetnummer)
         ad = AbsoluteData(
             assetnummer_id = assetnummer,
             storing_beschrijving = record.get_storing_beschrijvingen() if (record.storing != 0) else [],
@@ -104,13 +111,14 @@ def insert_logo_data(request):
                     vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
                     if vorige_storing:
                         if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
-                            print(f"{vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
+                            logging.info("Verkeerde storing opgehaald: %s. Verwacht was: %s", vorige_storing.laatste_data.assetnummer.assetnummer, assetnummer)
                             for i in range(0, 21):
                                 vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
                                 if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
+                                    logging.info("Storing komt weer overeen met assetnummer: %s-%s", vorige_storing.laatste_data.assetnummer.assetnummer, assetnummer)
                                     break
                                 if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
-                                    print(f"poging {i}: {vorige_storing.laatste_data.assetnummer.assetnummer} was niet {assetnummer}")
+                                     logging.info("Poging %s: Verkeerde storing opgehaald: %s. Verwacht was: %s", i, vorige_storing.laatste_data.assetnummer.assetnummer, assetnummer)
                                 if (i == 20):
                                     print(f"Polling dropped: {assetnummer}")
                                     return JsonResponse({"response": False, "error": "Fout bij het ophalen van de storing data"})
@@ -128,6 +136,7 @@ def insert_logo_data(request):
                         vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.gezien = False
                         vorige_storing.laatste_data = ad
+                    logging.info("Storing met id: %s geupdate. assetnummer: %s", vorige_storing.id, vorige_storing.laatste_data.assetnummer.assetnummer)
                     vorige_storing.save()
                 else:
                     #Check of storing voorkwam in de afgelopen x uur
@@ -143,10 +152,12 @@ def insert_logo_data(request):
                                 if sb in rad.storing_beschrijving:
                                     counter += 1
                                     if counter > 1 and record.check_storing(sb) == True:
+                                        logging.info("Nieuwe storing aangemaakt op basis van meerdere gelijke meldingen binnen timeout. asset: %s, storing: %s, aantal RADs: %s", ad.assetnummer.assetnummer, sb, recente_ads.count())
                                         maak_nieuwe_storing(ad.assetnummer, ad, sb, counter)
                                         break
                     else:
                         if record.check_storing(sb) == True:
+                            logging.info("Nieuwe storing aangemaakt op basis van 0 timeout. asset: %s", ad.assetnummer.assetnummer)
                             maak_nieuwe_storing(ad.assetnummer, ad, sb)
         else:
             #Er was geen storing bij deze polling
