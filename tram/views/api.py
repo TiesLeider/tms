@@ -125,6 +125,7 @@ def insert_logo_data(request):
                 except ObjectDoesNotExist:
                     vorige_storing = None
                 if vorige_storing:
+                    logging.info("assetnummer %s: vorige storingen: %s", ad.assetnummer.assetnummer, Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip'))
                     if (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
