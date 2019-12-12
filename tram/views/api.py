@@ -35,6 +35,26 @@ def insert_logo_data(request):
             new_storing.score = new_storing.get_score()
             new_storing.save()
 
+        def get_laatste_asbolute_data():
+            try:
+                vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
+                if (vorige_ad.assetnummer.assetnummer != assetnummer):
+                    logging.info("Verkeerde data opgehaald: %s. Verwacht was: %s", vorige_ad.assetnummer.assetnummer, assetnummer)
+                    for i in range(2, 21):
+                        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
+                        if (vorige_ad.assetnummer.assetnummer == assetnummer):
+                            logging.info("Data komt weer overeen met assetnummer: %s-%s", vorige_ad.assetnummer.assetnummer, assetnummer)
+                            break
+                        if (vorige_ad.assetnummer.assetnummer != assetnummer):
+                            logging.info("Poging %s: Verkeerde data opgehaald: %s. Verwacht was: %s", i, vorige_ad.assetnummer.assetnummer, assetnummer)
+                        if (i == 20):
+                            logging.warning("Polling dropped: %s", assetnummer)
+                            return JsonResponse({"response": False, "error": "Fout bij het ophalen van de data"})
+                return vorige_ad
+            except ObjectDoesNotExist:
+                return None
+
+
 
         #Check of de requestdata ok is en manipuleer assetnummer:
         requesthandler(request)
@@ -44,22 +64,6 @@ def insert_logo_data(request):
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
         
-        try:
-            vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
-            if (vorige_ad.assetnummer.assetnummer != assetnummer):
-                logging.info("Verkeerde data opgehaald: %s. Verwacht was: %s", vorige_ad.assetnummer.assetnummer, assetnummer)
-                for i in range(2, 21):
-                    vorige_ad = AbsoluteData.objects.filter(assetnummer_id=assetnummer).latest()
-                    if (vorige_ad.assetnummer.assetnummer == assetnummer):
-                        logging.info("Data komt weer overeen met assetnummer: %s-%s", vorige_ad.assetnummer.assetnummer, assetnummer)
-                        break
-                    if (vorige_ad.assetnummer.assetnummer != assetnummer):
-                        logging.info("Poging %s: Verkeerde data opgehaald: %s. Verwacht was: %s", i, vorige_ad.assetnummer.assetnummer, assetnummer)
-                    if (i == 20):
-                        logging.warning("Polling dropped: %s", assetnummer)
-                        return JsonResponse({"response": False, "error": "Fout bij het ophalen van de data"})
-        except ObjectDoesNotExist:
-            vorige_ad = None
 
 
         #Maak record Logodata:
@@ -77,10 +81,19 @@ def insert_logo_data(request):
             )
         record.save()
 
+        vorige_ad = get_laatste_asbolute_data()
 
         #Maak Absolutedata tabel
         if not vorige_ad:
             logging.warning("Geen vorige data gevonden van assetnummer: %s", assetnummer)
+            for i in range (1,6):
+                logging.info("Poging %s: opnieuw data ophalen van asset: %s", i, assetnummer)
+                vorige_ad = get_laatste_asbolute_data()
+                if vorige_ad:
+                    logging.info("Data gevonden van asset: %s!", assetnummer)
+                    break
+            
+
         ad = AbsoluteData(
             assetnummer_id = assetnummer,
             storing_beschrijving = record.get_storing_beschrijvingen() if (record.storing != 0) else [],
@@ -108,12 +121,12 @@ def insert_logo_data(request):
                     #Ja: maak nieuwe storing aan
                     #Nee: skip
                 try:
-                    vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                    vorige_storing = Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
                     if vorige_storing:
                         if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
                             logging.info("Verkeerde storing opgehaald: %s. Verwacht was: %s", vorige_storing.laatste_data.assetnummer.assetnummer, assetnummer)
                             for i in range(0, 21):
-                                vorige_storing = Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                                vorige_storing = Storing.objects.filter(assetnummer=assetnummer, bericht=sb).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
                                 if (vorige_storing.laatste_data.assetnummer.assetnummer == assetnummer):
                                     logging.info("Storing komt weer overeen met assetnummer: %s-%s", vorige_storing.laatste_data.assetnummer.assetnummer, assetnummer)
                                     break
@@ -125,7 +138,7 @@ def insert_logo_data(request):
                 except ObjectDoesNotExist:
                     vorige_storing = None
                 if vorige_storing:
-                    logging.info("assetnummer %s: vorige storingen: %s", ad.assetnummer.assetnummer, Storing.objects.filter(assetnummer=ad.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip'))
+                    logging.info("assetnummer %s: vorige storingen: %s", assetnummer, Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip'))
                     if (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
