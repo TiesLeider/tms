@@ -179,6 +179,7 @@ def insert_logo_data(request):
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
         return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
 @csrf_exempt
