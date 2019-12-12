@@ -74,3 +74,7 @@ body {
 .input-field .prefix.active {
   color: rgb(76,150,215);
 }
+
+th {
+  cursor: pointer;
+}

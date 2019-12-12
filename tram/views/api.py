@@ -107,9 +107,6 @@ def insert_logo_data(request):
             omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad) else record.omloop_b,
             )
         ad.save()
-        # vorige_ad.laatste_data = ad
-        # vorige_ad.save()
-
 
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
@@ -150,8 +147,9 @@ def insert_logo_data(request):
                         vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.gezien = False
                         vorige_storing.laatste_data = ad
-                    logging.info("Storing met id: %s geupdate. assetnummer: %s", vorige_storing.id, vorige_storing.laatste_data.assetnummer.assetnummer)
                     vorige_storing.save()
+                    logging.info("Storing met id: %s geupdate. assetnummer: %s", vorige_storing.id, vorige_storing.laatste_data.assetnummer.assetnummer)
+
                 else:
                     #Check of storing voorkwam in de afgelopen x uur
                     for obj in ad.assetnummer.configuratie.config:

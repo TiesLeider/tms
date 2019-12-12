@@ -32,7 +32,7 @@
                 <th>Count</th>
                 <th>Score</th>
                 <th>Omlopen</th>
-                <th>Tijdstip</th>
+                <th id="tijdstipTh">Tijdstip</th>
                 <th>Negeren</th>
                 <th>Herstellen</th>
             </tr>
@@ -52,7 +52,7 @@
     <script>
         $('#actieknoppen').hide()
         var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-
+        var selectedTh = document.getElementById("tijdstipTh");
         function swalDeactiveerStoring(id){
             Swal.fire({
                 title: 'Zeker weten?',
@@ -143,6 +143,12 @@
                 inhoud += regel
             }
             $('#tabelInhoud').html(inhoud);
+            if (selectedTh){
+                sorteerTabel(selectedTh, "laatse_modus")
+            }
+            else{
+                sorteerTabel(document.getElementById("tijdstipTh"), "laatse_modus")
+            }
         }
 
         $(document).ready(function(){
@@ -159,6 +165,7 @@
 
           getAjaxData();
           document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
+
 
         });
         var geselecteerde_storingen = []
@@ -213,7 +220,6 @@
 
         function selecteerAlle(source){
             boxen = document.getElementsByName("storingCheckbox");
-            console.log(boxen)
             for(box of boxen){
                 box.checked = source.checked;
                 if (box.checked == true){
@@ -223,6 +229,34 @@
                     geselecteerde_storingen.pop(box.value)
                 }
             }
+        }
+        document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            selectedTh = th
+            sorteerTabel(th)
+        })));
+
+        function sorteerTabel(th, modus=""){
+            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+                )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+            
+            const table = document.getElementById("tabelInhoud");
+
+
+            if (modus == "laatse_modus"){
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc))
+                .forEach(tr => table.appendChild(tr) );            
+            }
+
+            else {
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr) );
+            }
+
         }
 
         window.onclick = () => {
@@ -236,6 +270,7 @@
                 hervatAnimatie();
             }
         }
+
 
     </script>
 {% endblock javascript%}
