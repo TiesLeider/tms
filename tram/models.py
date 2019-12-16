@@ -23,18 +23,7 @@ class Asset(models.Model):
         except LogoData.DoesNotExist:
             pass
         return heeft_ls
-    
-class AssetLaatsteData(models.Model):
-    assetnummer = models.OneToOneField("Asset", on_delete=models.DO_NOTHING)
-    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.DO_NOTHING)
 
-    def heeft_laatste_data(self):
-        heeft_ld= False
-        try:
-            heeft_ld = (self.laatste_data is not None)
-        except LogoData.DoesNotExist:
-            pass
-        return heeft_ld
 
 class ConfiguratieElement(models.Model):
     inputnummer = models.SmallIntegerField()

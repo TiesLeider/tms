@@ -1,6 +1,6 @@
 import requests
 import json
-data = b'{"ojson":{"assetnummer":"w559","storing":256,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":5,"omloop_b":1,"kracht_a":0,"kracht_b":0}}'
+data = b'{"ojson":{"assetnummer":"w559","storing":8,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":5,"omloop_b":1,"kracht_a":0,"kracht_b":0}}'
 data2 = b'{"ojson":{"assetnummer":"Michiel","storing":256,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":3,"omloop_b":1,"kracht_a":0,"kracht_b":0}}'
 data3 = b'{"ojson":{"assetnummer":"w490","storing":8,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":7,"omloop_b":1,"kracht_a":0,"kracht_b":0}}'
 data4 = b'{"ojson":{"assetnummer":"w2642","storing":8,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":11,"omloop_b":1,"kracht_a":0,"kracht_b":0}}'
