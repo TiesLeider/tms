@@ -135,48 +135,97 @@
         });
     });
 
-    function maak_grafiek(labels, data) {
+    function maak_grafiek(labels, data, method) {
         $('#myChart').show();
         $('#loader').hide();
         var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Omlopen bak A',
-                    data: data[0],
-                    borderColor: 'rgb(135, 255, 221)',
-                    fill: false
-                },
-                {
-                    label: 'Omlopen bak B',
-                    data: data[1],
-                    borderColor: 'rgb(135, 235, 255)',
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
+        if (method == "omlopen_totaal"){
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omlopen bak A',
+                        data: data[0],
+                        borderColor: 'rgb(135, 255, 221)',
+                        fill: false
+                    },
+                    {
+                        label: 'Omlopen bak B',
+                        data: data[1],
+                        borderColor: 'rgb(135, 235, 255)',
+                        fill: false
                     }]
                 },
-                animation: {
-                    duration: 0 // general animation time
-                },
-                hover: {
-                    animationDuration: 0 // duration of animations when hovering an item
-                },
-                elements: {
-                    line: {
-                        tension: 0 // disables bezier curves
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    animation: {
+                        duration: 0 // general animation time
+                    },
+                    hover: {
+                        animationDuration: 0 // duration of animations when hovering an item
+                    },
+                    elements: {
+                        line: {
+                            tension: 0 // disables bezier curves
+                        },
+                        point: {
+                            radius: 0
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+        if (method == "omlopen_freq"){
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omlopen bak A',
+                        data: data[0],
+                        borderColor: 'rgb(135, 255, 221)',
+                        fill: false
+                    },
+                    {
+                        label: 'Omlopen bak B',
+                        data: data[1],
+                        borderColor: 'rgb(135, 235, 255)',
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    animation: {
+                        duration: 0 // general animation time
+                    },
+                    hover: {
+                        animationDuration: 0 // duration of animations when hovering an item
+                    },
+                    elements: {
+                        line: {
+                            tension: 0 // disables bezier curves
+                        },
+                        point: {
+                            radius: 0
+                        }
+                    }
+                }
+            });
+            
+        }
     }
 
     function laadGrafiek() {
@@ -194,7 +243,7 @@
             method: "GET",
             url: `/tram/api/${method}/{{asset.assetnummer}}/${vanDatum}/${totDatum}`,
             success: function (response) {
-                maak_grafiek(response.labels, response.data);
+                maak_grafiek(response.labels, response.data, method);
             },
             error: function (error_data) {
                 console.log(error_data)

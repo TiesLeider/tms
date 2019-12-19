@@ -131,6 +131,13 @@ class SmsData(models.Model):
     sim = models.CharField(max_length=10, null=True)
     asset = models.CharField(max_length=5, null=True)
 
+    class Meta:
+        verbose_name_plural = "sms data"
+        get_latest_by = "ontvangen"
+
+    def __str__(self):
+        return f"{self.asset} @ {self.ontvangen.strftime('%m/%d/%Y - %H:%M:%S')}"
+
 class Storing(models.Model):
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
     gezien = models.BooleanField()
