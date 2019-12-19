@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from ..models import *
-from .polling import Polling
+from .polling import LogoPolling, SmsPolling
 import traceback
 import datetime
 import json
@@ -45,7 +45,7 @@ def insert_logo_data(request):
             )
         record.save()
 
-        polling = Polling(record)
+        polling = LogoPolling(record)
         polling.insert_absolute_data()
         polling.storing_algoritme()
 
@@ -55,7 +55,19 @@ def insert_logo_data(request):
         logging.error("%s", traceback.format_exc())
         return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
-
+@csrf_exempt
+def insert_sms_data(request):
+    try:
+        requesthandler(request)
+        data = str(request.body)[2:-1]
+        json_data = json.loads(data).get("ojson")
+        sms_polling = SmsPolling(json_data)
+        sms_polling.insert_sms_data()
+        return JsonResponse({"response": True, "error": None})
+    except Exception as ex:
+        traceback.print_exc()
+        logging.error(" %s", traceback.format_exc())
+        return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
 @csrf_exempt
 def insert_logo_online(request):

@@ -32,8 +32,6 @@ class ConfiguratieElement(models.Model):
     timeout = models.IntegerField(default=24)
 
 
-
-
 class LogoData(models.Model):
     _id = models.ObjectIdField()
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)
@@ -117,6 +115,21 @@ class AbsoluteData(models.Model):
 
     def __str__(self):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"
+
+
+class SmsData(models.Model):
+    ontvangen = models.DateTimeField()
+    modem = models.CharField(max_length=10, default="")
+    telnummer = models.CharField(max_length=15, null=True)
+    storing = models.CharField(max_length=100, null=True)
+    smsc = models.CharField(max_length=15, null=True)
+    udh = models.BooleanField()
+    inputnummer = models.IntegerField(null=True)
+    status = models.CharField(max_length=15, null=True)
+    alphabet = models.CharField(max_length=15, null=True)
+    sent = models.DateTimeField()
+    sim = models.CharField(max_length=10, null=True)
+    asset = models.CharField(max_length=5, null=True)
 
 class Storing(models.Model):
     assetnummer = models.ForeignKey("Asset", on_delete=models.CASCADE)

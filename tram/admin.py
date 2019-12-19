@@ -15,6 +15,10 @@ class AbsoluteDataAdmin(admin.ModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing_beschrijving", "omloop_a", "omloop_b")
     list_filter=("assetnummer_id"),
 
+@admin.register(SmsData)
+class SmsDataAdmin(admin.ModelAdmin):
+    list_display=("asset", "storing", "ontvangen",)
+
 @admin.register(Configuratie)
 class ConfiguratieAdmin(admin.ModelAdmin):
     list_display=("naam",)
