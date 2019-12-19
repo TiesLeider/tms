@@ -68,7 +68,7 @@
        function checkOnlineAssets(){
         $.ajax({
           method: "GET",
-          url: "tram/api/check_online_assets",
+          url: "/tram/api/check_online_assets",
           success: function(response){
               updateVerbondenKnop(response)
           },
