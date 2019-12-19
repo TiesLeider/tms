@@ -141,7 +141,7 @@ def check_assets_online(request):
         online_assets = Asset.objects.filter(online=True)
         offline_assets = []
         for asset in online_assets:
-            ad = LogoData.objects.filter(assetnummer=asset).latest()
+            ad = AbsoluteData.objects.filter(assetnummer=asset).latest()
             if (ad.tijdstip < (datetime.datetime.now() - datetime.timedelta(minutes=30))):
                 offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": ad.tijdstip.strftime("%d %b %Y, %H:%M")})
     except Exception:
