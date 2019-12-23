@@ -49,8 +49,7 @@ class LogoPolling:
         new_storing.save()
 
     def get_laatste_asbolute_data(self):
-        vorige_ad = AbsoluteData.objects.filter(
-            assetnummer_id=self.assetnummer).latest()
+        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=self.assetnummer).latest()
         if (vorige_ad.assetnummer.assetnummer != self.assetnummer):
             logging.info("Verkeerde data opgehaald: %s. Verwacht was: %s",
                          vorige_ad.assetnummer.assetnummer, self.assetnummer)
