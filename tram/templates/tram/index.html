@@ -137,7 +137,7 @@
                 `<td>${storing.som}</td>` +
                 `<td>${storing.score}</td>` +
                 omloop_cel +
-                `<td>${storing.laatste_data__tijdstip}</td>` +
+                `<td id="storing${storing.id}" value=${storing.laatste_data__isotijdstip}>${storing.laatste_data__tijdstip}</td>` +
                 `<td><a href="tram/storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
                 `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
                 inhoud += regel
@@ -236,7 +236,12 @@
         })));
 
         function sorteerTabel(th, modus=""){
-            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+            if (th == document.getElementById("tijdstipTh")){
+                var getCellValue = (tr, idx) =>  tr.children[idx].getAttribute("value"); 
+            }
+            else {
+                var getCellValue = (tr, idx) =>  tr.children[idx].innerText || tr.children[idx].textContent;
+            }
 
             const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
                 v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
