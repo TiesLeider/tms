@@ -26,6 +26,7 @@
               <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_87_transparant.png' %}" class="round" style="position: relative; ; margin-right: 10px; margin-top: 6px;" alt=""></li>
               <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
               <li>
+                <a href="#" id="checken" class="grey hoverable btn-large round"><i class="large material-icons left">autorenew</i>Checken op offline assets...</a>
                 <a href="#" id="alle_verbonden" onclick="checkOnlineAssets()" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
                 <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
               </li>
@@ -81,6 +82,7 @@
          if (data.length > 0){
            content = "Geen data ontvangen van deze assets in het afgelopen halfuur: <br><br>" 
            $('#alle_verbonden').hide();
+           $("#checken").hide();
            $('#niet_verbonden').show();
            $('#niet_verbonden').html(`<i class="large material-icons left">warning</i>${data.length} logos niet verbonden`)
            for (asset of data){
