@@ -277,6 +277,9 @@
         if (today.getMonth() == 0) { mm = 12 } else { mm = today.getMonth() }
 
         var yyyy = today.getFullYear();
+        if (mm == 12){
+            yyyy = yyyy - 1
+        }
         if (dd < 10) {
             dd = '0' + dd;
         }
@@ -284,6 +287,7 @@
             mm = '0' + mm;
         }
         var today = dd + '-' + mm + '-' + yyyy;
+        console.log(today)
         return today;
     }
 
