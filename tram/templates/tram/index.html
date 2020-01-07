@@ -27,11 +27,11 @@
             <tr>
                 <th style="max-width: 5px;"><label><input id="selectAlle" type="checkbox" class="filled-in" onclick="selecteerAlle(this)"/><span></span></label></th>
                 <th>ID</th>
-                <th>Assetnummer</th>
-                <th>Storing</th>
+                <th id=assetTh>Assetnummer</th>
+                <th id=storingTh>Storing</th>
                 <th>Count</th>
                 <th>Score</th>
-                <th>Omlopen</th>
+                <th id="omloopTh">Omlopen</th>
                 <th id="tijdstipTh">Tijdstip</th>
                 <th>Negeren</th>
                 <th>Herstellen</th>
@@ -128,7 +128,7 @@
             var inhoud = ""
             var omloop_cel
             for (storing of data){
-                if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td>A:${storing.laatste_data__omloop_a} - B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td>${storing.laatste_data__omloop_a}</td>`}
+                if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td value=${storing.laatste_data__omloop_a + storing.laatste_data__omloop_b}>A:${storing.laatste_data__omloop_a} - B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td value=${storing.laatste_data__omloop_a}>${storing.laatste_data__omloop_a}</td>`}
                 regel = `<tr class="${color(storing.score, storing.bericht)}">` +
                 `<td class="white"><label><input id="select_${storing.id}" value="${storing.id}" name="storingCheckbox" type="checkbox" class="filled-in" onclick="addToSelectedList(${storing.id})"/><span></span></label></td>` +
                 `<td>${storing.id}</td>`+
@@ -137,7 +137,7 @@
                 `<td>${storing.som}</td>` +
                 `<td>${storing.score}</td>` +
                 omloop_cel +
-                `<td id="storing${storing.id}" value=${storing.laatste_data__isotijdstip}>${storing.laatste_data__tijdstip}</td>` +
+                `<td value=${storing.laatste_data__isotijdstip}>${storing.laatste_data__tijdstip}</td>` +
                 `<td><a href="tram/storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
                 `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
                 inhoud += regel
@@ -231,19 +231,33 @@
             }
         }
         document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            if (selectedTh == th){
+                sorteerTabel(th)
+            }
+            else{
+                if (th == document.getElementById("assetTh") || th == document.getElementById("storingTh")){
+                    console.log(th)
+                    sorteerTabel(th, "asc")
+                }
+                else {
+                    sorteerTabel(th, "desc")
+                }
+            }
             selectedTh = th
-            sorteerTabel(th)
+            
         })));
-
+        var icon = `<i class="material-icons">arrow_drop_down</i>`
+        var desc = true 
         function sorteerTabel(th, modus=""){
-            if (th == document.getElementById("tijdstipTh")){
+            document.querySelectorAll('th').forEach(th => th.innerHTML = th.innerHTML.replace(icon, ""));
+            if (th == document.getElementById("tijdstipTh") || th == document.getElementById("omloopTh")){
                 var getCellValue = (tr, idx) =>  tr.children[idx].getAttribute("value"); 
             }
             else {
                 var getCellValue = (tr, idx) =>  tr.children[idx].innerText || tr.children[idx].textContent;
             }
 
-            const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
                 v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
                 )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
             
@@ -256,11 +270,34 @@
                 .forEach(tr => table.appendChild(tr) );            
             }
 
+            
+            else if (modus == "asc"){
+                desc = false
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), true))
+                .forEach(tr => table.appendChild(tr) );            
+            }
+
+            else if (modus == "desc"){
+                desc = true
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), false))
+                .forEach(tr => table.appendChild(tr) );            
+            }
+
             else {
+                desc = !desc
                 Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
                 .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
                 .forEach(tr => table.appendChild(tr) );
             }
+            if (desc == true){
+                icon = `<i class="material-icons">arrow_drop_down</i>`
+            }
+            else if (desc == false){
+                icon = `<i class="material-icons">arrow_drop_up</i>`
+            }
+            th.innerHTML += icon
 
         }
 
