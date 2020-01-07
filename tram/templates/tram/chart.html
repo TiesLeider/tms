@@ -169,8 +169,14 @@
                         duration: 0 // general animation time
                     },
                     hover: {
-                        animationDuration: 0 // duration of animations when hovering an item
+                        animationDuration: 0, // duration of animations when hovering an item
+                        mode: 'nearest',
+                        intersect: true
                     },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                      },
                     elements: {
                         line: {
                             tension: 0 // disables bezier curves
@@ -212,16 +218,20 @@
                         duration: 0 // general animation time
                     },
                     hover: {
-                        animationDuration: 0 // duration of animations when hovering an item
+                        animationDuration: 0, // duration of animations when hovering an item,
+                        mode: 'label'
                     },
                     elements: {
                         line: {
                             tension: 0 // disables bezier curves
                         },
                         point: {
-                            radius: 0
+                            radius: 0.5
                         }
-                    }
+                    },
+                    tooltips: {
+                        mode: 'label',
+                    },
                 }
             });
             
