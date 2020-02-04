@@ -242,14 +242,14 @@ def get_omlopen_freq(request, assetnummer, van_datum, tot_datum):
 
 def get_actieve_storingen(request):
     storingen_qs = Storing.objects.filter(actief=True, gezien=False).order_by("-laatste_data__tijdstip")
-    data = list(storingen_qs.values("id", "laatste_data__assetnummer__assetnummer", "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
+    data = list(storingen_qs.values("id", "laatste_data__assetnummer__beschrijving", "laatste_data__assetnummer__assetnummer", "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
     for item in data:
         item["laatste_data__isotijdstip"] = item["laatste_data__tijdstip"].isoformat()
         item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime("%d %b %Y, %H:%M")
     return JsonResponse(data, safe=False)
 
 def get_sms_data(request):
-    sms_qs = SmsData.objects.all().order_by("ontvangen")
+    sms_qs = SmsData.objects.all().order_by("ontvangen")[:30]
     data = list(sms_qs.values("ontvangen", "telnummer", "storing", "status", "asset"))
 
     return JsonResponse(data, safe=False)
