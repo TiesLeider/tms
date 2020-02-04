@@ -249,7 +249,7 @@ def get_actieve_storingen(request):
     return JsonResponse(data, safe=False)
 
 def get_sms_data(request):
-    sms_qs = SmsData.objects.all().order_by("-ontvangen")[:30]
+    sms_qs = SmsData.objects.all().order_by("-ontvangen")
     data = list(sms_qs.values("ontvangen", "telnummer", "storing", "status", "asset"))
 
     return JsonResponse(data, safe=False)
