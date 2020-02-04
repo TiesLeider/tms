@@ -9,7 +9,6 @@ urlpatterns = [
     path("insertlogoonline",views.insert_logo_online, name="insert_logo_online"),
     path("storing/<int:storing_id>/gezien",views.storing_gezien, name="storing_gezien"),
     path("storing/<int:storing_id>/deactiveer",views.deactiveer_storing, name="storing_deactiveren"),
-    path("storingen", views.alle_storingen, name="alle_storingen"),
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
     path("api/resettelleralle", views.asset.reset_teller_alle, name="asset_reset_alle"),
@@ -19,5 +18,6 @@ urlpatterns = [
     path("index_form", views.index_form, name="index_form"),
     path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
     path("api/check_online_assets", views.check_assets_online, name="check_online_assets"),
-    path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data")
-]
+    path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data"),
+    path("sms", views.sms_lijst, name="sms_lijst")
+]  

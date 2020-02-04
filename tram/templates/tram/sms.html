@@ -1,0 +1,342 @@
+{% extends "tram/base.html" %}
+{% block content %}
+    <div class="card-panel white">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s3">
+                    <i id="zbIcon" class="material-icons prefix zoekBalkClass">search</i>
+                    <input id="zoekBalk" type="text" class="validate zoekBalkClass">
+                    <label for="zoekBalk">Zoeken</label>
+                </div>
+                <div class="col s9">
+                    <div id="balk" class="progress grey lighten-4" style="margin-top: 30px;">
+                        <div id="afteller" class="determinate" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="card-panel white" id="actieknoppen">
+            <button class="btn waves-effect waves-light blue round" type="submit" onclick="sendGeselecteerdeStoringen('negereren')">Geselecteerde storingen negeren
+                <i class="material-icons right">visibility_off</i>
+            </button>
+            <button class="btn waves-effect waves-light red round" type="submit" onclick="sendGeselecteerdeStoringen('herstellen')">Gelesecteerde storingen herstellen
+                <i class="material-icons right">offline_pin</i>
+            </button>        
+        </div>
+        <table id="tabel">
+            <tr>
+                <th style="max-width: 5px;"><label><input id="selectAlle" type="checkbox" class="filled-in" onclick="selecteerAlle(this)"/><span></span></label></th>
+                <th id=assetTh>Assetnummer</th>
+                <th id=storingTh>Storing</th>
+                <th>Status</th>
+                <th id="tijdstipTh">Tijdstip</th>
+                <th>Negeren</th>
+                <th>Herstellen</th>
+            </tr>
+            <tbody id="tabelInhoud">
+            </tbody>
+        </table>
+    </div>
+    {% if storingen|length > 30 %}
+        <div class="center-align">
+            <a class="waves-effect waves-light btn-large grey lighten-2 black-text" href="{% url 'alle_storingen'%}"><i class="material-icons left ">more_vert</i>Alle storingen</a>
+        </div>
+    {% endif %}
+{% endblock content%}
+
+{% block javascript%}
+    {% csrf_token %}
+    <script>
+        $('#actieknoppen').hide()
+        var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        var selectedTh = document.getElementById("tijdstipTh");
+        function swalDeactiveerStoring(id){
+            Swal.fire({
+                title: 'Zeker weten?',
+                text: "De storing wordt nu afgesloten. Bij nieuwe updates word een nieuwe storing aangemaakt.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ja, Herstel!'
+              }).then((result) => {
+                if (result.value) {
+                        window.location = "/tram/storing/"+ id +"/deactiveer";
+                    }
+                }
+            )
+        }
+
+        function pauzeerAnimatie(){
+            document.getElementById("afteller").style.animationPlayState = "paused";
+            document.getElementById("zbIcon").style.animationPlayState = "paused";
+            document.getElementById("zoekBalk").style.animationPlayState = "paused";
+        }
+
+    
+        function hervatAnimatie(){
+            if ($('input:checkbox').is(':checked') == false && $('#zoekBalk').val().toLowerCase() == ""){
+                document.getElementById("afteller").style.animationPlayState = "running";
+                document.getElementById("zbIcon").style.animationPlayState = "running";
+                document.getElementById("zoekBalk").style.animationPlayState = "running";
+            }
+        }
+
+        function getAjaxData(){
+            $.ajax({
+                method: "GET",
+                url: "/tram/api/get_sms_storingen",
+                success: function(response){
+                    updateTabel(response)
+                },
+                error: function(error_data){
+                    console.log(error_data)
+                },
+            })
+        }
+
+        function updateTabel(data){
+            var inhoud = ""
+            for (storing of data){  
+                regel = `<tr class="white">` +
+                `<td class="white"><label><input id="select_${storing.id}" value="${storing.id}" name="storingCheckbox" type="checkbox" class="filled-in" onclick="addToSelectedList(${storing.id})"/><span></span></label></td>` +
+                `<td><a href="/tram/asset/${storing.asset}"><button class=" white blue-text btn waves-effect waves-light">${storing.asset}</button></a></td>` +
+                `<td>${storing.storing}</td>` +
+                `<td>${storing.status}</td>` +
+                `<td value=${storing.ontvangen}>${storing.ontvangen}</td>` +
+                /*
+                `<td><a href="tram/storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
+                `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
+                */ "" 
+                inhoud += regel
+            }
+            $('#tabelInhoud').html(inhoud);
+            if (selectedTh){
+                sorteerTabel(selectedTh, "laatse_modus")
+            }
+            else{
+                sorteerTabel(document.getElementById("tijdstipTh"), "laatse_modus")
+            }
+        }
+
+        
+        /*
+
+        function updateTabel(data){
+
+            function color(score, melding){
+                if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden"){
+                    return "purple lighten-2"
+                }
+                else if(score >= 80 && score < 100 || melding == "WSA Defect"){
+                    return "red lighten-2"
+                }
+                else if(score >= 100 && score < 120){
+                    return "pink lighten-2"
+                }
+                else if(score >= 60 && score < 80){
+                    return "orange lighten-2"
+                }
+                else if(score >= 40 && score < 60){
+                    return "amber lighten-2"
+                }
+                else if(score >= 20 && score < 40){
+                    return "yellow lighten-2"
+                }
+                else if (score < 20){
+                    return "white"
+                }
+
+            }
+
+            var inhoud = ""
+            var omloop_cel
+            for (storing of data){
+                if (storing.laatste_data__omloop_b > 0) { omloop_cel = `<td value=${storing.laatste_data__omloop_a + storing.laatste_data__omloop_b}>A:${storing.laatste_data__omloop_a} - B: ${storing.laatste_data__omloop_b}</td>`} else {omloop_cel = `<td value=${storing.laatste_data__omloop_a}>${storing.laatste_data__omloop_a}</td>`}
+                regel = `<tr class="${color(storing.score, storing.bericht)}">` +
+                `<td class="white"><label><input id="select_${storing.id}" value="${storing.id}" name="storingCheckbox" type="checkbox" class="filled-in" onclick="addToSelectedList(${storing.id})"/><span></span></label></td>` +
+                `<td>${storing.id}</td>`+
+                `<td><a href="/tram/asset/${storing.laatste_data__assetnummer__assetnummer}"><button class=" white blue-text btn waves-effect waves-light">${storing.laatste_data__assetnummer__assetnummer}</button></a></td>` +
+                `<td>${storing.bericht}</td>` +
+                `<td>${storing.som}</td>` +
+                `<td>${storing.score}</td>` +
+                omloop_cel +
+                `<td value=${storing.laatste_data__isotijdstip}>${storing.laatste_data__tijdstip}</td>` +
+                `<td><a href="tram/storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
+                `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
+                inhoud += regel
+            }
+            $('#tabelInhoud').html(inhoud);
+            if (selectedTh){
+                sorteerTabel(selectedTh, "laatse_modus")
+            }
+            else{
+                sorteerTabel(document.getElementById("tijdstipTh"), "laatse_modus")
+            }
+        } */
+
+        $(document).ready(function(){
+          $("#zoekBalk").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            pauzeerAnimatie();
+            $("#tabelInhoud tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+            if (value == ""){
+                hervatAnimatie();
+            }
+          });
+
+          getAjaxData();
+          document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
+
+
+        });
+        var geselecteerde_storingen = []
+
+        function addToSelectedList(storing_ID){
+            if (document.getElementById(`select_${storing_ID}`).checked == true){
+                geselecteerde_storingen.push(storing_ID)
+            }
+            else {
+                geselecteerde_storingen.pop(storing_ID)
+            }
+            
+        }
+
+        function sendGeselecteerdeStoringen(methode){
+            postData = [...new Set(geselecteerde_storingen)]
+            if (postData.length > 0){
+                $.ajax({
+                    method: "POST",
+                    url: "tram/index_form",
+                    data: JSON.stringify({geselecteerde_storingen: postData, method: methode}),
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    },
+                    success: function(response, data){
+                        getAjaxData();
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '',
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                        $('#actieknoppen').hide();
+                    },
+                    error: function(error_data){
+                        Swal.fire("Error", `${error_data}`, "error")
+                    }   
+                })
+            }
+            else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: '',
+                    text:'selecteer eerst een storing',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+            }
+        }
+
+        function selecteerAlle(source){
+            boxen = document.getElementsByName("storingCheckbox");
+            for(box of boxen){
+                box.checked = source.checked;
+                if (box.checked == true){
+                    geselecteerde_storingen.push(box.value)
+                }
+                else {
+                    geselecteerde_storingen.pop(box.value)
+                }
+            }
+        }
+        document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            if (selectedTh == th){
+                sorteerTabel(th)
+            }
+            else{
+                if (th == document.getElementById("assetTh") || th == document.getElementById("storingTh")){
+                    console.log(th)
+                    sorteerTabel(th, "asc")
+                }
+                else {
+                    sorteerTabel(th, "desc")
+                }
+            }
+            selectedTh = th
+            
+        })));
+        var icon = `<i class="material-icons">arrow_drop_down</i>`
+        var desc = true 
+        function sorteerTabel(th, modus=""){
+            document.querySelectorAll('th').forEach(th => th.innerHTML = th.innerHTML.replace(icon, ""));
+            if (th == document.getElementById("tijdstipTh") || th == document.getElementById("omloopTh")){
+                var getCellValue = (tr, idx) =>  tr.children[idx].getAttribute("value"); 
+            }
+            else {
+                var getCellValue = (tr, idx) =>  tr.children[idx].innerText || tr.children[idx].textContent;
+            }
+
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+                )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+            
+            const table = document.getElementById("tabelInhoud");
+
+
+            if (modus == "laatse_modus"){
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc))
+                .forEach(tr => table.appendChild(tr) );            
+            }
+
+            
+            else if (modus == "asc"){
+                desc = false
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), true))
+                .forEach(tr => table.appendChild(tr) );            
+            }
+
+            else if (modus == "desc"){
+                desc = true
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), false))
+                .forEach(tr => table.appendChild(tr) );            
+            }
+
+            else {
+                desc = !desc
+                Array.from(table.querySelectorAll('tr:nth-child(n+1)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr) );
+            }
+            if (desc == true){
+                icon = `<i class="material-icons">arrow_drop_down</i>`
+            }
+            else if (desc == false){
+                icon = `<i class="material-icons">arrow_drop_up</i>`
+            }
+            th.innerHTML += icon
+
+        }
+
+        window.onclick = () => {
+            isChecked =  $('input:checkbox').is(':checked')
+            if (isChecked){
+                $('#actieknoppen').show()
+                pauzeerAnimatie();
+            }
+            else{
+                $('#actieknoppen').hide()
+                hervatAnimatie();
+            }
+        }
+
+
+    </script>
+{% endblock javascript%}

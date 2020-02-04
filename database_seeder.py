@@ -51,7 +51,7 @@ ell_stand1 = [
         {"inputnummer":4,"beschrijving":"Tongen failure A+B","urgentieniveau_id":2},
         {"inputnummer":5,"beschrijving":"Volgorde","urgentieniveau_id":2},
         {"inputnummer":6,"beschrijving":"WSA Defect","urgentieniveau_id":2},
-        {"inputnummer":7,"beschrijving":"Open gereden","urgentieniveau_id":3},
+        {"inputnummer":7,"beschrijving":"  gereden","urgentieniveau_id":3},
         {"inputnummer":8,"beschrijving":"Reserve","urgentieniveau_id":0},
         {"inputnummer":9,"beschrijving":"Timeout L of R point A of Point B","urgentieniveau_id":2},
         {"inputnummer":10,"beschrijving":"Verzamelmelding deksels, water in bak","urgentieniveau_id":4},

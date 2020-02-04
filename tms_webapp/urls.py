@@ -20,6 +20,6 @@ from tram import views as tram_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tram/', include("tram.urls")),
-    path("", tram_views.index, name="index")
-
+    path("", tram_views.index, name="index"),
+    # path("csv", tram_views.csv, name="csv")
 ]
