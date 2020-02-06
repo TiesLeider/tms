@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
 
 INSTALLED_APPS = [
     'tram.apps.TramConfig',
+    'pomp.apps.PompConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

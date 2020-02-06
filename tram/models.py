@@ -27,7 +27,7 @@ class Asset(models.Model):
 
 class ConfiguratieElement(models.Model):
     inputnummer = models.SmallIntegerField()
-    beschrijving = models.CharField(max_length=50, null=True)
+    beschrijving = models.CharField(max_length=100, null=True)
     urgentieniveau = models.ForeignKey("Urgentieniveau", on_delete=models.CASCADE)
     timeout = models.IntegerField(default=24)
 
@@ -42,8 +42,8 @@ class LogoData(models.Model):
     druk_b2 = models.IntegerField()
     kracht_a = models.IntegerField()
     kracht_b = models.IntegerField()
-    omloop_a = models.IntegerField()
-    omloop_b = models.IntegerField()
+    omloop_a = models.BigIntegerField()
+    omloop_b = models.BigIntegerField()
     tijdstip = models.DateTimeField(auto_now=True)
 
     def __str__(self):
