@@ -21,7 +21,7 @@ data6 = b'''{"ojson":{ "received": "2019-12-16 22:13:01", "modem": "wwan0", "fro
 
 # print(f"{r.json()}")
 
-pompdata = b'{"ojson":{"assetnummer":"pomp", "storing":3, "niveau": 200}}'
+pompdata = b'{"ojson":{"assetnummer":"Testasset", "storing":3, "niveau": 20}}'
 
-r = requests.post( url="http://127.0.0.1:8000/pomp/insertdata", data = pompdata)
+r = requests.post( url="http://10.165.2.10:8000/pomp/insertdata", data = pompdata)
 print(f"{r.json()}")
