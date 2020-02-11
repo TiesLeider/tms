@@ -1,0 +1,27 @@
+127;10.0.9.73;WSL W127;aangesloten 9, 10, 11;
+160;;WSL W160 (Azartplein);aangesloten 11;
+260;10.0.7.73;WSL W260 (Rembrandtplein);aangesloten 9 en 11;
+300;10.0.7.209;WSL W300 (Victorieplein);aangesloten 9 en 11;
+309;10.0.7.169;WSL W309-311 (Ceintuurbaan);Ombouw onbekend;Wordt gepolled
+313;10.0.3.209;WSL W313-315;Ombouw onbekend;Wordt gepolled
+317;10.0.3.233;WSL W317-319;Ombouw onbekend;
+433;10.0.7.49;WSL W433 (Nassaukade);aangesloten 9 en 11;
+434;10.0.7.97;WSL W434 (Frederik Hendrikplantsoen);aangesloten 9 en 11;
+455;10.0.9.65;WSL W455 (Bos en Lommerplein);aangesloten 9 en 11;
+490;10.0.7.201;WSL W490 (Marnixstraat);Aansluiting onbekend (waarschijnlijk 9, 10, 11);Wordt gepolled
+492;10.0.7.81;WSL W492 (Marnixstraat);Aansluiting onbekend (waarschijnlijk 9, 10, 11);Wordt gepolled
+496;10.0.7.121;WSL W496 (Kinkerstraat);Aansluiting onbekend�(waarschijnlijk 9, 10, 11);Wordt gepolled
+528;10.0.7.217;WSL W528 (Hoofdweg);Ombouw onbekend;
+559;10.0.8.41;WSL W559-565 (Overtoom);Ombouw onbekend;Wordt gepolled
+563;10.0.7.105;WSL W563-635 (Overtoom);Ombouw onbekend;Wordt gepolled
+576;10.0.7.89;WSL W576 (Surinamestraat);aangesloten 9, 10 en 11;
+577;10.0.7.9;WSL W577 (Overtoomsesluis);aangesloten 9, 10 en 11;
+588;10.0.3.57;WSL W588-590 (Amstelveenseweg);"aangesloten 9, 10 en 11; Mist 12";Wordt gepolled
+617;10.0.7.33;WSL W617 (Haarlemmermeercircuit);Ombouw onbekend;Wordt gepolled
+621;10.0.7.113;WSL W621 (Haarlemmermeercircuit);Ombouw onbekend;Wordt gepolled
+625;10.0.3.177;WSL W625 (Haarlemmermeercircuit);Ombouw onbekend;Wordt gepolled
+691;10.0.7.185;WSL W691 (Celebesstraat);aangesloten 9 en 11;
+971;10.0.7.129;WSL W971 (Eindlus IJburg);aangesloten 9, 10 en 11;
+2641;10.0.9.81;WSL W2641;"alles aangesloten; input sensor 7,8";Wordt gepolled
+2642;10.0.9.97;WSL W2642;"alles aangesloten; input sensor 7,8";Wordt gepolled
+Michiel;10.29.0.3;Bureau;; 

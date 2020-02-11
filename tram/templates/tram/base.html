@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+      <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>TMS</title>
+    <!-- Material Icon CDN -->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Path of the materialize.min.css file -->
+        <link rel="stylesheet" href="{% static 'tram/css/materialize.min.css' %}">
+    <!-- Custom css file path -->
+        <link rel="stylesheet" href="{% static 'tram/css/style.css' %}">
+    <!-- Used as an example only to position the footer at the end of the page.
+      You can delete these styles or move it to your custom css file -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <nav class="cyan">
+        <div class="nav-wrapper">
+          <div class="container" style="margin-left: 30px">
+            <ul class="left">
+              <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_87_transparant.png' %}" class="round" style="position: relative; ; margin-right: 10px; margin-top: 6px;" alt=""></li>
+              <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
+              <li>
+                <a href="#" id="checken" class="grey hoverable btn-large round"><i class="large material-icons left">autorenew</i>Checken op offline assets...</a>
+                <a href="#" id="alle_verbonden" onclick="checkOnlineAssets()" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
+                <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
+              </li>
+              <li><a href="#" class="grey hoverable btn-large round"><i class="material-icons left">timeline</i>Analyse</a></li>
+            </ul>
+            <img class="brand-logo right" src="{% static 'tram/img/gvb_logo.png' %}" height="65px" style="padding-right: 20px;" alt=""/>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <div id="niet_verbonden_modal" class="modal red lighten-1">
+      <div class="modal-content" id="niet_verbonden_modal_content">
+      </div>
+    </div>
+    <main>
+        {% block content %}{% endblock%}
+    </main>
+    <footer class="page-footer cyan">
+      <div class="container">
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+          © 2019 TMS
+        </div>
+      </div>
+    </footer>
+    <!-- The jQuery file path -->
+      <script src="{% static 'tram/js/jquery.min.js' %}"></script>
+    <!-- Path of the materialize.min.js file -->
+      <script src="{% static 'tram/js/materialize.min.js' %}"></script>
+    <script>
+      $("document").ready(function(){
+        $('#alle_verbonden').hide();
+        $('#niet_verbonden').hide();
+        $('.modal').modal();
+        $('.tooltipped').tooltip();
+        checkOnlineAssets()
+        setInterval(checkOnlineAssets, 60000 * 5)
+       });
+
+       function checkOnlineAssets(){
+        $.ajax({
+          method: "GET",
+          url: "/tram/api/check_online_assets",
+          success: function(response){
+              updateVerbondenKnop(response)
+          },
+          error: function(error_data){
+              console.log(error_data)
+          },
+      })
+       }
+       function updateVerbondenKnop(data){
+         if (data.length > 0){
+           content = "Geen data ontvangen van deze assets in het afgelopen halfuur: <br><br>" 
+           $('#alle_verbonden').hide();
+           $("#checken").hide();
+           $('#niet_verbonden').show();
+           $('#niet_verbonden').html(`<i class="large material-icons left">warning</i>${data.length} logos niet verbonden`)
+           for (asset of data){
+             content += `
+             <div class="card-panel white">
+              <span><a href="/tram/asset/${asset.assetnummer}"><button class=" white blue-text btn waves-effect waves-light">${asset.assetnummer}</button></a> Laatste data ontvangen op: ${asset.tijdstip}</span>
+            </div>`
+           }
+           $('#niet_verbonden_modal_content').html(content)
+         }
+         if (data.length == 0){
+          M.toast({html: 'Alle assets zijn online!'})
+          $("#checken").hide();
+          $('#alle_verbonden').show();
+          $('#niet_verbonden').hide();
+         }
+       }
+    </script>
+      {% block javascript %} {% endblock %}
+  </body>
+</html>

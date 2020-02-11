@@ -1,0 +1,127 @@
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }  
+  main {
+    flex: 1 0 auto;
+    /* background-image: ; */
+    background-color: dodgerblue;
+  }
+
+.round {
+  border-radius: 25px;
+}
+
+#afteller {
+  animation-name: afteller;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.zoekBalkClass{
+  animation-name: zoekBalkAni;
+  animation-duration: 30s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+
+@keyframes zoekBalkAni{
+  0% {color:rgb(32,189,103); border-bottom-color:rgb(32,189,103);}
+  33% {color: rgb(32,189,103); border-bottom-color:rgb(32,189,103);}
+  35% {color: rgb(231,130,0); border-bottom-color:rgb(231,130,0);}
+  66% {color: rgb(231,130,0); border-bottom-color:rgb(231,130,0);}
+  68% {color:  rgb(76,150,215) ;border-bottom-color:rgb(76,150,215);}
+  100% {color: rgb(76,150,215); border-bottom-color:rgb(76,150,215);}
+}
+
+@keyframes afteller{
+  0% {width: 0%; background-color:rgb(32,189,103);}
+  33% {background-color: rgb(32,189,103);;}
+  35% {background-color: rgb(231,130,0);}
+  66% {background-color: rgb(231,130,0);}
+  68% {background-color:  rgb(76,150,215);}
+  100% {width: 100%; background-color: rgb(76,150,215);}
+}
+
+ /* label color */
+ .input-field label {
+  color: #000;
+}
+/* label focus color */
+/* .input-field input[type=text]:focus + label {
+  color: rgb(76,150,215);
+} */
+/* label underline focus color */
+/* .input-field input[type=text]:focus {
+  border-bottom: 1px solid rgb(76,150,215);
+  box-shadow: 0 1px 0 0 rgb(76,150,215);
+} */
+/* valid color */
+.input-field input[type=text].valid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+/* invalid color */
+.input-field input[type=text].invalid {
+  border-bottom: 1px solid #000;
+  box-shadow: 0 1px 0 0 #000;
+}
+/* icon prefix focus color */
+.input-field .prefix.active {
+  color: rgb(76,150,215);
+}
+
+th {
+  cursor: pointer;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+#tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+#tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+#tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}

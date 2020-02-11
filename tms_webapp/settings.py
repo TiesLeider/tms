@@ -25,13 +25,13 @@ SECRET_KEY = '%i5rimpb-9z$%u2@*k(=f%t)%@95v6z@ujvu!=7u-^b0530uxj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["10.165.2.10"]
-
+ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
 
 # Application definition
 
 INSTALLED_APPS = [
     'tram.apps.TramConfig',
+    'pomp.apps.PompConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -104,15 +104,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'nl-nl'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Amsterdam'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

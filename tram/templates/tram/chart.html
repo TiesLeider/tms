@@ -1,0 +1,304 @@
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TMS</title>
+    <!-- Material Icon CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Path of the materialize.min.css file -->
+    <link rel="stylesheet" href="{% static 'tram/css/materialize.min.css' %}">
+    <!-- Custom css file path -->
+    <link rel="stylesheet" href="{% static 'tram/css/style.css' %}">
+    <!-- Used as an example only to position the footer at the end of the page.
+    You can delete these styles or move it to your custom css file -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+</head>
+
+<body>
+    <main style="background-color: white">
+        <div class="row">
+            <div class="col l12 m12 s12">
+                <div class="card-panel white">
+                    <div class="input-field col s12">
+                        <select id="grafiekSelect">
+                            <option value="omlopen_totaal">Omlopen totaal</option>
+                            <option value="omlopen_freq">Omloop Frequentie</option>
+                        </select>
+                        <label>Kies grafiek</label>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <input id="van_datum" type="text" class="datepicker">
+                            <label for="van_datum">Vanaf datum</label>
+                        </div>
+                        <div class="input-field col s5">
+                            <input id="tot_datum" type="text" class="datepicker">
+                            <label for="tot_datum">Tot en met datum</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <a onclick="getAjaxData(vandaagDate(), vandaagDate())"
+                            class="waves-effect waves-light btn grey round"><i class="material-icons right">add</i>
+                            vandaag</a>
+                        <a onclick="getAjaxData(vorigeMaandDate(), vandaagDate())"
+                            class="waves-effect waves-light btn grey round"><i class="material-icons right">add</i>
+                            afgelopen maand</a>
+                    </div>
+                    <div id="grafiek" class="center-align">
+                        <div id="loader" class="preloader-wrapper big active">
+                            <div class="spinner-layer spinner-blue">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="spinner-layer spinner-red">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="spinner-layer spinner-yellow">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+
+                            <div class="spinner-layer spinner-green">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas id="myChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+<!-- The jQuery file path -->
+<script src="{% static 'tram/js/jquery.min.js' %}"></script>
+<!-- Path of the materialize.min.js file -->
+<script src="{% static 'tram/js/materialize.min.js' %}"></script>
+<script>
+    var chart;
+    $(document).ready(function () {
+        $('select').formSelect();
+
+        $('#myChart').hide();
+        $('#loader').hide();
+
+        var vanDatumPicker = $('#van_datum').datepicker({
+            maxDate: new Date(),
+            format: "dd-mm-yyyy",
+            onClose: function () {
+                getAjaxData()
+            }
+        });
+
+        var totDatumPicker = $('#tot_datum').datepicker({
+            maxDate: new Date(),
+            defaultDate: new Date(),
+            setDefaultDate: true,
+            format: "dd-mm-yyyy",
+            onClose: function () {
+                getAjaxData()
+            }
+        });
+    });
+
+    function maak_grafiek(labels, data, method) {
+        $('#myChart').show();
+        $('#loader').hide();
+        var ctx = document.getElementById('myChart').getContext('2d');
+        if (method == "omlopen_totaal"){
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omlopen bak A',
+                        data: data[0],
+                        borderColor: 'rgb(135, 255, 221)',
+                        fill: false
+                    },
+                    {
+                        label: 'Omlopen bak B',
+                        data: data[1],
+                        borderColor: 'rgb(135, 235, 255)',
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: false
+                            }
+                        }]
+                    },
+                    animation: {
+                        duration: 0 // general animation time
+                    },
+                    hover: {
+                        animationDuration: 0, // duration of animations when hovering an item
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                      },
+                    elements: {
+                        line: {
+                            tension: 0 // disables bezier curves
+                        },
+                        point: {
+                            radius: 0.5
+                        }
+                    }
+                }
+            });
+        }
+        if (method == "omlopen_freq"){
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omlopen bak A',
+                        data: data[0],
+                        borderColor: 'rgb(135, 255, 221)',
+                        fill: false
+                    },
+                    {
+                        label: 'Omlopen bak B',
+                        data: data[1],
+                        borderColor: 'rgb(135, 235, 255)',
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: false
+                            }
+                        }]
+                    },
+                    animation: {
+                        duration: 0 // general animation time
+                    },
+                    hover: {
+                        animationDuration: 0, // duration of animations when hovering an item,
+                        mode: 'label'
+                    },
+                    elements: {
+                        line: {
+                            tension: 0 // disables bezier curves
+                        },
+                        point: {
+                            radius: 0.5
+                        }
+                    },
+                    tooltips: {
+                        mode: 'label',
+                    },
+                }
+            });
+            
+        }
+    }
+
+    function laadGrafiek() {
+        $('#myChart').hide();
+        $('#loader').show();
+    }
+
+    function getAjaxData(vanDatum = document.getElementById("van_datum").value, totDatum = document.getElementById("tot_datum").value) {
+        method = document.getElementById("grafiekSelect").value
+
+        if (chart) {
+            chart.destroy()
+        }
+        $.ajax({
+            method: "GET",
+            url: `/tram/api/${method}/{{asset.assetnummer}}/${vanDatum}/${totDatum}`,
+            success: function (response) {
+                maak_grafiek(response.labels, response.data, method);
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            },
+            beforeSend: function (response) {
+                laadGrafiek()
+            }
+        })
+    }
+
+    function vandaagDate() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var today = dd + '-' + mm + '-' + yyyy;
+        return today;
+    }
+
+    function vorigeMaandDate() {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm
+        if (today.getMonth() == 0) { mm = 12 } else { mm = today.getMonth() }
+
+        var yyyy = today.getFullYear();
+        if (mm == 12){
+            yyyy = yyyy - 1
+        }
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var today = dd + '-' + mm + '-' + yyyy;
+        console.log(today)
+        return today;
+    }
+
+</script>

@@ -1,0 +1,72 @@
+{% extends "tram/base.html" %}
+{% block content %}
+    <div class="card-panel white">
+        <h1>{{asset.assetnummer}}</h1>
+        <div class="row">
+            <div class="col l5">
+                <div class="card-panel blue-grey lighten-3">
+                    <h3>Details</h3>
+                    <table>
+                        <tr>
+                            <td>Beschrijving:</td>
+                            <td>{{asset.beschrijving}}</td>
+                        </tr>
+                        <tr>
+                            <td>IP-Adres:</td>
+                            <td>{{asset.ip_adres}}</td>
+                        </tr>
+                        <tr>
+                            <td>Online:</td>
+                            <td>{{asset.online}}</td>
+                        </tr>
+                        <tr>
+                            <td>Configuratie:</td>
+                            <td>{{asset.configuratie.naam}}</td>
+                        </tr>
+                        <tr>
+                            <td>Weging:</td>
+                            <td>{{asset.weging}}x</td>
+                        </tr>
+                        <tr>
+                            <td>Aantal omlopen:</td>
+                            <td>Bak A: {{laatste_polling.omloop_a}}<br>Bak B: {{laatste_polling.omloop_b}}</td>
+                        </tr>
+                        <tr>
+                            <td>Laatste data ontvangen op:</td>
+                            <td>{{laatste_polling.tijdstip}}</td>
+                        </tr>
+                    </table>
+                    <br>
+                </div>
+            </div>
+            <div class="col l7">
+                <div class="card-panel  red lighten-2">
+                    <h3>Laatste storingen:</h3>
+                    <table>
+                        <tr>
+                            <th>Storing</th>
+                            <th>Omlopen</th>
+                            <th>Tijdstip</th>
+                        </tr>
+                        {% for data in laatste_data|dictsortreversed:"tijdstip"%}
+                            <tr>
+                                <td>
+                                {% for s in data.storing_beschrijving%}
+                                {{s}}<br>
+                                {% endfor%}
+                                </td>
+                                {% if data.omloop_b > 0 %}
+                                    <td>A:{{data.omloop_a}} <br> B: {{data.omloop_b}}</td>
+                                {% else %}
+                                    <td>{{data.omloop_a}}</td>   
+                                {% endif%}
+                                <td>{{data.tijdstip}}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <iframe src="{% url 'asset_chart' asset.assetnummer %}" id="iframe" frameborder="0" height="1300px" width="90%"></iframe>
+    </div>
+{% endblock %}
