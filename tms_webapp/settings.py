@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
+    'import_export',
     'tram.apps.TramConfig',
     'pomp.apps.PompConfig',
     'django.contrib.admin',
@@ -119,3 +120,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = '/var/www/tms/static/'
+
+IMPORT_EXPORT_USE_TRANSACTIONS = False
