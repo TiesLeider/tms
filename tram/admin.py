@@ -1,9 +1,16 @@
 from django.contrib import admin
 from .models import *
+from import_export import resources
+from import_export.admin import ImportExportActionModelAdmin
 
-@admin.register(Asset)
-class AssetAdmin(admin.ModelAdmin):
+class AssetResource(resources.ModelResource):
+
+    class Meta:
+        model = Asset
+    
+class AssetAdmin(ImportExportActionModelAdmin):
     list_display=("assetnummer", "beschrijving", "ip_adres", "online", "disconnections")
+    resource_class = AssetResource
 
 @admin.register(LogoData)
 class LogoDataAdmin(admin.ModelAdmin):
@@ -27,7 +34,9 @@ class ConfiguratieAdmin(admin.ModelAdmin):
 class StoringAdmin(admin.ModelAdmin):
     list_display=("id", "assetnummer", "actief", "gezien")
 
+
 # Register your models here.
 # admin.site.register(LogoMelding)
 # admin.site.register(Configuratie)
+admin.site.register(Asset, AssetAdmin)
 admin.site.register(Urgentieniveau)
