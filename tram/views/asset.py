@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from ..models import *
+from django.db.models import Sum
 
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
@@ -25,6 +26,14 @@ def reset_teller_alle(request):
             laatste_data.save()
         except:
             pass
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+def corrigeer_omlopen(request, assetnummer):
+    som = LogoData.objects.filter(assetnummer=assetnummer, tijdstip__range=(datetime.datetime(2019, 12, 12), datetime.datetime.now())).aggregate(Sum("omloop_a"))
+    ad = AbsoluteData.objects.filter(assetnummer=assetnummer).latest()
+    ad.omloop_a = som["omloop_a__sum"]
+    ad.save()
+
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def asset_chart(request, assetnummer):

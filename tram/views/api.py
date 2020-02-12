@@ -3,12 +3,18 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from django.db.models import Sum
 from ..models import *
 from .polling import LogoPolling, SmsPolling
+from requests.exceptions import Timeout
+import requests
 import traceback
 import datetime
 import json
 import logging
+import subprocess
+import platform
+import os
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
 
@@ -272,7 +278,7 @@ def index_form(request):
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-def check_assets_online(request):
+def check_assets_online_oud(request):
     try:
         online_assets = Asset.objects.filter(pollbaar=True)
         offline_assets = []
@@ -280,7 +286,36 @@ def check_assets_online(request):
             ad = AbsoluteData.objects.filter(assetnummer=asset).latest()
             if (ad.tijdstip < (datetime.datetime.now() - datetime.timedelta(minutes=30))):
                 offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": ad.tijdstip.strftime("%d %b %Y, %H:%M")})
-    except Exception:
-        pass
+    except Exception as ex:
+        print(ex)
+
+    return JsonResponse(offline_assets, safe=False)
+
+def check_assets_online(request):
+    def ping(host):
+        FNULL = open(os.devnull, 'w')
+        param = '-n' if platform.system().lower()=='windows' else '-c'
+        return subprocess.call(
+        ["ping", param, "1", host], stdout=FNULL) == 0
+
+
+    try:
+        logo_assets = Asset.objects.exclude(ip_adres_logo=None)
+        offline_assets = []
+        for asset in logo_assets:
+            print(asset.ip_adres_logo)
+            # if ping(asset.ip_adres_logo) != 0:
+            try:
+                r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=2)
+            except Timeout:
+                try:
+                    ad = AbsoluteData.objects.filter(assetnummer=asset).latest()
+                    tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
+                except ObjectDoesNotExist:
+                    tijdstip = "Nooit" 
+                offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
+    except Exception as ex:
+        print(ex)
+        print(type(ex))
 
     return JsonResponse(offline_assets, safe=False)

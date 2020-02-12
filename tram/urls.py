@@ -11,6 +11,7 @@ urlpatterns = [
     path("storing/<int:storing_id>/deactiveer",views.deactiveer_storing, name="storing_deactiveren"),
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
+    path("asset/<str:assetnummer>/corrigeer_omlopen", views.asset.corrigeer_omlopen, name="asset_corrigeer_omlopen"),
     path("api/resettelleralle", views.asset.reset_teller_alle, name="asset_reset_alle"),
     path("api/omlopen_totaal/<str:assetnummer>/<str:van_datum>/<str:tot_datum>", views.api.get_omlopen_totaal, name="get_omlopen_totaal"),
     path("api/omlopen_freq/<str:assetnummer>/<str:van_datum>/<str:tot_datum>", views.api.get_omlopen_freq, name="get_omlopen_freq"),
