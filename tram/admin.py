@@ -3,13 +3,23 @@ from .models import *
 from import_export import resources
 from import_export.admin import ImportExportActionModelAdmin
 
+admin.site.site_header = "TMS Beheer"
+
 class AssetResource(resources.ModelResource):
 
+
     class Meta:
+        skip_unchanged = True
+        report_skipped = True
         model = Asset
+
+class ConfiguratieResource(resources.ModelResource):
+
+    class Meta:
+        model = Configuratie
     
 class AssetAdmin(ImportExportActionModelAdmin):
-    list_display=("assetnummer", "beschrijving", "ip_adres", "online", "disconnections")
+    list_display=("assetnummer", "beschrijving", "ip_adres_logo", "pollbaar")
     resource_class = AssetResource
 
 @admin.register(LogoData)
@@ -27,8 +37,9 @@ class SmsDataAdmin(admin.ModelAdmin):
     list_display=("asset", "storing", "ontvangen",)
 
 @admin.register(Configuratie)
-class ConfiguratieAdmin(admin.ModelAdmin):
+class ConfiguratieAdmin(ImportExportActionModelAdmin):
     list_display=("naam",)
+    resource_class = ConfiguratieResource
 
 @admin.register(Storing)
 class StoringAdmin(admin.ModelAdmin):

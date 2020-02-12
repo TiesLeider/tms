@@ -121,6 +121,6 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/home/gvb-tms/tms/static_files/'
+STATIC_ROOT = '/var/www/tms/static/'
 
 IMPORT_EXPORT_USE_TRANSACTIONS = False

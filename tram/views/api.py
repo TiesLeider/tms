@@ -274,7 +274,7 @@ def index_form(request):
 
 def check_assets_online(request):
     try:
-        online_assets = Asset.objects.filter(online=True)
+        online_assets = Asset.objects.filter(pollbaar=True)
         offline_assets = []
         for asset in online_assets:
             ad = AbsoluteData.objects.filter(assetnummer=asset).latest()

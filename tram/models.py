@@ -6,11 +6,11 @@ import datetime
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True)
     beschrijving = models.CharField(null=True, max_length=70)
-    ip_adres = models.GenericIPAddressField(null=True)
-    online = models.BooleanField(default=False)
+    ip_adres_logo = models.GenericIPAddressField(null=True)
+    ip_adres_modem = models.GenericIPAddressField(null=True)
+    pollbaar = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     weging = models.IntegerField(default=1)
-    disconnections = models.IntegerField(default=0)
 
 
     def __str__(self):
