@@ -127,7 +127,8 @@ def insert_logo_data(request):
                     #Ja: maak nieuwe storing aan
                     #Nee: skip
                 try:
-                    vorige_storing = Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                    vorige_storingen = Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip')
+                    vorige_storing = vorige_storingen.first()
                     if vorige_storing:
                         if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
                             logging.info("%s: Verkeerde storing opgehaald. (storing van %s)", assetnummer, vorige_storing.laatste_data.assetnummer.assetnummer)
@@ -144,8 +145,13 @@ def insert_logo_data(request):
                 except ObjectDoesNotExist:
                     vorige_storing = None
                 if vorige_storing:
-                    #TODO: Slechts 1 storing per keer.
-                    logging.info("%s: vorige storingen: %s", assetnummer, Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip'))
+                    if vorige_storingen.count() > 1:
+                        print(vorige_storing)
+                        vorige_storing.som = vorige_storingen.aggregate(Sum("som"))["som__sum"]
+                        logging.info("%s: aggregate: %s", assetnummer, vorige_storingen.aggregate(Sum("som"))["som__sum"])
+                        for s in vorige_storingen.exclude(id=vorige_storing.id):
+                            s.delete()
+                    logging.info("%s: vorige storingen: %s", assetnummer, vorige_storingen)
                     if (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
