@@ -113,9 +113,10 @@ def insert_logo_data(request):
             omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad) else record.omloop_a,
             omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad) else record.omloop_b,
             )
-        if((ad.omloop_a + ad.omloop_b) - (vorige_ad.omloop_a + vorige_ad.omloop_b)) > 100:
-            logging.warning("%s: OMLOOP WAARSCHUWING: verschil in omlopen is groter dan 100. vorig aantal omlopen: %s, huidig aantal omlopen: %s. gemaakte omlopen: %s", assetnummer, (vorige_ad.omloop_a + vorige_ad.omloop_b), (ad.omloop_a + ad.omloop_b), (record.omloop_a + record.omloop_b))
-        ad.save()
+        if vorige_ad:    
+            if((ad.omloop_a + ad.omloop_b) - (vorige_ad.omloop_a + vorige_ad.omloop_b)) > 100:
+                logging.warning("%s: OMLOOP WAARSCHUWING: verschil in omlopen is groter dan 100. vorig aantal omlopen: %s, huidig aantal omlopen: %s. gemaakte omlopen: %s", assetnummer, (vorige_ad.omloop_a + vorige_ad.omloop_b), (ad.omloop_a + ad.omloop_b), (record.omloop_a + record.omloop_b))
+            ad.save()
 
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
