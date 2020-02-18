@@ -6,11 +6,18 @@ import datetime
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True)
     beschrijving = models.CharField(null=True, max_length=70)
-    ip_adres_logo = models.GenericIPAddressField(null=True)
-    ip_adres_modem = models.GenericIPAddressField(null=True)
+    ip_adres_logo = models.GenericIPAddressField(null=True, blank=True)
+    ip_adres_modem = models.GenericIPAddressField(null=True, blank=True)
     pollbaar = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     weging = models.IntegerField(default=1)
+    variant = models.CharField(max_length=200, null=True)
+    link_fotos = models.CharField(max_length=200, null=True)
+    link_tekeningen = models.CharField(max_length=200, null=True)
+    lat_coordinaat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    lon_coordinaat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+
+
 
 
     def __str__(self):
@@ -175,7 +182,7 @@ class Storing(models.Model):
 class Configuratie(models.Model):
     _id = models.ObjectIdField()
     naam = models.CharField(max_length=50)
-    config = models.ArrayModelField(model_container=ConfiguratieElement)
+    config = models.ArrayField(model_container=ConfiguratieElement)
 
     def __str__(self):
         return self.naam
