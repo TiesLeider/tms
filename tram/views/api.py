@@ -187,7 +187,6 @@ def insert_logo_data_oud(request):
                     vorige_storing = None
                 if vorige_storing:
                     if vorige_storingen.count() > 1:
-                        print(vorige_storing)
                         vorige_storing.som = vorige_storingen.aggregate(Sum("som"))["som__sum"]
                         logging.info("%s: aggregate: %s", assetnummer, vorige_storingen.aggregate(Sum("som"))["som__sum"])
                         for s in vorige_storingen.exclude(id=vorige_storing.id):
@@ -334,7 +333,8 @@ def check_assets_online_oud(request):
             if (ad.tijdstip < (datetime.datetime.now() - datetime.timedelta(minutes=30))):
                 offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": ad.tijdstip.strftime("%d %b %Y, %H:%M")})
     except Exception as ex:
-        print(ex)
+        traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
 
     return JsonResponse(offline_assets, safe=False)
 
@@ -350,7 +350,6 @@ def check_assets_online(request):
         logo_assets = Asset.objects.exclude(ip_adres_logo=None)
         offline_assets = []
         for asset in logo_assets:
-            print(asset.ip_adres_logo)
             # if ping(asset.ip_adres_logo) != 0:
             try:
                 r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=2)
@@ -362,7 +361,7 @@ def check_assets_online(request):
                     tijdstip = "Nooit" 
                 offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
     except Exception as ex:
-        print(ex)
-        print(type(ex))
+        traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
 
     return JsonResponse(offline_assets, safe=False)
