@@ -25,9 +25,49 @@ def requesthandler(request):
             return request
 
 
-
 @csrf_exempt
 def insert_logo_data(request):
+    try:
+        #Check of de requestdata ok is en manipuleer assetnummer:
+        requesthandler(request)
+        data = str(request.body)[2:-1]
+        json_data = json.loads(data).get("ojson")
+        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startswith("w") else json_data.get("assetnummer")
+        if len(assetnummer) > 4 and assetnummer.startswith("W"):
+            assetnummer = assetnummer[1:]
+        
+
+
+        #Maak record Logodata:
+        record = LogoData(
+            assetnummer_id = assetnummer,
+            storing = json_data.get("storing"),
+            druk_a1 = json_data.get("druk_a1"),
+            druk_a2 = json_data.get("druk_a2"),
+            druk_b1 = json_data.get("druk_b1"),
+            druk_b2 = json_data.get("druk_b2"),
+            kracht_a = json_data.get("kracht_a"),
+            kracht_b = json_data.get("kracht_b"),
+            omloop_a = json_data.get("omloop_a"),
+            omloop_b = json_data.get("omloop_b"),
+            )
+        record.save()
+
+        polling = LogoPolling(record)
+
+        polling.insert_absolute_data()
+        polling.storing_algoritme() 
+
+        return JsonResponse({"response": True, "error": None})
+    except Exception as ex:
+        traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
+        return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
+
+
+
+@csrf_exempt
+def insert_logo_data_oud(request):
     try:
         def maak_nieuwe_storing(asset, absulute_data, bericht, counter=1):
             logging.info("%s: Nieuwe storing aangemaakt: %s", asset, bericht)

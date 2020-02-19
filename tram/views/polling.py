@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from ..models import *
 import datetime
+from django.db.models import Sum
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
@@ -35,7 +36,8 @@ class LogoPolling:
         self.ad.save()
 
     def maak_nieuwe_storing(self, bericht, counter=1):
-        logging.info("Nieuwe storing aangemaakt: %s: %s", self.assetnummer)
+        logging.info(
+            f"{self.assetnummer}: Nieuwe storing aangemaakt:  {bericht}")
         new_storing = Storing(
             assetnummer_id=self.assetnummer,
             gezien=False,
@@ -49,37 +51,12 @@ class LogoPolling:
         new_storing.save()
 
     def get_laatste_asbolute_data(self):
-        vorige_ad = AbsoluteData.objects.filter(assetnummer_id=self.assetnummer).latest()
-        if (vorige_ad.assetnummer.assetnummer != self.assetnummer):
-            logging.info("Verkeerde data opgehaald: %s. Verwacht was: %s",
-                         vorige_ad.assetnummer.assetnummer, self.assetnummer)
-            for i in range(2, 21):
-                vorige_ad = AbsoluteData.objects.filter(
-                    assetnummer_id=self.assetnummer).latest()
-                if (vorige_ad.assetnummer.assetnummer == self.assetnummer):
-                    logging.info("Data komt weer overeen met assetnummer: %s-%s",
-                                 vorige_ad.assetnummer.assetnummer, self.assetnummer)
-                    break
-                if (vorige_ad.assetnummer.assetnummer != self.assetnummer):
-                    logging.info("Poging %s: Verkeerde data opgehaald: %s. Verwacht was: %s",
-                                 i, vorige_ad.assetnummer.assetnummer, self.assetnummer)
-                if (i == 20):
-                    logging.warning("Polling dropped: %s", self.assetnummer)
-                    raise Exception(
-                        f"Fout bij het ophalen van data van asset {self.assetnummer}")
-
+        try:
+            vorige_ad = AbsoluteData.objects.filter(
+                assetnummer_id=self.assetnummer).latest()
+        except ObjectDoesNotExist:
+            vorige_ad = None
         return vorige_ad
-
-        if not self.vorige_ad:
-            logging.warning(
-                "Geen vorige data gevonden van assetnummer: %s", assetnummer)
-            for i in range(1, 6):
-                logging.info(
-                    "Poging %s: opnieuw data ophalen van asset: %s", i, assetnummer)
-                self.vorige_ad = self.get_laatste_asbolute_data()
-                if self.vorige_ad:
-                    logging.info("Data gevonden van asset: %s!", assetnummer)
-                    break
 
     def storing_algoritme(self):
         # Er is een vorige polling geweest van deze asset
@@ -90,34 +67,21 @@ class LogoPolling:
                 # Zo ja: kijk huidige procedure
                 # Zo niet: kijk of de deze beschrijving voorkwam in de afgelopen x (configuratie.timeout) uur of storing is voorgekomen
                     # Ja: maak nieuwe storing aan
-                    #Nee: skip
+                    # Nee: skip
                 try:
-                    vorige_storing = Storing.objects.filter(assetnummer=self.assetnummer, bericht=sb, actief=True).select_related(
-                        "laatste_data").order_by('-laatste_data__tijdstip').first()
-                    if vorige_storing:
-                        if (vorige_storing.laatste_data.assetnummer.assetnummer != self.assetnummer):
-                            logging.info("Verkeerde storing opgehaald: %s. Verwacht was: %s",
-                                         vorige_storing.laatste_data.assetnummer.assetnummer, assetnummer)
-                            for i in range(0, 21):
-                                vorige_storing = Storing.objects.filter(assetnummer=self.assetnummer, bericht=sb).select_related(
-                                    "laatste_data").order_by('-laatste_data__tijdstip').first()
-                                if (vorige_storing.laatste_data.assetnummer.assetnummer == self.assetnummer):
-                                    logging.info("Storing komt weer overeen met assetnummer: %s-%s",
-                                                 vorige_storing.laatste_data.assetnummer.assetnummer, self.assetnummer)
-                                    break
-                                if (vorige_storing.laatste_data.assetnummer.assetnummer != self.assetnummer):
-                                    logging.info("Poging %s: Verkeerde storing opgehaald: %s. Verwacht was: %s",
-                                                 i, vorige_storing.laatste_data.assetnummer.assetnummer, self.assetnummer)
-                                if (i == 20):
-                                    print(
-                                        f"Polling dropped: {self.assetnummer}")
-                                    raise Exception(
-                                        f"Fout bij het ophalen van storing data van asset: {self.assetnummer}")
+                    vorige_storingen = Storing.objects.filter(assetnummer=self.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip')
+                    vorige_storing = vorige_storingen.first()
                 except ObjectDoesNotExist:
                     vorige_storing = None
                 if vorige_storing:
-                    logging.info("assetnummer %s: vorige storingen: %s", self.assetnummer, Storing.objects.filter(
-                        assetnummer=self.assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip'))
+                    if vorige_storingen.count() > 1:
+                        print(vorige_storing)
+                        vorige_storing.som = vorige_storingen.aggregate(Sum("som"))["som__sum"]
+                        logging.info(f'{self.assetnummer}: aggregate: {vorige_storingen.aggregate(Sum("som"))["som__sum"]}')
+                        for s in vorige_storingen.exclude(id=vorige_storing.id):
+                            s.delete()
+
+                    logging.info(f"{self.assetnummer}: vorige storingen: {vorige_storingen}")
                     if (vorige_storing.gezien == False):
                         # De storing is niet gezien gemeld
                         vorige_storing.som += 1
@@ -130,8 +94,7 @@ class LogoPolling:
                         vorige_storing.gezien = False
                         vorige_storing.laatste_data = self.ad
                     vorige_storing.save()
-                    logging.info("Storing met id: %s geupdate. assetnummer: %s",
-                                 vorige_storing.id, vorige_storing.laatste_data.assetnummer.assetnummer)
+                    logging.info(f"{self.assetnummer}Storing met id: {vorige_storing.id} geupdate.")
 
                 else:
                     # Check of storing voorkwam in de afgelopen x uur
@@ -148,14 +111,13 @@ class LogoPolling:
                                 if sb in rad.storing_beschrijving:
                                     counter += 1
                                     if counter > 1 and self.record.check_storing(sb) == True:
-                                        logging.info("Nieuwe storing aangemaakt op basis van meerdere gelijke meldingen binnen timeout. asset: %s, storing: %s, aantal RADs: %s",
-                                                     self.ad.assetnummer.assetnummer, sb, recente_ads.count())
+                                        logging.info(f"{self.assetnummer}: Nieuwe storing aangemaakt op basis van meerdere gelijke meldingen binnen timeout. storing: {sb}, aantal RADs: {recente_ads.count()}")
                                         self.maak_nieuwe_storing(sb, counter)
                                         break
                     else:
                         if self.record.check_storing(sb) == True:
                             logging.info(
-                                "Nieuwe storing aangemaakt op basis van 0 timeout. asset: %s", self.ad.assetnummer.assetnummer)
+                                f"{self.assetnummer}: Nieuwe storing aangemaakt op basis van 0 timeout.")
                             self.maak_nieuwe_storing(sb)
 
 class SmsPolling:
