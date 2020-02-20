@@ -10,7 +10,7 @@ class ConfiguratieElement(models.Model):
 
 class Configuratie(models.Model):
     naam = models.CharField(max_length=50)
-    config = models.ArrayModelField(model_container=ConfiguratieElement)
+    config = models.ArrayField(model_container=ConfiguratieElement)
 
     def __str__(self):
         return self.naam

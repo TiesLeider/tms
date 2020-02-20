@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('_id', djongo.models.fields.ObjectIdField(auto_created=True, primary_key=True, serialize=False)),
                 ('naam', models.CharField(max_length=50)),
-                ('config', djongo.models.fields.ArrayModelField(model_container=tram.models.ConfiguratieElement)),
+                ('config', djongo.models.fields.ArrayField(model_container=tram.models.ConfiguratieElement)),
             ],
         ),
         migrations.CreateModel(

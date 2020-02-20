@@ -3,12 +3,18 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from django.db.models import Sum
 from ..models import *
 from .polling import LogoPolling, SmsPolling
+from requests.exceptions import Timeout
+import requests
 import traceback
 import datetime
 import json
 import logging
+import subprocess
+import platform
+import os
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
 
@@ -19,9 +25,49 @@ def requesthandler(request):
             return request
 
 
-
 @csrf_exempt
 def insert_logo_data(request):
+    try:
+        #Check of de requestdata ok is en manipuleer assetnummer:
+        requesthandler(request)
+        data = str(request.body)[2:-1]
+        json_data = json.loads(data).get("ojson")
+        assetnummer = json_data.get("assetnummer").upper() if json_data.get("assetnummer").startswith("w") else json_data.get("assetnummer")
+        if len(assetnummer) > 4 and assetnummer.startswith("W"):
+            assetnummer = assetnummer[1:]
+        
+
+
+        #Maak record Logodata:
+        record = LogoData(
+            assetnummer_id = assetnummer,
+            storing = json_data.get("storing"),
+            druk_a1 = json_data.get("druk_a1"),
+            druk_a2 = json_data.get("druk_a2"),
+            druk_b1 = json_data.get("druk_b1"),
+            druk_b2 = json_data.get("druk_b2"),
+            kracht_a = json_data.get("kracht_a"),
+            kracht_b = json_data.get("kracht_b"),
+            omloop_a = json_data.get("omloop_a"),
+            omloop_b = json_data.get("omloop_b"),
+            )
+        record.save()
+
+        polling = LogoPolling(record)
+
+        polling.insert_absolute_data()
+        polling.storing_algoritme() 
+
+        return JsonResponse({"response": True, "error": None})
+    except Exception as ex:
+        traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
+        return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
+
+
+
+@csrf_exempt
+def insert_logo_data_oud(request):
     try:
         def maak_nieuwe_storing(asset, absulute_data, bericht, counter=1):
             logging.info("%s: Nieuwe storing aangemaakt: %s", asset, bericht)
@@ -107,9 +153,10 @@ def insert_logo_data(request):
             omloop_a = vorige_ad.omloop_a + record.omloop_a if (vorige_ad) else record.omloop_a,
             omloop_b = vorige_ad.omloop_b + record.omloop_b if (vorige_ad) else record.omloop_b,
             )
-        if((ad.omloop_a + ad.omloop_b) - (vorige_ad.omloop_a + vorige_ad.omloop_b)) > 100:
-            logging.warning("%s: OMLOOP WAARSCHUWING: verschil in omlopen is groter dan 100. vorig aantal omlopen: %s, huidig aantal omlopen: %s. gemaakte omlopen: %s", assetnummer, (vorige_ad.omloop_a + vorige_ad.omloop_b), (ad.omloop_a + ad.omloop_b), (record.omloop_a + record.omloop_b))
-        ad.save()
+        if vorige_ad:    
+            if((ad.omloop_a + ad.omloop_b) - (vorige_ad.omloop_a + vorige_ad.omloop_b)) > 100:
+                logging.warning("%s: OMLOOP WAARSCHUWING: verschil in omlopen is groter dan 100. vorig aantal omlopen: %s, huidig aantal omlopen: %s. gemaakte omlopen: %s", assetnummer, (vorige_ad.omloop_a + vorige_ad.omloop_b), (ad.omloop_a + ad.omloop_b), (record.omloop_a + record.omloop_b))
+            ad.save()
 
         #Er is een vorige polling geweest van deze asset
         if len(ad.storing_beschrijving) > 0:
@@ -121,7 +168,8 @@ def insert_logo_data(request):
                     #Ja: maak nieuwe storing aan
                     #Nee: skip
                 try:
-                    vorige_storing = Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip').first()
+                    vorige_storingen = Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip')
+                    vorige_storing = vorige_storingen.first()
                     if vorige_storing:
                         if (vorige_storing.laatste_data.assetnummer.assetnummer != assetnummer):
                             logging.info("%s: Verkeerde storing opgehaald. (storing van %s)", assetnummer, vorige_storing.laatste_data.assetnummer.assetnummer)
@@ -138,8 +186,12 @@ def insert_logo_data(request):
                 except ObjectDoesNotExist:
                     vorige_storing = None
                 if vorige_storing:
-                    #TODO: Slechts 1 storing per keer.
-                    logging.info("%s: vorige storingen: %s", assetnummer, Storing.objects.filter(assetnummer=assetnummer, bericht=sb, actief=True).select_related("laatste_data").order_by('-laatste_data__tijdstip'))
+                    if vorige_storingen.count() > 1:
+                        vorige_storing.som = vorige_storingen.aggregate(Sum("som"))["som__sum"]
+                        logging.info("%s: aggregate: %s", assetnummer, vorige_storingen.aggregate(Sum("som"))["som__sum"])
+                        for s in vorige_storingen.exclude(id=vorige_storing.id):
+                            s.delete()
+                    logging.info("%s: vorige storingen: %s", assetnummer, vorige_storingen)
                     if (vorige_storing.gezien == False):
                         #De storing is niet gezien gemeld
                         vorige_storing.som += 1
@@ -272,15 +324,44 @@ def index_form(request):
     else:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-def check_assets_online(request):
+def check_assets_online_oud(request):
     try:
-        online_assets = Asset.objects.filter(online=True)
+        online_assets = Asset.objects.filter(pollbaar=True)
         offline_assets = []
         for asset in online_assets:
             ad = AbsoluteData.objects.filter(assetnummer=asset).latest()
             if (ad.tijdstip < (datetime.datetime.now() - datetime.timedelta(minutes=30))):
                 offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": ad.tijdstip.strftime("%d %b %Y, %H:%M")})
-    except Exception:
-        pass
+    except Exception as ex:
+        traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
+
+    return JsonResponse(offline_assets, safe=False)
+
+def check_online_assets(request):
+    def ping(host):
+        FNULL = open(os.devnull, 'w')
+        param = '-n' if platform.system().lower()=='windows' else '-c'
+        return subprocess.call(
+        ["ping", param, "1", host], stdout=FNULL) == 0
+
+
+    try:
+        logo_assets = Asset.objects.exclude(ip_adres_logo=None)
+        offline_assets = []
+        for asset in logo_assets:
+            # if ping(asset.ip_adres_logo) != 0:
+            try:
+                r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
+            except Timeout:
+                try:
+                    ad = AbsoluteData.objects.filter(assetnummer=asset).latest()
+                    tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
+                except ObjectDoesNotExist:
+                    tijdstip = "Nooit" 
+                offline_assets.append({"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
+    except Exception as ex:
+        traceback.print_exc()
+        logging.error("%s", traceback.format_exc())
 
     return JsonResponse(offline_assets, safe=False)
