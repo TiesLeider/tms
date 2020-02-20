@@ -338,7 +338,7 @@ def check_assets_online_oud(request):
 
     return JsonResponse(offline_assets, safe=False)
 
-def check_assets_online(request):
+def check_online_assets(request):
     def ping(host):
         FNULL = open(os.devnull, 'w')
         param = '-n' if platform.system().lower()=='windows' else '-c'
@@ -352,7 +352,7 @@ def check_assets_online(request):
         for asset in logo_assets:
             # if ping(asset.ip_adres_logo) != 0:
             try:
-                r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=2)
+                r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
             except Timeout:
                 try:
                     ad = AbsoluteData.objects.filter(assetnummer=asset).latest()

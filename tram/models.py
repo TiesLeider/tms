@@ -11,11 +11,11 @@ class Asset(models.Model):
     pollbaar = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     weging = models.IntegerField(default=1)
-    variant = models.CharField(max_length=200, null=True)
-    link_fotos = models.CharField(max_length=200, null=True)
-    link_tekeningen = models.CharField(max_length=200, null=True)
-    lat_coordinaat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    lon_coordinaat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    variant = models.CharField(max_length=200, null=True, blank=True)
+    link_fotos = models.CharField(max_length=200, null=True, blank=True)
+    link_tekeningen = models.CharField(max_length=200, null=True, blank=True)
+    lat_coordinaat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    lon_coordinaat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
 
 

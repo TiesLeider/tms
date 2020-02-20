@@ -94,7 +94,7 @@ class LogoPolling:
                         vorige_storing.gezien = False
                         vorige_storing.laatste_data = self.ad
                     vorige_storing.save()
-                    logging.info(f"{self.assetnummer}Storing met id: {vorige_storing.id} geupdate.")
+                    logging.info(f"{self.assetnummer}: Storing met id: {vorige_storing.id} geupdate.")
 
                 else:
                     # Check of storing voorkwam in de afgelopen x uur

@@ -18,7 +18,7 @@ urlpatterns = [
     path("api/alle_actieve_storingen/", views.get_actieve_storingen, name="alle_actieve_storingen"),
     path("index_form", views.index_form, name="index_form"),
     path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
-    path("api/check_online_assets", views.check_assets_online, name="check_online_assets"),
+    path("api/check_online_assets", views.check_online_assets, name="check_online_assets"),
     path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data"),
     path("sms", views.sms_lijst, name="sms_lijst")
 ]  
