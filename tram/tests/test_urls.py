@@ -50,7 +50,19 @@ class TestUrls(SimpleTestCase):
         url = reverse("get_sms_data")
         self.assertEquals(resolve(url).func, get_sms_data)
 
+    def test_get_sensor_waarden_url_resolves(self):
+        url = reverse("get_sensor_waarden", args=["W001", "omloop_a"])
+        self.assertEquals(resolve(url).func, get_sensor_waarden)
+
 #Asset
+    def test_insert_logo_data_resolves(self):
+        url = reverse("insert_logo_data")
+        self.assertEquals(resolve(url).func, insert_logo_data)
+
+    def test_insert_sms_data_resolves(self):
+        url = reverse("insert_sms_data")
+        self.assertEquals(resolve(url).func, insert_sms_data)
+
     def test_asset_index_url_resolves(self):
         url = reverse("asset_index", args=["W001"])
         self.assertEquals(resolve(url).func, asset_index)
@@ -70,3 +82,7 @@ class TestUrls(SimpleTestCase):
     def test_asset_chart_url_resolves(self):
         url = reverse("asset_chart", args=["W001"])
         self.assertEquals(resolve(url).func, asset_chart)
+    
+    def test_asset_analyse_url_resolves(self):
+        url = reverse("asset_analyse", args=["W001", "omloop_a"])
+        self.assertEquals(resolve(url).func, asset_analyse)

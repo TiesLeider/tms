@@ -1,0 +1,41 @@
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TMS</title>
+</head>
+
+<body>
+    <div id="container" style="height: 400px; width: 100%"></div>
+</body>
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script>
+    Highcharts.getJSON(`/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`, function (data) {
+        // Create the chart
+        Highcharts.stockChart('container', {
+    
+    
+            rangeSelector: {
+                selected: 1
+            },
+    
+            title: {
+                text: '{{veld}}'
+            },
+    
+            series: [{
+                name: '{{veld}}',
+                data: data,
+                tooltip: {
+                    valueDecimals: 0
+                }
+            }]
+        });
+    });
+</script> 

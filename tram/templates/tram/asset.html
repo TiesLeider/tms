@@ -71,6 +71,21 @@
                 </div>
             </div>
         </div>
-        <iframe src="{% url 'asset_chart' asset.assetnummer %}" id="iframe" frameborder="0" height="1300px" width="90%"></iframe>
+        <div class="row">
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'omloop_a' %}" id="iframe"  frameborder="0" height="450px" width="48%"></iframe>
+            {% if data.omloop_b > 0 %}
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'omloop_b' %}" id="iframe"  frameborder="0" height="450px" width="48%"></iframe>
+            {% endif %}
+        </div>
+        <div class="row">
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a1' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a2' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_b1' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_b2' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
+        </div>
+        <div class="row">
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'kracht_a' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
+            <iframe src="{% url 'asset_analyse' asset.assetnummer 'kracht_b' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
+        </div>
     </div>
 {% endblock %}
