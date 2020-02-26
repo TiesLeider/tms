@@ -22,5 +22,4 @@ urlpatterns = [
     path('tram/', include("tram.urls")),
     path('pomp/', include("pomp.urls")),
     path("", tram_views.index, name="index"),
-    # path("csv", tram_views.csv, name="csv")
 ]
