@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 if not os.path.exists(path):
                     os.makedirs(path)
 
-            with open(path + f'{veld}.json', 'w+') as outfile:
+            with open(path + f'{veld}.json', 'w') as outfile:
                 json.dump(response, outfile)
 
         for asset in Asset.objects.filter(pollbaar=True):
