@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from ..models import *
 from django.db.models import Sum
 
+
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     laatste_polling = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
@@ -43,3 +44,6 @@ def asset_chart(request, assetnummer):
 def asset_analyse(request, assetnummer, veld):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     return render(request, "tram/highstock.html", {"asset": asset, "veld" : veld})
+
+def asset_data(request, assetnummer, veld):
+    return JsonResponse(loader.get_template("tram/data/2641/omloop_a.json").render(), safe=False)

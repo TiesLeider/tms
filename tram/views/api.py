@@ -15,6 +15,7 @@ import logging
 import subprocess
 import platform
 import os
+from django.template import Context, loader
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
@@ -215,10 +216,15 @@ def check_online_assets(request):
     return JsonResponse(offline_assets, safe=False)
 
 
-def get_sensor_waarden(request, assetnummer, veld):
+def get_sensor_waarden_oud(request, assetnummer, veld):
     qs = AbsoluteData.objects.filter(assetnummer=assetnummer).order_by("tijdstip")
     data = list(qs.values(veld, "tijdstip"))
     response = []
     for item in data:
         response.append( [round(item["tijdstip"].timestamp()) * 1000, item[veld]])
+
+
     return JsonResponse(response, safe=False)
+
+def get_sensor_waarden(request, assetnummer, veld):
+    return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
