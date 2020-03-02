@@ -19,25 +19,33 @@
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
 <script>
+    var asset = `{{asset.assetnummer}}`
+    var veld = `{{veld}}`
+
+    $('document').ready(
+        get_gemiddelde(asset, veld)
+    )
 
     function get_gemiddelde(assetnummer, veld){
-       let gemiddelde = 0
         $.ajax({
             method: "GET",
-            url: `/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`,
+            url: `/tram/api/get_maand_gemiddelde/{{asset.assetnummer}}/{{veld}}`,
             error: function(response){
                 console.log(response)
             },
-            succes: function (response) {
-                gemiddelde = response.gemiddelde } ,
+            success: function (response) {
+                highStock(response.gemiddelde)
+                
+            } ,
         })
-
-        return gemiddelde
-
     }
 
-    Highcharts.getJSON(`/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`, function (data) {
+
+    function highStock(gemiddelde){
+
+    Highcharts.getJSON(`/tram/api/get_sensor_waarden/${asset}/${veld}`, function (data) {
         // Create the chart
+        console.log("HC " + gemiddelde)
 
         Highcharts.setOptions({
             time: {
@@ -47,27 +55,17 @@
 
         if (`{{veld}}`.includes("omloop") ==  false){
             Highcharts.stockChart('container', {
-                plotLines: {
-                    value: get_gemiddelde(`{{asset.assetnummer}}`, `{{veld}}`),
-                    color: 'green',
-                    dashStyle: 'shortdash',
-                    width: 2,
-                    label: {
-                        text: 'Last quarter minimum'
-                    }
-                },
-                
                 yAxis: {
                     title: {
                         text: '{{veld}}'
                     },
                     plotLines: [{
-                        value: 300,
+                        value: gem,
                         color: 'green',
                         dashStyle: 'shortdash',
                         width: 2,
                         label: {
-                            text: 'Maandgemiddelde'
+                            text:  'Maandgemiddelde (' + gemiddelde + ')'  
                         }
                     }]
                 },
@@ -175,4 +173,5 @@
             });
         }
     });
+}
 </script> 
