@@ -65,7 +65,7 @@
                         dashStyle: 'shortdash',
                         width: 2,
                         label: {
-                            text:  'Maandgemiddelde (' + gemiddelde + ')'  
+                            text:  ''  
                         }
                     }]
                 },
@@ -107,6 +107,10 @@
         
                 title: {
                     text: ' {{asset.assetnummer}} - {{veld}}'
+                },
+
+                subtitle: {
+                    text: 'Maandgemiddelde: ' + gemiddelde + ". (groene lijn)"
                 },
     
                 series: [{
