@@ -230,10 +230,19 @@ def get_sensor_waarden(request, assetnummer, veld):
     return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
 
 def get_maand_gemiddelde(request, assetnummer, veld):
-    start_datum = datetime.datetime.now() - datetime.timedelta(days=30)
-    eind_datum = datetime.datetime.now()
-    gemiddelde = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).aggregate(Avg(veld))
+    nu = datetime.datetime.now()
+    vorige_maand = nu - datetime.timedelta(days=30)
+    gister = nu - datetime.timedelta(days=1)
+    maand_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_maand, nu))
+    dag_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(gister, nu))
+    maand_gemiddelde = maand_qs.aggregate(Avg(veld)).get(veld + "__avg") if maand_qs else 0
+    dag_gemiddelde = dag_qs.aggregate(Avg(veld)).get(veld + "__avg") if dag_qs else 0
+    
+    print(f"\n {dag_gemiddelde}  \n")
+
     response = {
-        "gemiddelde": round(gemiddelde.get(veld + "__avg"))
+        "maand_gemiddelde": round(maand_gemiddelde),
+        "dag_gemiddelde": round(dag_gemiddelde)
     }
     return JsonResponse(response)
+

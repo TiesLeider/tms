@@ -34,7 +34,7 @@
                 console.log(response)
             },
             success: function (response) {
-                highStock(response.gemiddelde)
+                highStock(response)
                 
             } ,
         })
@@ -45,7 +45,6 @@
 
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/${asset}/${veld}`, function (data) {
         // Create the chart
-        console.log("HC " + gemiddelde)
 
         Highcharts.setOptions({
             time: {
@@ -60,14 +59,23 @@
                         text: '{{veld}}'
                     },
                     plotLines: [{
-                        value: gemiddelde,
+                        value: gemiddelde.maand_gemiddelde,
                         color: 'green',
                         dashStyle: 'shortdash',
                         width: 2,
                         label: {
                             text:  ''  
                         }
-                    }]
+                    },{
+                        value: gemiddelde.dag_gemiddelde,
+                        color: 'yellow',
+                        dashStyle: 'shortdash',
+                        width: 2,
+                        label: {
+                            text:  ''  
+                        }
+                    }
+                    ]
                 },
         
                 rangeSelector: {
@@ -110,7 +118,7 @@
                 },
 
                 subtitle: {
-                    text: 'Maandgemiddelde: ' + gemiddelde + ". (groene lijn)"
+                    text: 'Maandgemiddelde: ' + gemiddelde.maand_gemiddelde + ". (groene lijn) <br> Daggemiddelde: "+ gemiddelde.dag_gemiddelde + ". (gele lijn) "
                 },
     
                 series: [{
