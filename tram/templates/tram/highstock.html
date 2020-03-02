@@ -10,7 +10,7 @@
 <body>
     <div id="container" style="height: 400px; width: 100%"></div>
 </body>
-
+<script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/data.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
@@ -19,7 +19,10 @@
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`, function (data) {
         // Create the chart
         Highcharts.stockChart('container', {
-    
+            
+            time:{
+                timezone:   "Europe/Amsterdam"
+            },
     
             rangeSelector: {
 
