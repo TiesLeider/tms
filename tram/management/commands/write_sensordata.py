@@ -21,7 +21,7 @@ class Command(BaseCommand):
             data = list(qs.values(veld, "tijdstip"))
             response = []
             for item in data:
-                response.append( [round((item["tijdstip"].timestamp()) * 1000, item[veld]])
+                response.append( [round((item["tijdstip"].timestamp()) * 1000), item[veld]] )
                 path = os.getcwd() + f'\\tram\\templates\\tram\\data\\{assetnummer}\\'  if platform.system().lower() == 'windows' else os.getcwd() + f'/tram/templates/tram/data/{assetnummer}/'
 
                 if not os.path.exists(path):
