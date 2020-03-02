@@ -12,6 +12,30 @@ class Asset(models.Model):
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True)
     weging = models.IntegerField(default=1)
 
+    gem_dag_omloop_a_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_week_omloop_a_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_maand_omloop_a_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    gem_dag_omloop_b_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_week_omloop_b_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_maand_omloop_b_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    gem_dag_druk_a1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_week_druk_a1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_maand_druk_a1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    gem_dag_druk_a2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_week_druk_a2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_maand_druk_a2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    gem_dag_druk_b1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_week_druk_b1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_maand_druk_b1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
+    gem_dag_druk_b2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_week_druk_b2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    gem_maand_druk_b2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+
 
 
 
