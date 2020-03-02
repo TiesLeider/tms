@@ -10,6 +10,7 @@
 <body>
     <div id="container" style="height: 400px; width: 100%"></div>
 </body>
+<script src="{% static 'tram/js/jquery.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.28/moment-timezone-with-data-1970-2030.js"></script>
@@ -18,6 +19,23 @@
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
 <script>
+
+    function get_gemiddelde(assetnummer, veld){
+       let gemiddelde = 0
+        $.ajax({
+            method: "GET",
+            url: `/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`,
+            error: function(response){
+                console.log(response)
+            },
+            succes: function (response) {
+                gemiddelde = response.gemiddelde } ,
+        })
+
+        return gemiddelde
+
+    }
+
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`, function (data) {
         // Create the chart
 
@@ -27,56 +45,134 @@
             }
         });
 
-
-        Highcharts.stockChart('container', {
-            
-    
-            rangeSelector: {
-
-                buttons: [
-                {
-                    type: 'day',
-                    count: 1,
-                    text: '1d'
+        if (`{{veld}}`.includes("omloop") ==  false){
+            Highcharts.stockChart('container', {
+                plotLines: {
+                    value: get_gemiddelde(`{{asset.assetnummer}}`, `{{veld}}`),
+                    color: 'green',
+                    dashStyle: 'shortdash',
+                    width: 2,
+                    label: {
+                        text: 'Last quarter minimum'
+                    }
                 },
-                {
-                    type: 'day',
-                    count: 3,
-                    text: '3d'
-                }, {
-                    type: 'week',
-                    count: 1,
-                    text: '1w'
-                }, {
-                    type: 'month',
-                    count: 1,
-                    text: '1m'
-                }, {
-                    type: 'month',
-                    count: 6,
-                    text: '6m'
-                }, {
-                    type: 'year',
-                    count: 1,
-                    text: '1y'
-                }, {
-                    type: 'all',
-                    text: 'All'
-                }],
-                selected: 3
-            },
+                
+                yAxis: {
+                    title: {
+                        text: '{{veld}}'
+                    },
+                    plotLines: [{
+                        value: 300,
+                        color: 'green',
+                        dashStyle: 'shortdash',
+                        width: 2,
+                        label: {
+                            text: 'Maandgemiddelde'
+                        }
+                    }]
+                },
+        
+                rangeSelector: {
     
-            title: {
-                text: ' {{asset.assetnummer}} - {{veld}}'
-            },
+                    buttons: [
+                    {
+                        type: 'day',
+                        count: 1,
+                        text: '1d'
+                    },
+                    {
+                        type: 'day',
+                        count: 3,
+                        text: '3d'
+                    }, {
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    }, {
+                        type: 'month',
+                        count: 1,
+                        text: '1m'
+                    }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    selected: 3
+                },
+        
+                title: {
+                    text: ' {{asset.assetnummer}} - {{veld}}'
+                },
     
-            series: [{
-                name: '{{veld}}',
-                data: data,
-                tooltip: {
-                    valueDecimals: 0
-                }
-            }]
-        });
+                series: [{
+                    name: '{{veld}}',
+                    data: data,
+                    tooltip: {
+                        valueDecimals: 0
+                    }
+                }]
+    
+            });
+        }
+
+        else {
+            Highcharts.stockChart('container', {
+ 
+                rangeSelector: {
+    
+                    buttons: [
+                    {
+                        type: 'day',
+                        count: 1,
+                        text: '1d'
+                    },
+                    {
+                        type: 'day',
+                        count: 3,
+                        text: '3d'
+                    }, {
+                        type: 'week',
+                        count: 1,
+                        text: '1w'
+                    }, {
+                        type: 'month',
+                        count: 1,
+                        text: '1m'
+                    }, {
+                        type: 'month',
+                        count: 6,
+                        text: '6m'
+                    }, {
+                        type: 'year',
+                        count: 1,
+                        text: '1y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
+                    selected: 3
+                },
+        
+                title: {
+                    text: ' {{asset.assetnummer}} - {{veld}}'
+                },
+    
+                series: [{
+                    name: '{{veld}}',
+                    data: data,
+                    tooltip: {
+                        valueDecimals: 0
+                    }
+                }]
+    
+            });
+        }
     });
 </script> 

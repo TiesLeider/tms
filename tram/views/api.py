@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from ..models import *
 from .polling import LogoPolling, SmsPolling
 from requests.exceptions import Timeout
@@ -228,3 +228,12 @@ def get_sensor_waarden_oud(request, assetnummer, veld):
 
 def get_sensor_waarden(request, assetnummer, veld):
     return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
+
+def get_maand_gemiddelde(request, assetnummer, veld):
+    start_datum = datetime.datetime.now() - datetime.timedelta(days=30)
+    eind_datum = datetime.datetime.now()
+    gemiddelde = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum)).aggregate(Avg(veld))
+    response = {
+        "gemiddelde": round(gemiddelde.get(veld + "__avg"))
+    }
+    return JsonResponse(response)
