@@ -10,7 +10,9 @@
 <body>
     <div id="container" style="height: 400px; width: 100%"></div>
 </body>
-<script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.28/moment-timezone-with-data-1970-2030.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/data.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
@@ -18,11 +20,16 @@
 <script>
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/{{asset.assetnummer}}/{{veld}}`, function (data) {
         // Create the chart
+
+        Highcharts.setOptions({
+            time: {
+                timezone: 'Europe/Amsterdam'
+            }
+        });
+
+
         Highcharts.stockChart('container', {
             
-            time:{
-                timezone:   "Europe/Amsterdam"
-            },
     
             rangeSelector: {
 
