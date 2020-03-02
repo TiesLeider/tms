@@ -24,12 +24,12 @@ class AssetAdmin(ImportExportActionModelAdmin):
 
 @admin.register(LogoData)
 class LogoDataAdmin(admin.ModelAdmin):
-    list_display=("assetnummer_id", "tijdstip", "storing", "omloop_a", "omloop_b")
+    list_display=("assetnummer_id", "tijdstip", "storing", "omloop_a", "omloop_b", "druk_a1", "druk_a2", "druk_b1", "druk_b2")
     list_filter=("assetnummer_id"),
 
 @admin.register(AbsoluteData)
 class AbsoluteDataAdmin(admin.ModelAdmin):
-    list_display=("assetnummer_id", "tijdstip", "storing_beschrijving", "omloop_a", "omloop_b")
+    list_display=("assetnummer_id", "tijdstip", "storing_beschrijving", "omloop_a", "omloop_b", "druk_a1", "druk_a2", "druk_b1", "druk_b2")
     list_filter=("assetnummer_id"),
 
 @admin.register(SmsData)
