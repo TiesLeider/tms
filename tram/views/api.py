@@ -232,16 +232,20 @@ def get_sensor_waarden(request, assetnummer, veld):
 def get_maand_gemiddelde(request, assetnummer, veld):
     nu = datetime.datetime.now()
     vorige_maand = nu - datetime.timedelta(days=30)
+    vorige_week = nu - datetime.timedelta(days=7)
     gister = nu - datetime.timedelta(days=1)
     maand_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_maand, nu))
+    week_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_week, nu))
     dag_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(gister, nu))
-    maand_gemiddelde = maand_qs.aggregate(Avg(veld)).get(veld + "__avg") if maand_qs else 0
-    dag_gemiddelde = dag_qs.aggregate(Avg(veld)).get(veld + "__avg") if dag_qs else 0
+    maand_gemiddelde = maand_qs.aggregate(Avg(veld)).get(veld + "__avg") if maand_qs.count() > 0 else 0
+    week_gemiddelde = week_qs.aggregate(Avg(veld)).get(veld + "__avg") if week_qs.count() > 0 else 0
+    dag_gemiddelde = dag_qs.aggregate(Avg(veld)).get(veld + "__avg") if dag_qs.count() > 0 else 0
     
-    print(f"\n {dag_gemiddelde}  \n")
+
 
     response = {
         "maand_gemiddelde": round(maand_gemiddelde),
+        "week_gemiddelde": round(week_gemiddelde),
         "dag_gemiddelde": round(dag_gemiddelde)
     }
     return JsonResponse(response)

@@ -1,14 +1,32 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from ..models import *
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 
 
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     laatste_polling = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
     laatste_data = AbsoluteData.objects.filter(assetnummer=asset).exclude(storing_beschrijving=[]).order_by("-tijdstip")[:15]
-    return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "laatste_polling": laatste_polling})
+    nu = datetime.datetime.now()
+    vorige_maand = nu - datetime.timedelta(days=30)
+    vorige_week = nu - datetime.timedelta(days=7)
+    gister = nu - datetime.timedelta(days=1)
+    maand_qs = LogoData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_maand, nu))
+    week_qs = LogoData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_week, nu))
+    dag_qs = LogoData.objects.filter(assetnummer=assetnummer, tijdstip__range=(gister, nu))
+    maand_gemiddelde = maand_qs.aggregate(Avg("omloop_a")).get("omloop_a__avg") if maand_qs.count() > 0 else 0
+    week_gemiddelde = week_qs.aggregate(Avg("omloop_a")).get("omloop_a__avg") if week_qs.count() > 0 else 0
+    dag_gemiddelde = dag_qs.aggregate(Avg("omloop_a")).get("omloop_a__avg") if dag_qs.count() > 0 else 0
+
+    gemiddelde_omlopen = {
+        "dag_gemiddelde": round(dag_gemiddelde, 2),
+        "week_gemiddelde": round(week_gemiddelde, 2),
+        "maand_gemiddelde": round(maand_gemiddelde, 2)
+    }
+
+    print(gemiddelde_omlopen.get("dag_gemiddelde"))
+    return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "laatste_polling": laatste_polling, "gemiddelde_omlopen": gemiddelde_omlopen})
 
 def reset_teller_standen(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
@@ -44,6 +62,3 @@ def asset_chart(request, assetnummer):
 def asset_analyse(request, assetnummer, veld):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     return render(request, "tram/highstock.html", {"asset": asset, "veld" : veld})
-
-def asset_data(request, assetnummer, veld):
-    return JsonResponse(loader.get_template("tram/data/2641/omloop_a.json").render(), safe=False)

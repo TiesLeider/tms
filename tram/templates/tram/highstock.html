@@ -40,7 +40,6 @@
         })
     }
 
-
     function highStock(gemiddelde){
 
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/${asset}/${veld}`, function (data) {
@@ -69,6 +68,15 @@
                     },{
                         value: gemiddelde.dag_gemiddelde,
                         color: 'yellow',
+                        dashStyle: 'shortdash',
+                        width: 2,
+                        label: {
+                            text:  ''  
+                        }
+                    },
+                    {
+                        value: gemiddelde.week_gemiddelde,
+                        color: 'red',
                         dashStyle: 'shortdash',
                         width: 2,
                         label: {
@@ -118,7 +126,7 @@
                 },
 
                 subtitle: {
-                    text: 'Maandgemiddelde: ' + gemiddelde.maand_gemiddelde + ". (groene lijn) <br> Daggemiddelde: "+ gemiddelde.dag_gemiddelde + ". (gele lijn) "
+                    text: `Maandgemiddelde: ${gemiddelde.maand_gemiddelde}. (groene lijn) <br> Weekgemiddelde: ${gemiddelde.week_gemiddelde}. (rode lijn) <br> Daggemiddelde: ${gemiddelde.dag_gemiddelde}. (gele lijn) `
                 },
     
                 series: [{
@@ -173,6 +181,8 @@
                 title: {
                     text: ' {{asset.assetnummer}} - {{veld}}'
                 },
+
+                
     
                 series: [{
                     name: '{{veld}}',
