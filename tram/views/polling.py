@@ -18,6 +18,12 @@ class LogoPolling:
         self.storing_beschrijving = self.record.get_storing_beschrijvingen()
         self.vorige_ad = self.get_laatste_asbolute_data()
 
+        self.asset = Asset.objects.get(assetnummer=self.assetnummer)
+        if self.asset.pollbaar == False:
+            self.asset.pollbaar = True
+            self.asset.save()
+
+
     def insert_absolute_data(self):
         self.ad = AbsoluteData(
             assetnummer_id=self.record.assetnummer,

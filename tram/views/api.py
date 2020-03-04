@@ -53,6 +53,11 @@ def insert_logo_data(request):
             omloop_a=json_data.get("omloop_a"),
             omloop_b=json_data.get("omloop_b"),
         )
+        ld = LogoData.objects.filter(assetnummer=assetnummer).latest()
+
+        if ( record.omloop_a > 50 and ld.omloop_a == record.omloop_a and ld.omloop_b == record.omloop_b):
+             return JsonResponse({"response": True, "error": None})
+             logging.error(f"{assetnummer}: polling overgeslagen. Waarschijnlijk identieke polling.")
         record.save()
 
         polling = LogoPolling(record)
