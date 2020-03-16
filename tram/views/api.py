@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import Sum, Avg
 from ..models import *
-from .polling import LogoPolling, SmsPolling
+from .polling import LogoPolling, SmsPolling, LogoData
 from requests.exceptions import Timeout
 import requests
 import traceback
@@ -39,28 +39,27 @@ def insert_logo_data(request):
             "assetnummer").startswith("w") else json_data.get("assetnummer")
         if len(assetnummer) > 4 and assetnummer.startswith("W"):
             assetnummer = assetnummer[1:]
-
+        asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
         # Maak record Logodata:
-        record = LogoData(
-            assetnummer_id=assetnummer,
-            storing=json_data.get("storing"),
-            druk_a1=json_data.get("druk_a1"),
-            druk_a2=json_data.get("druk_a2"),
-            druk_b1=json_data.get("druk_b1"),
-            druk_b2=json_data.get("druk_b2"),
-            kracht_a=json_data.get("kracht_a"),
-            kracht_b=json_data.get("kracht_b"),
-            omloop_a=json_data.get("omloop_a"),
-            omloop_b=json_data.get("omloop_b"),
-        )
-        ld = LogoData.objects.filter(assetnummer=assetnummer).latest()
+        record = LogoData(json_data, asset)
 
-        if ( record.omloop_a > 50 and ld.omloop_a == record.omloop_a and ld.omloop_b == record.omloop_b):
-             return JsonResponse({"response": True, "error": None})
-             logging.error(f"{assetnummer}: polling overgeslagen. Waarschijnlijk identieke polling.")
-        record.save()
+        if ( record.storing == 0 and  
+            asset.druk_a1 == record.druk_a1 and
+            asset.druk_a2 == record.druk_a2 and
+            asset.druk_b1 == record.druk_b1 and
+            asset.druk_b2 == record.druk_b2 and
+            asset.kracht_a == record.kracht_a and
+            asset.kracht_b == record.kracht_b and
+            asset.omloop_a_toegevoegd == 0 and 
+            asset.omloop_b_toegevoegd == 0 or
+            asset.laatste_data.omloop_a_toegevoegd > 25 and asset.omloop_a_toegevoegd == record.omloop_a and
+            asset.laatste_data.omloop_b_toegevoegd == record.omloop_b
+            ):
+            asset.laatste_data.save()
+            return JsonResponse({"response": True, "error": None})
+            logging.error(f"{assetnummer}: polling overgeslagen. Identieke polling.")
 
-        polling = LogoPolling(record)
+        polling = LogoPolling(logo_data=record, asset=asset)
         polling.insert_absolute_data()
         polling.storing_algoritme()
 
@@ -86,67 +85,24 @@ def insert_sms_data(request):
         return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
 
-@csrf_exempt
-def insert_logo_online(request):
-    try:
-        requesthandler(request)
-        data = str(request.body)[2:-1]
-        json_data = json.loads(data).get("ojson")
-        assetnummer = json_data.get("assetnummer").upper() if (json_data.get(
-            "assetnummer").startswith("w")) else json_data.get("assetnummer")
-        asset = Asset.objects.get(assetnummer=assetnummer)
-        asset.logo_online = False
-        asset.disconnections += 1
-        asset.save()
-
-        return JsonResponse({"response": True, "error": None})
-    except Exception as ex:
-        return JsonResponse({"response": False, "error": str(ex)})
-
-
-def get_omlopen_totaal(request, assetnummer, van_datum, tot_datum):
-    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
-    eind_datum = datetime.datetime.strptime(
-        tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
-    ad_qs = AbsoluteData.objects.filter(
-        assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
-    data = list(ad_qs.values("tijdstip", "omloop_a", "omloop_b"))
-    response = {
-        "labels": list(ad_qs.values_list("tijdstip", flat=True)),
-        "data": [
-            list(ad_qs.values_list("omloop_a", flat=True)),
-            list(ad_qs.values_list("omloop_b", flat=True))
-        ]
-    }
-    return JsonResponse(response, safe=False)
-
-
-def get_omlopen_freq(request, assetnummer, van_datum, tot_datum):
-    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
-    eind_datum = datetime.datetime.strptime(
-        tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
-    ld_qs = LogoData.objects.filter(
-        assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
-    data = list(ld_qs.values("tijdstip", "omloop_a", "omloop_b"))
-    response = {
-        "labels": list(ld_qs.values_list("tijdstip", flat=True)),
-        "data": [
-            list(ld_qs.values_list("omloop_a", flat=True)),
-            list(ld_qs.values_list("omloop_b", flat=True))
-        ]
-    }
-    return JsonResponse(response, safe=False)
-
-
 def get_actieve_storingen(request):
     storingen_qs = Storing.objects.filter(
-        actief=True, gezien=False).order_by("-laatste_data__tijdstip")
-    data = list(storingen_qs.values("id", "laatste_data__assetnummer__beschrijving", "laatste_data__assetnummer__assetnummer",
-                                    "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
-    for item in data:
-        item["laatste_data__isotijdstip"] = item["laatste_data__tijdstip"].isoformat()
-        item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime(
-            "%d %b %Y, %H:%M")
+        actief=True, gezien=False)
+    data = []
+    for s in storingen_qs:
+        laatste_data = s.data.last()
+        data.append(dict(id=s.id, 
+                        laatste_data__assetnummer__beschrijving=s.assetnummer.beschrijving, 
+                        laatste_data__assetnummer__assetnummer=s.assetnummer.assetnummer, 
+                        bericht=s.bericht,
+                        som=s.som,
+                        score=s.score,
+                        laatste_data__omloop_a=laatste_data.omloop_a,
+                        laatste_data__omloop_b=laatste_data.omloop_b,
+                        laatste_data__tijdstip=laatste_data.tijdstip.strftime("%d %b %Y, %H:%M"),
+                        laatste_data__isotijdstip=laatste_data.tijdstip.isoformat()
+
+                        ))
     return JsonResponse(data, safe=False)
 
 
@@ -221,7 +177,7 @@ def check_online_assets(request):
     return JsonResponse(offline_assets, safe=False)
 
 
-def get_sensor_waarden_oud(request, assetnummer, veld):
+def get_sensor_waarden(request, assetnummer, veld):
     qs = AbsoluteData.objects.filter(assetnummer=assetnummer).order_by("tijdstip")
     data = list(qs.values(veld, "tijdstip"))
     response = []
@@ -231,7 +187,7 @@ def get_sensor_waarden_oud(request, assetnummer, veld):
 
     return JsonResponse(response, safe=False)
 
-def get_sensor_waarden(request, assetnummer, veld):
+def get_sensor_waarden_oud(request, assetnummer, veld):
     return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
 
 def get_maand_gemiddelde(request, assetnummer, veld):

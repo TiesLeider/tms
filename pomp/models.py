@@ -1,4 +1,5 @@
-from djongo import models
+from django.db import models
+from django.contrib.postgres.fields import JSONField, ArrayField
 
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=30)
@@ -10,14 +11,13 @@ class ConfiguratieElement(models.Model):
 
 class Configuratie(models.Model):
     naam = models.CharField(max_length=50)
-    config = models.ArrayField(model_container=ConfiguratieElement)
+    config = JSONField()
 
     def __str__(self):
         return self.naam
 
 
 class Data(models.Model):
-    _id = models.ObjectIdField()
     asset = models.ForeignKey("Asset", on_delete=models.CASCADE)
     storing = models.IntegerField()
     niveau = models.IntegerField()

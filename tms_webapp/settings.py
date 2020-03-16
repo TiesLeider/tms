@@ -77,10 +77,15 @@ WSGI_APPLICATION = 'tms_webapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'tms',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'TMS',
+        'USER': 'postgres',
+        'PASSWORD': 'admin',
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
     }
 }
+
 
 
 # Password validation

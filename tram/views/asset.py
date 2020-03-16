@@ -31,7 +31,7 @@ def reset_teller_alle(request):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def corrigeer_omlopen(request, assetnummer):
-    som = LogoData.objects.filter(assetnummer=assetnummer, tijdstip__range=(datetime.datetime(2019, 12, 12), datetime.datetime.now())).aggregate(Sum("omloop_a"))
+    som = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(datetime.datetime(2020, 3, 11), datetime.datetime.now())).aggregate(Sum("omloop_a_toegevoegd"))
     ad = AbsoluteData.objects.filter(assetnummer=assetnummer).latest()
     ad.omloop_a = som["omloop_a__sum"]
     ad.save()
