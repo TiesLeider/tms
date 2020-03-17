@@ -5,6 +5,12 @@ from import_export.admin import ImportExportActionModelAdmin
 
 admin.site.site_header = "TMS Beheer"
 
+class UrgentieniveauResource(resources.ModelResource):
+    class Meta:
+        skip_unchanged = True
+        report_skipped = True
+        model = Urgentieniveau
+
 class ConfiguratieElementResource(resources.ModelResource):
     class Meta:
         skip_unchanged = True
@@ -57,9 +63,11 @@ class ConfiguratieElemenentAdmin(ImportExportActionModelAdmin):
     list_display=("id", "inputnummer", "beschrijving", "urgentieniveau", "timeout", "configuratie")
     resource_class = ConfiguratieElementResource
 
+@admin.register(Urgentieniveau)
+class UrgentieniveauAdmin(ImportExportActionModelAdmin):
+    resource_class = UrgentieniveauResource
 
 # Register your models here.
 # admin.site.register(LogoMelding)
 # admin.site.register(Configuratie)
 admin.site.register(Asset, AssetAdmin)
-admin.site.register(Urgentieniveau)
