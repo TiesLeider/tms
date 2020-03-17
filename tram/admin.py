@@ -5,6 +5,13 @@ from import_export.admin import ImportExportActionModelAdmin
 
 admin.site.site_header = "TMS Beheer"
 
+class ConfiguratieElementResource(resources.ModelResource):
+    class Meta:
+        skip_unchanged = True
+        report_skipped = True
+        model = ConfiguratieElement
+
+
 class ConfiguratieElementInline(admin.TabularInline):
     model = ConfiguratieElement
 
@@ -46,8 +53,9 @@ class StoringAdmin(admin.ModelAdmin):
     list_display=("id", "assetnummer", "actief", "gezien")
 
 @admin.register(ConfiguratieElement)
-class ConfiguratieElemenentAdmin(admin.ModelAdmin):
+class ConfiguratieElemenentAdmin(ImportExportActionModelAdmin):
     list_display=("id", "inputnummer", "beschrijving", "urgentieniveau", "timeout", "configuratie")
+    resource_class = ConfiguratieElementResource
 
 
 # Register your models here.
