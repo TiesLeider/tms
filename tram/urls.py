@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data"),
     path("api/get_sensor_waarden/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden, name="get_sensor_waarden"),
     path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
+    path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
 
     #Asset
     path("insertlogodata",views.insert_logo_data, name="insert_logo_data"),

@@ -24,7 +24,7 @@ data6 = b'''{"ojson":{ "received": "2019-12-16 22:13:01", "modem": "wwan0", "fro
 
 voor = datetime.datetime.now()
 for i in range (0, 1):
-    r = requests.post(url = "http://10.165.2.10:8000/tram/insertlogodata", data = data2)
+    r = requests.post(url = "http://127.0.0.1:8000/tram/insertlogodata", data = data2)
 na = datetime.datetime.now()
 verschil = na - voor
 

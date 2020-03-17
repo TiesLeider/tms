@@ -106,12 +106,12 @@ class LogoPolling:
             gezien=False,
             actief=True,
             bericht=bericht,
-            laatste_data=self.ad,
             som=counter,
             score=0,
         )
         new_storing.score = new_storing.get_score()
         new_storing.save()
+        new_storing.data.add(self.ad)
 
     def storing_algoritme(self):
         # Er is een vorige polling geweest van deze asset
