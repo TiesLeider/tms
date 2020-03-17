@@ -1,13 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
 from ..models import *
 from django.db.models import Sum, Avg
 
 
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
-    laatste_polling = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
+    try:
+        laatste_polling = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
+    except ObjectDoesNotExist:
+        laatste_polling = None
     laatste_data = AbsoluteData.objects.filter(assetnummer=asset).exclude(storing_beschrijving=[]).order_by("-tijdstip")[:15]
+
+        
 
     return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "laatste_polling": laatste_polling})
 
