@@ -27,4 +27,5 @@ urlpatterns = [
     path("asset/<str:assetnummer>/corrigeer_omlopen", views.asset.corrigeer_omlopen, name="asset_corrigeer_omlopen"),
     path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
     path("analyse/<str:assetnummer>/<str:veld>", views.asset_analyse, name="asset_analyse"),
+    path("asset_lijst", views.asset_lijst, name="asset_lijst")
 ]  

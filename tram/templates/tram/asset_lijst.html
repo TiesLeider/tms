@@ -1,0 +1,26 @@
+{% extends "tram/base.html" %}
+{% block content %}
+<div class="card-panel white">
+    <table>
+        <thead>
+            <th>Assetnummer</th>
+            <th>Beschrijving</th>
+            <th>IP-adres (logo)</th>
+            <th>IP-adres (modem)</th>
+            <th>Configuratie</th>
+        </thead>
+        <tbody>
+            {%for asset in assets %}
+            <tr>
+                <td><span title="{{asset.beschrijving}}"><a href="{% url 'asset_index'  asset.assetnummer %}" class="white blue-text btn waves-effect waves-light">{{asset.assetnummer}}</a></span></td>
+                <td>{{asset.beschrijving}}</td>
+                <td>{{asset.ip_adres_logo}}</td>
+                <td>{{asset.ip_adres_modem}}</td>
+                <td>{{asset.configuratie}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

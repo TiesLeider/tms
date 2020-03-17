@@ -44,6 +44,11 @@ def corrigeer_omlopen(request, assetnummer):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+def asset_lijst(request):
+    assets = Asset.objects.all().order_by("assetnummer")
+    return render(request, "tram/asset_lijst.html", {"assets": assets})
+
+
 def asset_chart(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     return render(request, "tram/chart.html", {"asset": asset})
