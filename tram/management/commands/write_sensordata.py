@@ -5,6 +5,7 @@ from tram.models import *
 import os
 import json
 import platform
+import datetime
 
 class Command(BaseCommand):
     help = 'Schrijft sensordata weg naar bestanden'
@@ -16,6 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         def schrijf_data(assetnummer, veld):
+            gister = datetime.datetime.now()
             
             qs = AbsoluteData.objects.filter(assetnummer=assetnummer).order_by("tijdstip")
             data = list(qs.values(veld, "tijdstip"))

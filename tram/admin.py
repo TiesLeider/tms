@@ -5,6 +5,10 @@ from import_export.admin import ImportExportActionModelAdmin
 
 admin.site.site_header = "TMS Beheer"
 
+class AbsoluteDataResource(resources.ModelResource):
+    class Meta:
+        model = AbsoluteData
+
 class UrgentieniveauResource(resources.ModelResource):
     class Meta:
         skip_unchanged = True

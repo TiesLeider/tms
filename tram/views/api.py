@@ -50,10 +50,10 @@ def insert_logo_data(request):
                 asset.druk_b2 == record.druk_b2 and
                 asset.kracht_a == record.kracht_a and
                 asset.kracht_b == record.kracht_b and
-                asset.omloop_a_toegevoegd == 0 and 
-                asset.omloop_b_toegevoegd == 0 or
-                asset.laatste_data.omloop_a_toegevoegd > 25 and asset.omloop_a_toegevoegd == record.omloop_a and
-                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b
+                record.omloop_a_toegevoegd == 0 and 
+                record.omloop_b_toegevoegd == 0 or
+                asset.laatste_data.omloop_a_toegevoegd > 25 and asset.laatste_data.omloop_a_toegevoegd == record.omloop_a_toegevoegd and
+                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b_toegevoegd
                 ):
                 asset.laatste_data.save()
                 return JsonResponse({"response": True, "error": None})
@@ -177,7 +177,7 @@ def check_online_assets(request):
     return JsonResponse(offline_assets, safe=False)
 
 
-def get_sensor_waarden(request, assetnummer, veld):
+def get_sensor_waarden_oud(request, assetnummer, veld):
     qs = AbsoluteData.objects.filter(assetnummer=assetnummer).order_by("tijdstip")
     data = list(qs.values(veld, "tijdstip"))
     response = []
@@ -187,7 +187,9 @@ def get_sensor_waarden(request, assetnummer, veld):
 
     return JsonResponse(response, safe=False)
 
-def get_sensor_waarden_oud(request, assetnummer, veld):
+def get_sensor_waarden(request, assetnummer, veld):
+    #TODO append met de database_data
+
     return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
 
 def get_maand_gemiddelde(request, assetnummer, veld):
