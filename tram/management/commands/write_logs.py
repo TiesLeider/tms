@@ -18,9 +18,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         #Maak variabelen
-        gister = datetime.datetime.now() - datetime.timedelta(days=1)
-        eergister = datetime.datetime.now() - datetime.timedelta(days=2)
-        qs = AbsoluteData.objects.filter(tijdstip__range=(eergister, gister))
+        gister = datetime.date.today() - datetime.timedelta(days=1)
+        eergister = datetime.date.today() - datetime.timedelta(days=2)
+        qs = AbsoluteData.objects.filter(tijdstip__lte=eergister)
         path = os.getcwd() + f'\\tram\\data\\'  if platform.system().lower() == 'windows' else os.getcwd() + f'/tram/data/'
         if not os.path.exists(path):
             os.makedirs(path)
