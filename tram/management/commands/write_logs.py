@@ -20,7 +20,7 @@ class Command(BaseCommand):
         #Maak variabelen
         gister = datetime.date.today() - datetime.timedelta(days=1)
         eergister = datetime.date.today() - datetime.timedelta(days=2)
-        qs = AbsoluteData.objects.filter(tijdstip__lte=eergister)
+        qs = AbsoluteData.objects.filter(tijdstip__gte=gister)
         path = os.getcwd() + f'\\tram\\data\\'  if platform.system().lower() == 'windows' else os.getcwd() + f'/tram/data/'
         if not os.path.exists(path):
             os.makedirs(path)
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         #Export de data
         dataset = AbsoluteDataResource().export(queryset=qs)
 
-        with open(path + f"{eergister.strftime('%d-%m-%Y')}.csv", "w") as data_file:
+        with open(path + f"{gister.strftime('%d-%m-%Y')}.csv", "w") as data_file:
             data_file.write(dataset.csv)
             data_file.close()
 

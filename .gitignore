@@ -2,3 +2,4 @@ api.log
 *.pyc
 tram/templates/tram/data
 tms_webapp/settings.py
+tram/data
