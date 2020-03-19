@@ -28,10 +28,10 @@ class Command(BaseCommand):
         #Export de data
         dataset = AbsoluteDataResource().export(queryset=qs)
 
-        with open(path + f"Data van {eergister.strftime('%d-%m-%Y')}.csv", "w") as data_file:
+        with open(path + f"{eergister.strftime('%d-%m-%Y')}.csv", "w") as data_file:
             data_file.write(dataset.csv)
             data_file.close()
 
         #Verwijder de records
-        qs.delete()
+        # qs.delete()
 
