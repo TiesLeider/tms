@@ -33,5 +33,5 @@ class Command(BaseCommand):
             data_file.close()
 
         #Verwijder de records
-        # qs.delete()
+        AbsoluteData.objects.filter(tijdstip__gte=eergister).delete()
 
