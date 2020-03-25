@@ -5,7 +5,7 @@
         <thead>
             <th>Assetnummer</th>
             <th>Beschrijving</th>
-            <th>Omlopen</th>
+            <th>Omlopen</th>    
             <th>IP-adres (logo)</th>
             <th>IP-adres (modem)</th>
             <th>Configuratie</th>
@@ -15,7 +15,7 @@
             <tr>
                 <td><span title="{{asset.beschrijving}}"><a href="{% url 'asset_index'  asset.assetnummer %}" class="white blue-text btn waves-effect waves-light">{{asset.assetnummer}}</a></span></td>
                 <td>{{asset.beschrijving}}</td>
-                <td>Bak A: {{laatste_polling.omloop_a}}<br>Bak B: {{laatste_polling.omloop_b}}<br>{{druk_a1}}</td>
+                <td>Bak A: {{laatste_data.omloop_a}}<br>Bak B: {{laatste_data.omloop_b}}<br>{{druk_a1}}</td>
                 <td>{{asset.ip_adres_logo}}</td>
                 <td>{{asset.ip_adres_modem}}</td>
                 <td>{{asset.configuratie}}</td>
