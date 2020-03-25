@@ -24,33 +24,6 @@ class Asset(models.Model):
     omloop_a = models.IntegerField(blank=True, default=0)
     omloop_b = models.IntegerField(blank=True, default=0)
 
-    gem_dag_omloop_a_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_week_omloop_a_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_maand_omloop_a_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-    gem_dag_omloop_b_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_week_omloop_b_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_maand_omloop_b_freq = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-    gem_dag_druk_a1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_week_druk_a1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_maand_druk_a1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-    gem_dag_druk_a2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_week_druk_a2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_maand_druk_a2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-    gem_dag_druk_b1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_week_druk_b1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_maand_druk_b1 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-    gem_dag_druk_b2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_week_druk_b2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    gem_maand_druk_b2 = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-
-
-
-
     def __str__(self):  
         return self.assetnummer
 
@@ -117,7 +90,7 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
-    data = models.ManyToManyField("AbsoluteData")
+    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.PROTECT, null=True)
 
     class Meta:
         verbose_name_plural = "storingen"

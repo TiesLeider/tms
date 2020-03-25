@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 from import_export import resources
-from import_export.admin import ImportExportActionModelAdmin
+from import_export.admin import ImportExportActionModelAdmin, ExportActionModelAdmin
 
 admin.site.site_header = "TMS Beheer"
 
@@ -33,6 +33,10 @@ class AssetResource(resources.ModelResource):
         model = Asset
         import_id_fields = ["assetnummer"]
 
+class StoringResource(resources.ModelResource):
+    class Meta:
+        model = Storing
+
 class ConfiguratieResource(resources.ModelResource):
 
     class Meta:
@@ -59,7 +63,7 @@ class ConfiguratieAdmin(ImportExportActionModelAdmin):
     resource_class = ConfiguratieResource
 
 @admin.register(Storing)
-class StoringAdmin(admin.ModelAdmin):
+class StoringAdmin(ExportActionModelAdmin):
     list_display=("id", "assetnummer", "actief", "gezien")
 
 @admin.register(ConfiguratieElement)

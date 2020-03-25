@@ -111,8 +111,8 @@ class LogoPolling:
             score=0,
         )
         new_storing.score = new_storing.get_score()
+        new_storing.laatste_data = self.ad
         new_storing.save()
-        new_storing.data.add(self.ad)
 
     def storing_algoritme(self):
         # Er is een vorige polling geweest van deze asset
@@ -125,7 +125,7 @@ class LogoPolling:
                     # Ja: maak nieuwe storing aan
                     # Nee: skip
                 try:
-                    vorige_storingen = Storing.objects.filter(assetnummer=self.assetnummer, bericht=sb, actief=True).order_by("data")
+                    vorige_storingen = Storing.objects.filter(assetnummer=self.assetnummer, bericht=sb, actief=True).order_by("laatste_data__tijdstip")
                     vorige_storing = vorige_storingen.first()
                 except ObjectDoesNotExist:
                     vorige_storing = None
@@ -140,13 +140,13 @@ class LogoPolling:
                         # De storing is niet gezien gemeld
                         vorige_storing.som += 1
                         vorige_storing.score = vorige_storing.get_score()
-                        vorige_storing.data.add(self.ad)
+                        vorige_storing.laatste_data = self.ad
                     elif (vorige_storing.gezien == True):
                         # De storing is actief en gezien gemeld
                         vorige_storing.som += 1
                         vorige_storing.score = vorige_storing.get_score()
                         vorige_storing.gezien = False
-                        vorige_storing.data.add(self.ad)
+                        vorige_storing.laatste_data = self.ad
                     vorige_storing.save()
                     logging.info(f"{self.assetnummer}: Storing met id: {vorige_storing.id} geupdate.")
 

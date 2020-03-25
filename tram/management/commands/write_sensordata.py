@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         def schrijf_data(assetnummer, veld):
-            gister = datetime.datetime.now()
+            vandaag = datetime.date.today()
             
             qs = AbsoluteData.objects.filter(assetnummer=assetnummer).order_by("tijdstip")
             data = list(qs.values(veld, "tijdstip"))
@@ -29,8 +29,17 @@ class Command(BaseCommand):
                 if not os.path.exists(path):
                     os.makedirs(path)
 
-            with open(path + f'{veld}.json', 'w') as outfile:
-                json.dump(response, outfile)
+            try:
+                with open(path + f'{veld}.json', 'r+') as outfile:
+                    json_data = json.load(outfile)
+                    print(json_data)
+                    print(type(json_data))
+                    for item in response:
+                        json_data.append(item)
+                    json.dump(json_data, outfile)
+            except FileNotFoundError:
+                with open(path + f'{veld}.json', 'w+') as outfile:
+                    json.dump(response, outfile)
 
         for asset in Asset.objects.filter(pollbaar=True):
             try:
@@ -60,7 +69,7 @@ class Command(BaseCommand):
                     schrijf_data(asset, "kracht_b")
 
             except Exception as ex:
-                traceback.print_exc()
+                # traceback.print_exc()
                 # self.stdout.write(self.style.SUCCESS(f'{ex}'))
                 continue
 

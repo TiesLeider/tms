@@ -88,21 +88,20 @@ def insert_sms_data(request):
 def get_actieve_storingen(request):
     storingen_qs = Storing.objects.filter(
         actief=True, gezien=False)
-    data = []
-    for s in storingen_qs:
-        laatste_data = s.data.last()
-        data.append(dict(id=s.id, 
-                        laatste_data__assetnummer__beschrijving=s.assetnummer.beschrijving, 
-                        laatste_data__assetnummer__assetnummer=s.assetnummer.assetnummer, 
-                        bericht=s.bericht,
-                        som=s.som,
-                        score=s.score,
-                        laatste_data__omloop_a=laatste_data.omloop_a,
-                        laatste_data__omloop_b=laatste_data.omloop_b,
-                        laatste_data__tijdstip=laatste_data.tijdstip.strftime("%d %b %Y, %H:%M"),
-                        laatste_data__isotijdstip=laatste_data.tijdstip.isoformat()
+    data = list(storingen_qs.values("id", "assetnummer__beschrijving", "assetnummer__assetnummer",
+                                    "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
 
-                        ))
+    for item in data:
+        try:
+            item["laatste_data__isotijdstip"] = item["laatste_data__tijdstip"].isoformat() 
+            item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime(   
+                "%d %b %Y, %H:%M")
+        except AttributeError:
+            item["laatste_data__isotijdstip"] = ""
+            item["laatste_data__tijdstip"] = "<i>Tijdstip en omlopen worden geüpdatet bij een nieuw alarm</i>"
+            item["laatste_data__omloop_a"] = "-"
+            item["laatste_data__omloop_b"] = 0
+
     return JsonResponse(data, safe=False)
 
 
