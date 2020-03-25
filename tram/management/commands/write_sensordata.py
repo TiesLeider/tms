@@ -29,16 +29,18 @@ class Command(BaseCommand):
                 if not os.path.exists(path):
                     os.makedirs(path)
 
-            try:
-                with open(path + f'{veld}.json', 'r+') as outfile:
-                    json_data = json.load(outfile)
-                    print(json_data)
-                    print(type(json_data))
-                    for item in response:
-                        json_data.append(item)
-                    json.dump(json_data, outfile)
-            except FileNotFoundError:
-                with open(path + f'{veld}.json', 'w+') as outfile:
+            # try:
+            #     with open(path + f'{veld}.json', 'r+') as outfile:
+            #         json_data = json.load(outfile)
+            #         print(json_data)
+            #         print(type(json_data))
+            #         for item in response:
+            #             json_data.append(item)
+            #         json.dump(json_data, outfile)
+            # except FileNotFoundError:
+            #     with open(path + f'{veld}.json', 'w+') as outfile:
+            #         json.dump(response, outfile)
+            with open(path + f'{veld}.json', 'w+') as outfile:
                     json.dump(response, outfile)
 
         for asset in Asset.objects.filter(pollbaar=True):
