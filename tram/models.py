@@ -12,7 +12,7 @@ class Asset(models.Model):
     pollbaar = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True, default=3)
     weging = models.IntegerField(default=1)
-    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.SET_NULL, null=True)
+    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.SET_NULL, null=True, editable=False)
 
     storing_beschrijving = ArrayField(models.CharField(max_length=200), null=True, blank=True, default=list)
     druk_a1 = models.IntegerField(blank=True, default=0)
@@ -90,7 +90,7 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
-    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.PROTECT, null=True)
+    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.PROTECT, null=True, editable=False)
 
     class Meta:
         verbose_name_plural = "storingen"
