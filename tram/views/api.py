@@ -50,10 +50,10 @@ def insert_logo_data(request):
                 asset.druk_b2 == record.druk_b2 and
                 asset.kracht_a == record.kracht_a and
                 asset.kracht_b == record.kracht_b and
-                record.omloop_a_toegevoegd == 0 and 
-                record.omloop_b_toegevoegd == 0 or
-                asset.laatste_data.omloop_a_toegevoegd > 25 and asset.laatste_data.omloop_a_toegevoegd == record.omloop_a_toegevoegd and
-                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b_toegevoegd
+                record.omloop_a == 0 and 
+                record.omloop_b == 0 or
+                asset.laatste_data.omloop_a_toegevoegd > 25 and asset.laatste_data.omloop_a_toegevoegd == record.omloop_a and
+                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b
                 ):
                 asset.laatste_data.save()
                 return JsonResponse({"response": True, "error": None})
