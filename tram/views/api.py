@@ -51,13 +51,19 @@ def insert_logo_data(request):
                 asset.kracht_a == record.kracht_a and
                 asset.kracht_b == record.kracht_b and
                 record.omloop_a == 0 and 
-                record.omloop_b == 0 or
-                asset.laatste_data.omloop_a_toegevoegd > 25 and asset.laatste_data.omloop_a_toegevoegd == record.omloop_a and
-                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b
+                record.omloop_b == 0
                 ):
                 asset.laatste_data.save()
                 return JsonResponse({"response": True, "error": None})
                 logging.error(f"{assetnummer}: polling overgeslagen. Identieke polling.")
+            elif (asset.laatste_data.omloop_a_toegevoegd > 25 and asset.laatste_data.omloop_a_toegevoegd == record.omloop_a and
+                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b):
+                asset.laatste_data.save()
+                return JsonResponse({"response": True, "error": None})
+                logging.error(f"{assetnummer}: polling overgeslagen. Identieke polling.")
+            else:
+                pass
+
 
         polling = LogoPolling(logo_data=record, asset=asset)
         polling.insert_absolute_data()

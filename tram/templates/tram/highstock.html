@@ -57,33 +57,6 @@
                     title: {
                         text: '{{veld}}'
                     },
-                    plotLines: [{
-                        value: gemiddelde.maand_gemiddelde,
-                        color: 'green',
-                        dashStyle: 'shortdash',
-                        width: 2,
-                        label: {
-                            text:  ''  
-                        }
-                    },{
-                        value: gemiddelde.dag_gemiddelde,
-                        color: 'yellow',
-                        dashStyle: 'shortdash',
-                        width: 2,
-                        label: {
-                            text:  ''  
-                        }
-                    },
-                    {
-                        value: gemiddelde.week_gemiddelde,
-                        color: 'red',
-                        dashStyle: 'shortdash',
-                        width: 2,
-                        label: {
-                            text:  ''  
-                        }
-                    }
-                    ]
                 },
         
                 rangeSelector: {
@@ -126,7 +99,7 @@
                 },
 
                 subtitle: {
-                    text: `Daggemiddelde: ${gemiddelde.dag_gemiddelde}. (gele lijn) <br> Weekgemiddelde: ${gemiddelde.week_gemiddelde}. (rode lijn) <br> Maandgemiddelde: ${gemiddelde.maand_gemiddelde}. (groene lijn) `
+                    text: ``
                 },
     
                 series: [{
@@ -182,7 +155,7 @@
                     text: ' {{asset.assetnummer}} - {{veld}}'
                 },
                 subtitle:{
-                    text: `{% if veld == "omloop_a" %}Daggemiddelde: {{asset.gem_dag_omloop_a_freq}}. <br> Weekgemiddelde: {{asset.gem_week_omloop_a_freq}}. <br> Maandgemiddelde: {{asset.gem_maand_omloop_a_freq}} {% elif veld == "omloop_b" %} Daggemiddelde: {{asset.gem_dag_omloop_b_freq}}. <br> Weekgemiddelde: {{asset.gem_week_omloop_b_freq}}. <br> Maandgemiddelde: {{asset.gem_maand_omloop_b_freq}}  {% endif %}`
+                    text: ``
                 },
 
                 
