@@ -83,7 +83,7 @@ def insert_sms_data(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         sms_polling = SmsPolling(json_data)
-        sms_polling.insert_sms_data()
+        #sms_polling.insert_sms_data()
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         traceback.print_exc()
@@ -152,33 +152,52 @@ def check_assets_online_oud(request):
     return JsonResponse(offline_assets, safe=False)
 
 
+# def check_online_assets(request):
+#     def ping(host):
+#         FNULL = open(os.devnull, 'w')
+#         param = '-n' if platform.system().lower() == 'windows' else '-c'
+#         return subprocess.call(
+#             ["ping", param, "1", host], stdout=FNULL) == 0
+
+#     try:
+#         logo_assets = Asset.objects.exclude(ip_adres_logo=None)
+#         offline_assets = []
+#         for asset in logo_assets:
+#             # if ping(asset.ip_adres_logo) != 0:
+#             try:
+#                 r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
+#             except Timeout:
+#                 try:
+#                     ad = AbsoluteData.objects.filter(
+#                         assetnummer=asset).latest()
+#                     tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
+#                 except ObjectDoesNotExist:
+#                     tijdstip = "Nooit"
+#                 offline_assets.append(
+#                     {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
+#     except Exception as ex:   
+#         traceback.print_exc()
+#         logging.error("%s", traceback.format_exc())
+
+#     return JsonResponse(offline_assets, safe=False)
+
 def check_online_assets(request):
-    def ping(host):
-        FNULL = open(os.devnull, 'w')
-        param = '-n' if platform.system().lower() == 'windows' else '-c'
-        return subprocess.call(
-            ["ping", param, "1", host], stdout=FNULL) == 0
-
-    try:
-        logo_assets = Asset.objects.exclude(ip_adres_logo=None)
-        offline_assets = []
-        for asset in logo_assets:
-            # if ping(asset.ip_adres_logo) != 0:
-            try:
-                r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
-            except Timeout:
-                try:
-                    ad = AbsoluteData.objects.filter(
-                        assetnummer=asset).latest()
-                    tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
-                except ObjectDoesNotExist:
-                    tijdstip = "Nooit"
-                offline_assets.append(
-                    {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
-    except Exception as ex:
-        traceback.print_exc()
-        logging.error("%s", traceback.format_exc())
-
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+    offline_assets = []
+    for asset in r.json():
+            for key, value in asset.items():
+                if value == False:
+                    assetnummer = key.upper() if key.startswith("w") else key
+                    if len(assetnummer) > 4 and assetnummer.startswith("W"):
+                        assetnummer = assetnummer[1:]
+                    asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
+                    try:
+                        tijdstip = asset.laatste_data.tijdstip.strftime("%d %b %Y, %H:%M")
+                    except:
+                        tijdstip = "Nooit"
+                    if asset.pollbaar == True:
+                        offline_assets.append(
+                            {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
     return JsonResponse(offline_assets, safe=False)
 
 
