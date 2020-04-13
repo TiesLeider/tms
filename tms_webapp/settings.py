@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
 
 INSTALLED_APPS = [
     'import_export',
+    'crispy_forms',
+    'crispy_forms_materialize',
     'tram.apps.TramConfig',
     'pomp.apps.PompConfig',
     'django.contrib.admin',
@@ -129,3 +131,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/tms/static/'
 
 IMPORT_EXPORT_USE_TRANSACTIONS = False
+
+LOGIN_REDIRECT_URL = "index"
+
+LOGIN_URL = "login"
+
+CRISPY_TEMPLATE_PACK = "materialize_css_forms"

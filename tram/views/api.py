@@ -28,6 +28,9 @@ def requesthandler(request):
         return request
 
 
+def api_docs(request):
+    return render(request, "tram/api_docs.html", {})
+
 @csrf_exempt
 def insert_logo_data(request):
     try:

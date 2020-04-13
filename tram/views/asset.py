@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 from ..models import *
 from django.db.models import Sum, Avg
 
 
+@login_required
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     try:
@@ -17,6 +19,7 @@ def asset_index(request, assetnummer):
 
     return render(request, "tram/asset.html", {"asset": asset, "laatste_data":laatste_data, "laatste_polling": laatste_polling})
 
+@login_required
 def reset_teller_standen(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     laatste_data = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
@@ -25,6 +28,7 @@ def reset_teller_standen(request, assetnummer):
     laatste_data.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+@login_required
 def reset_teller_alle(request):
     for asset in Asset.objects.all():
         try:
@@ -44,6 +48,7 @@ def corrigeer_omlopen(request, assetnummer):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+@login_required
 def asset_lijst(request):
     assets = Asset.objects.all().order_by("assetnummer")
     return render(request, "tram/asset_lijst.html", {"assets": assets})

@@ -1,0 +1,48 @@
+{% extends "tram/base.html" %}
+{% block content %}
+    <div class="container">
+        <div class="card-panel white">
+            <table>
+                <thead>
+                    <tr>
+                        <th data-field="id">Naam</th>
+                        <th data-field="">Locatie</th>
+                        <th data-field="url">Url</th>
+                        <th data-field="name">Methode</th>
+                        <th data-field="price">Beschrijving</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Actieve storingen</td>
+                        <td>views.get_actieve_storingen</td>
+                        <td><a href="{% url 'alle_actieve_storingen'%}">api/alle_actieve_storingen/</a></td>
+                        <td>GET</td>
+                        <td>De backend returnt alle actieve storingen.</td>
+                    </tr>
+                    <tr>
+                        <td>IP-nummers</td>
+                        <td>views.ip_nummers</td>
+                        <td><a href="{% url 'get_ipnummers'%}">api/get_ipnummers/</a></td>
+                        <td>GET</td>
+                        <td>De backend returnt alle assets met een storingsplc en het IP-adres daarvan.</td>
+                    </tr>
+                    <tr>
+                        <td>Toezenden Logo data</td>
+                        <td>views.insert_logo_data</td>
+                        <td><a href="{% url 'insert_logo_data'%}">/insertlogodata</a></td>
+                        <td>POST</td>
+                        <td>De backend verwerkt de toegezonden data en plaast deze in de database.</td>
+                    </tr>
+                    <tr>
+                        <td>Toezenden SMS data</td>
+                        <td>views.insert_sms_data</td>
+                        <td><a href="{% url 'insert_logo_data'%}">/insertsmsdata</a></td>
+                        <td>POST</td>
+                        <td>De backend verwerkt de toegezonden data en plaast deze in de database.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content%}

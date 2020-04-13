@@ -24,13 +24,18 @@
           <div class="container" style="margin-left: 30px">
             <ul class="left">
               <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_87_transparant.png' %}" class="round" style="position: relative; ; margin-right: 10px; margin-top: 6px;" alt=""></li>
-              <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
-              <li>
-                <a href="#" id="checken" class="grey hoverable btn-large round"><i class="large material-icons left">autorenew</i>Checken op offline assets...</a>
-                <a href="#" id="alle_verbonden" onclick="checkOnlineAssets()" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
-                <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
-              </li>
-              <li><a href="{% url 'asset_lijst' %}" class="grey hoverable btn-large round"><i class="material-icons left">timeline</i>Asset lijst</a></li>
+              {% if user.is_authenticated%}
+                <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
+                <li>
+                  <a href="#" id="checken" class="grey hoverable btn-large round"><i class="large material-icons left">autorenew</i>Checken op offline assets...</a>
+                  <a href="#" id="alle_verbonden" onclick="checkOnlineAssets()" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
+                  <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
+                </li>
+                <li><a href="{% url 'asset_lijst' %}" class="grey hoverable btn-large round"><i class="material-icons left">dns</i>Asset lijst</a></li>
+                <li><a href="{% url 'logout' %}" class="red lighten-2 hoverable btn-large round"><i class="small material-icons left">exit_to_app</i> {{user.username}}, Log uit</a></li>
+              {% else %}
+                <li><a href="{% url 'login' %}" class="grey hoverable btn-large round"><i class="small material-icons left">vpn_key</i>Log in</a></li>
+              {% endif %}
             </ul>
             <img class="brand-logo right" src="{% static 'tram/img/gvb_logo.png' %}" height="65px" style="padding-right: 20px;" alt=""/>
           </div>
@@ -49,7 +54,7 @@
       </div>
       <div class="footer-copyright">
         <div class="container">
-          © 2019 TMS
+          © 2020 TMS
         </div>
       </div>
     </footer>
@@ -59,6 +64,7 @@
       <script src="{% static 'tram/js/jquery.min.js' %}"></script>
     <!-- Path of the materialize.min.js file -->
       <script src="{% static 'tram/js/materialize.min.js' %}"></script>
+      {% if user.is_authenticated %}
     <script>
       $("document").ready(function(){
         $('#alle_verbonden').hide();
@@ -104,6 +110,7 @@
          }
        }
     </script>
+    {%endif%}
       {% block javascript %} {% endblock %}
   </body>
 </html>

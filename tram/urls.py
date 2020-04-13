@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
  
 
 urlpatterns = [
@@ -10,6 +11,7 @@ urlpatterns = [
     path("sms", views.sms_lijst, name="sms_lijst"),
 
     #API
+    path("api/", views.api_docs, name="api_docs"),
     path("api/resettelleralle", views.asset.reset_teller_alle, name="asset_reset_alle"),
     path("api/alle_actieve_storingen/", views.get_actieve_storingen, name="alle_actieve_storingen"),
     path("index_form", views.index_form, name="index_form"),
@@ -27,5 +29,9 @@ urlpatterns = [
     path("asset/<str:assetnummer>/corrigeer_omlopen", views.asset.corrigeer_omlopen, name="asset_corrigeer_omlopen"),
     path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
     path("analyse/<str:assetnummer>/<str:veld>", views.asset_analyse, name="asset_analyse"),
-    path("asset_lijst", views.asset_lijst, name="asset_lijst")
+    path("asset_lijst", views.asset_lijst, name="asset_lijst"),
+
+    #User Account Control
+    path("login", auth_views.LoginView.as_view(template_name="tram/login.html"), name="login"),
+    path("logout", auth_views.LogoutView.as_view(template_name="tram/logout.html"), name="logout")
 ]  
