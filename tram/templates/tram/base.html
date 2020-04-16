@@ -32,7 +32,7 @@
                   <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
                 </li>
                 <li><a href="{% url 'asset_lijst' %}" class="grey hoverable btn-large round"><i class="material-icons left">dns</i>Asset lijst</a></li>
-                <li><a href="{% url 'logout' %}" class="red lighten-2 hoverable btn-large round"><i class="small material-icons left">exit_to_app</i> {{user.username}}, Log uit</a></li>
+                <li id="dropdownUserBtn" class="dropdown-trigger" data-target='dropdown1'><a  href="#" class="red lighten-2 hoverable btn-large round " ><i class="small material-icons left">account_box</i>{{user.username}}</a></li>
               {% else %}
                 <li><a href="{% url 'login' %}" class="grey hoverable btn-large round"><i class="small material-icons left">vpn_key</i>Log in</a></li>
               {% endif %}
@@ -42,10 +42,16 @@
         </div>
       </nav>
     </header>
+    <ul id='dropdown1' class='dropdown-content' style="background-color: rgba(255, 255, 255, 0);">
+        {%if user.is_superuser %}
+          <li><a href="{% url 'admin:index' %}" class="blue lighten-2  white-text"><i class="material-icons left">settings</i>Adminpaneel</a></li>
+        {% endif %}
+      <li><a href="{% url 'logout' %}" class="red lighten-2  white-text"><i class="small material-icons left">exit_to_app</i>Log uit</a></li>
+    </ul>
     <div id="niet_verbonden_modal" class="modal red lighten-1">
       <div class="modal-content" id="niet_verbonden_modal_content">
       </div>
-    </div>
+    </div>  
     <main>
         {% block content %}{% endblock%}
     </main>
@@ -67,6 +73,8 @@
       {% if user.is_authenticated %}
     <script>
       $("document").ready(function(){
+        var dropdownUser = $("#dropdownUserBtn")
+        dropdownUser.dropdown({"constrainWidth": false});
         $('#alle_verbonden').hide();
         $('#niet_verbonden').hide();
         $('.modal').modal();
