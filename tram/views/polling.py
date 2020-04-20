@@ -110,7 +110,7 @@ class LogoPolling:
             som=counter,
             score=0,
         )
-        new_storing.score = 4 if bericht == "Druklimit overschreden" else new_storing.get_score()
+        new_storing.score = 4 if bericht == "Druklimiet overschreden" else new_storing.get_score()
         new_storing.laatste_data = self.ad
         new_storing.save()
 
@@ -122,13 +122,13 @@ class LogoPolling:
             self.record.druk_b2 > self.asset.alarm_waarde_druk_b
         ):
             try:
-                qs =  Storing.objects.get(assetnummer=self.assetnummer, bericht="Druklimit overschreden", actief=True)
+                qs =  Storing.objects.get(assetnummer=self.assetnummer, bericht="Druklimiet overschreden", actief=True)
                 qs.gezien = False
                 qs.som += 1
                 qs.save()
 
             except ObjectDoesNotExist:
-                self.maak_nieuwe_storing("Druklimit overschreden")
+                self.maak_nieuwe_storing("Druklimiet overschreden")
         # Er is een vorige polling geweest van deze asset
         if len(self.storing_beschrijving) > 0:
             # Bij deze polling is een storing vastgelegd
