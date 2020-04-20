@@ -110,7 +110,7 @@ class LogoPolling:
             som=counter,
             score=0,
         )
-        new_storing.score = 4 if bericht == "Druklimit overschreden." else new_storing.get_score()
+        new_storing.score = 4 if bericht == "Druklimit overschreden" else new_storing.get_score()
         new_storing.laatste_data = self.ad
         new_storing.save()
 
