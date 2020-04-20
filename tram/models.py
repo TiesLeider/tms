@@ -12,6 +12,8 @@ class Asset(models.Model):
     pollbaar = models.BooleanField(default=False)
     configuratie = models.ForeignKey("Configuratie", on_delete=models.CASCADE, null=True, default=3)
     weging = models.IntegerField(default=1)
+    alarm_waarde_druk_a = models.IntegerField(default=750)
+    alarm_waarde_druk_b = models.IntegerField(default=750)
     laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.SET_NULL, null=True, editable=False)
 
     storing_beschrijving = ArrayField(models.CharField(max_length=200), null=True, blank=True, default=list)
