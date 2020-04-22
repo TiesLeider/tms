@@ -82,6 +82,7 @@
             {% endif %}
         </div>
         <div class="row">
+            <!--TODO druk aanpassen-->
             {% if laatste_polling.druk_a1 > 100 %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a1' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}

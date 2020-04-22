@@ -77,6 +77,7 @@ class LogoPolling:
         self.asset.omloop_b += self.record.omloop_b
 
     def insert_absolute_data(self):
+        #TODO ruis 
         self.ad = AbsoluteData(
             assetnummer_id=self.asset.assetnummer,
             storing_beschrijving=self.storing_beschrijving,
@@ -137,6 +138,8 @@ class LogoPolling:
         if len(self.storing_beschrijving) > 0:
             # Bij deze polling is een storing vastgelegd
             for sb in self.storing_beschrijving:
+                if sb == STRING_DRUK_OVERSCHREDEN:
+                    continue
                 # Check of dezelfde storing actief is
                 # Zo ja: kijk huidige procedure
                 # Zo niet: kijk of de deze beschrijving voorkwam in de afgelopen x (configuratie.timeout) uur of storing is voorgekomen

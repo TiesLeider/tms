@@ -5,6 +5,8 @@ from import_export.admin import ImportExportActionModelAdmin, ExportActionModelA
 
 admin.site.site_header = "TMS Beheer"
 
+#TODO Verzenden gebruiker gegevens naar Email.
+
 class AbsoluteDataResource(resources.ModelResource):
     class Meta:
         model = AbsoluteData
