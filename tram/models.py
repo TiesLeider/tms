@@ -26,6 +26,9 @@ class Asset(models.Model):
     omloop_a = models.IntegerField(blank=True, default=0)
     omloop_b = models.IntegerField(blank=True, default=0)
 
+    class Meta:
+        ordering = ['assetnummer',]
+
     def __str__(self):  
         return self.assetnummer
 
