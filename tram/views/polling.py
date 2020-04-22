@@ -9,6 +9,8 @@ from django.db.models import Sum
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
 
+STRING_DRUK_OVERSCHREDEN = "Druklimiet overschreden"
+
 class LogoData():
     
     def __init__(self, json_data, asset):
@@ -110,25 +112,27 @@ class LogoPolling:
             som=counter,
             score=0,
         )
-        new_storing.score = 4 if bericht == "Druklimiet overschreden" else new_storing.get_score()
+        new_storing.score = 4 if bericht == STRING_DRUK_OVERSCHREDEN else new_storing.get_score()
         new_storing.laatste_data = self.ad
         new_storing.save()
 
     def storing_algoritme(self):
-        #
         if (self.record.druk_a1 > self.asset.alarm_waarde_druk_a or
             self.record.druk_b1 > self.asset.alarm_waarde_druk_b or
             self.record.druk_a2 > self.asset.alarm_waarde_druk_a or
             self.record.druk_b2 > self.asset.alarm_waarde_druk_b
         ):
+            self.ad.storing_beschrijving.append(STRING_DRUK_OVERSCHREDEN)
+            self.ad.save()
             try:
-                qs =  Storing.objects.get(assetnummer=self.assetnummer, bericht="Druklimiet overschreden", actief=True)
+                qs =  Storing.objects.get(assetnummer=self.assetnummer, bericht=STRING_DRUK_OVERSCHREDEN, actief=True)
                 qs.gezien = False
                 qs.som += 1
+                qs.score = 4 * qs.som
                 qs.save()
 
             except ObjectDoesNotExist:
-                self.maak_nieuwe_storing("Druklimiet overschreden")
+                self.maak_nieuwe_storing(STRING_DRUK_OVERSCHREDEN)
         # Er is een vorige polling geweest van deze asset
         if len(self.storing_beschrijving) > 0:
             # Bij deze polling is een storing vastgelegd
