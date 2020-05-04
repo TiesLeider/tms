@@ -248,7 +248,12 @@ def dashboard_omlopen(request):
     assets = Asset.objects.all()
     totale_omlopen = assets.aggregate(Sum("omloop_a"))["omloop_a__sum"] + assets.aggregate(Sum("omloop_b"))["omloop_b__sum"]
     asset_array = []
+
+    def get_key(elem):
+        return elem["y"]
+
     for asset in assets:
         asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+    asset_array.sort(key=get_key)
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))

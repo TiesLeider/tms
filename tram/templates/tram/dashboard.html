@@ -7,7 +7,7 @@
 {%endblock%}
 {% block content %}
 <div class="card-panel white">
-    <h1>Dashboard</h1>
+    <h1>WIP Dashboard</h1>
     <div class="row">
         <div class="col s12 m6 l6">
             <div class="card-panel white">
@@ -54,7 +54,7 @@
                 text: `Totaal aantal omlopen ${data.totale_omlopen}`
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                pointFormat: '<b>{point.percentage:.1f}% (= {point.omlopen} omlopen)</b>'
             },
             accessibility: {
                 point: {
