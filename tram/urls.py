@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/get_sensor_waarden/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden, name="get_sensor_waarden"),
     path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
     path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
+    path("api/dashboard_omlopen", views.dashboard_omlopen, name="dashboard_omlopen"),
 
     #Asset
     path("insertlogodata",views.insert_logo_data, name="insert_logo_data"),
@@ -30,6 +31,7 @@ urlpatterns = [
     path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
     path("analyse/<str:assetnummer>/<str:veld>", views.asset_analyse, name="asset_analyse"),
     path("asset_lijst", views.asset_lijst, name="asset_lijst"),
+    path("asset_dashboard/", views.dashboard, name="dashboard"),
 
     #User Account Control
     #TODO Wachtwoord veranderen na eerste keer inloggen

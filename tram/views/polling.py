@@ -81,10 +81,10 @@ class LogoPolling:
         self.ad = AbsoluteData(
             assetnummer_id=self.asset.assetnummer,
             storing_beschrijving=self.storing_beschrijving,
-            druk_a1=self.record.druk_a1,
-            druk_a2=self.record.druk_a2,
-            druk_b1=self.record.druk_b1,
-            druk_b2=self.record.druk_b2,
+            druk_a1=self.record.druk_a1 if (self.record.druk_a1 > 20) else 0,
+            druk_a2=self.record.druk_a2 if (self.record.druk_a2 > 20) else 0,
+            druk_b1=self.record.druk_b1 if (self.record.druk_b1 > 20) else 0,
+            druk_b2=self.record.druk_b2 if (self.record.druk_b2 > 20) else 0,
             kracht_a=self.record.kracht_a,
             kracht_b=self.record.kracht_b,
             omloop_a=self.asset.omloop_a +

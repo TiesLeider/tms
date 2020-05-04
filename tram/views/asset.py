@@ -61,3 +61,8 @@ def asset_chart(request, assetnummer):
 def asset_analyse(request, assetnummer, veld):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     return render(request, "tram/highstock.html", {"asset": asset, "veld" : veld})
+
+def dashboard(request):
+
+
+    return render(request, "tram/dashboard.html", {})
