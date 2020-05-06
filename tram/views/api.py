@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg, Count
 from ..models import *
 from .polling import LogoPolling, SmsPolling, LogoData
 from requests.exceptions import Timeout
@@ -254,6 +254,21 @@ def dashboard_omlopen(request):
 
     for asset in assets:
         asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
-    asset_array.sort(key=get_key)
+    asset_array.sort(key=get_key, reverse=True) 
+
+    return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
+
+def dashboard_tongen(request):
+    qs = Storing.objects.filter()
+    assets = Asset.objects.all()
+    totale_omlopen = assets.aggregate(Sum("omloop_a"))["omloop_a__sum"] + assets.aggregate(Sum("omloop_b"))["omloop_b__sum"]
+    asset_array = []
+
+    def get_key(elem):
+        return elem["y"]
+
+    for asset in assets:
+        asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+    asset_array.sort(key=get_key, reverse=True) 
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))

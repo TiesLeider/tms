@@ -118,10 +118,10 @@ class LogoPolling:
         new_storing.save()
 
     def storing_algoritme(self):
-        if (self.record.druk_a1 > self.asset.alarm_waarde_druk_a or
-            self.record.druk_b1 > self.asset.alarm_waarde_druk_b or
-            self.record.druk_a2 > self.asset.alarm_waarde_druk_a or
-            self.record.druk_b2 > self.asset.alarm_waarde_druk_b
+        if (self.ad.druk_a1 > self.asset.alarm_waarde_druk_a or
+            self.ad.druk_b1 > self.asset.alarm_waarde_druk_b or
+            self.ad.druk_a2 > self.asset.alarm_waarde_druk_a or
+            self.ad.druk_b2 > self.asset.alarm_waarde_druk_b
         ):
             self.ad.storing_beschrijving.append(STRING_DRUK_OVERSCHREDEN)
             self.ad.save()

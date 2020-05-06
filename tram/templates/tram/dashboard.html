@@ -12,10 +12,17 @@
         <div class="col s12 m6 l6">
             <div class="card-panel white">
                 <figure class="highcharts-figure">
-                    <div id="container"></div>
+                    <div id="omlopen"></div>
                     <p class="highcharts-description">
-                        This pie chart shows how the chart legend can be used to provide
-                        information about the individual slices.
+                    </p>
+                </figure>
+            </div>
+        </div>
+        <div class="col s12 m6 l6">
+            <div class="card-panel white">
+                <figure class="highcharts-figure">
+                    <div id="tongen"></div>
+                    <p class="highcharts-description">
                     </p>
                 </figure>
             </div>
@@ -32,6 +39,7 @@
             url: "/tram/api/dashboard_omlopen",
             success: function(response){
                 highchartOmlopen(response)
+                highchartTongen(response)
             },
             error: function(error_data){
                 console.log(error_data)
@@ -40,7 +48,7 @@
     }
 
     function highchartOmlopen(data){
-        Highcharts.chart('container', {
+        Highcharts.chart('omlopen', {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -51,7 +59,46 @@
                 text: 'Omlopen',
             },
             subtitle:{
-                text: `Totaal aantal omlopen ${data.totale_omlopen}`
+                text: `Totaal aantal omlopen alle assets: ${data.totale_omlopen}`
+            },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.1f}% (= {point.omlopen} omlopen)</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Assets',
+                colorByPoint: true,
+                data: data.asset_array
+            }]
+        });
+    }
+    function highchartTongen(data){
+        Highcharts.chart('omlopen', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Omlopen',
+            },
+            subtitle:{
+                text: `Totaal aantal omlopen alle assets: ${data.totale_omlopen}`
             },
             tooltip: {
                 pointFormat: '<b>{point.percentage:.1f}% (= {point.omlopen} omlopen)</b>'
