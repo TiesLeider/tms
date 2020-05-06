@@ -268,7 +268,11 @@ def dashboard_tongen(request):
         return elem["y"]
 
     for asset in assets:
-        asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+        percentage = ((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100
+        if percentage == 0:
+            continue
+
+        asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y= percentage))
     asset_array.sort(key=get_key, reverse=True) 
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
