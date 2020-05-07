@@ -127,6 +127,7 @@ class LogoPolling:
             self.ad.save()
             try:
                 qs =  Storing.objects.get(assetnummer=self.assetnummer, bericht=STRING_DRUK_OVERSCHREDEN, actief=True)
+                qs.laatste_data = self.ad
                 qs.gezien = False
                 qs.som += 1
                 qs.score = 4 * qs.som
