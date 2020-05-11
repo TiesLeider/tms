@@ -21,6 +21,7 @@ urlpatterns = [
     path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
     path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
     path("api/dashboard_omlopen", views.dashboard_omlopen, name="dashboard_omlopen"),
+     path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
 
     #Asset
     path("insertlogodata",views.insert_logo_data, name="insert_logo_data"),

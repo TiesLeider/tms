@@ -18,17 +18,22 @@
                 </figure>
             </div>
         </div>
+        {% for storing in storingen %}
         <div class="col s12 m6 l6">
             <div class="card-panel white">
                 <figure class="highcharts-figure">
-                    <div id="tongen"></div>
+                    <div id="{{storing}}"></div>
                     <p class="highcharts-description">
                     </p>
                 </figure>
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
+<script type="text/javascript"> 
+    var storingen = JSON.parse("{{storingen_serz|escapejs}}");
+ </script>
 {% endblock %}
 {% block javascript %}
 
@@ -39,7 +44,20 @@
             url: "/tram/api/dashboard_omlopen",
             success: function(response){
                 highchartOmlopen(response)
-                highchartTongen(response)
+            },
+            error: function(error_data){
+                console.log(error_data)
+            },
+        })
+    }
+
+    function getAjaxDataStoring(storing){
+        $.ajax({
+            method: "GET",
+            url: `/tram/api/dashboard/storing/${storing}`,
+            success: function(response){
+                highchartStoring(response, storing)
+                console.log(response)
             },
             error: function(error_data){
                 console.log(error_data)
@@ -86,8 +104,9 @@
             }]
         });
     }
-    function highchartTongen(data){
-        Highcharts.chart('omlopen', {
+
+    function highchartStoring(data, storing){
+        Highcharts.chart(`${storing}`, {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -95,13 +114,13 @@
                 type: 'pie'
             },
             title: {
-                text: 'Omlopen',
+                text: `${storing}`,
             },
             subtitle:{
-                text: `Totaal aantal omlopen alle assets: ${data.totale_omlopen}`
+                text: `Totaal aantal storingen alle assets: ${data.totale_storingen}`
             },
             tooltip: {
-                pointFormat: '<b>{point.percentage:.1f}% (= {point.omlopen} omlopen)</b>'
+                pointFormat: '<b>{point.percentage:.1f}%</b>'
             },
             accessibility: {
                 point: {
@@ -126,5 +145,8 @@
         });
     }
     getAjaxData();
+    for (s of storingen){
+        getAjaxDataStoring(s);
+    }
 </script>
 {% endblock %}

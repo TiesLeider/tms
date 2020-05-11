@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from ..models import *
 from django.db.models import Sum, Avg
+import json
 
 
 @login_required
@@ -63,6 +64,6 @@ def asset_analyse(request, assetnummer, veld):
     return render(request, "tram/highstock.html", {"asset": asset, "veld" : veld})
 
 def dashboard(request):
-
-
-    return render(request, "tram/dashboard.html", {})
+    storingen = ["No Fail Save", "Tong failure A+B", "WSA Defect", "Timeout L of R point A of Point B", "Verzamelmelding deksels, water in bak", "Druklimiet overschreden"]
+        
+    return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen)})

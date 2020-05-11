@@ -258,21 +258,28 @@ def dashboard_omlopen(request):
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
 
-def dashboard_tongen(request):
-    qs = Storing.objects.filter()
+def dashboard_storingen(request, storing):
+    if storing == "Tong failure A+B":
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"])
+    else:   
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing])
     assets = Asset.objects.all()
-    totale_omlopen = assets.aggregate(Sum("omloop_a"))["omloop_a__sum"] + assets.aggregate(Sum("omloop_b"))["omloop_b__sum"]
+    totale_storingen = qs.count()
     asset_array = []
 
     def get_key(elem):
         return elem["y"]
 
     for asset in assets:
-        percentage = ((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100
-        if percentage == 0:
+        if storing == "Tong failure A+B":
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"], assetnummer=asset).count()
+        else:
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
+        if aantal == 0:
             continue
+        percentage = (aantal / totale_storingen)*100
 
-        asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y= percentage))
+        asset_array.append(dict(name=asset.assetnummer, y= percentage))
     asset_array.sort(key=get_key, reverse=True) 
 
-    return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
+    return JsonResponse(dict(totale_storingen=totale_storingen, asset_array=asset_array))
