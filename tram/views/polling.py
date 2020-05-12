@@ -76,9 +76,6 @@ class LogoPolling:
 
 
     def insert_absolute_data(self):
-        self.asset.omloop_a += self.record.omloop_a
-        self.asset.omloop_b += self.record.omloop_b
-
         self.ad = AbsoluteData(
             assetnummer_id=self.asset.assetnummer,
             storing_beschrijving=self.storing_beschrijving,
@@ -88,15 +85,17 @@ class LogoPolling:
             druk_b2=self.record.druk_b2 if (self.record.druk_b2 > 20) else 0,
             kracht_a=self.record.kracht_a,
             kracht_b=self.record.kracht_b,
-            omloop_a=self.asset.omloop_a +
+            omloop_a=self.vorige_ad.omloop_a +
             self.record.omloop_a if (self.vorige_ad) else self.record.omloop_a,
-            omloop_b=self.asset.omloop_b +
+            omloop_b=self.vorige_ad.omloop_b +
             self.record.omloop_b if (self.vorige_ad) else self.record.omloop_b,
             omloop_a_toegevoegd = self.record.omloop_a,
             omloop_b_toegevoegd = self.record.omloop_b,
         )
         self.ad.save()
         self.asset.laatste_data = self.ad
+        self.asset.omloop_a = self.ad.omloop_a
+        self.asset.omloop_b = self.ad.omloop_b
         self.asset.save()
 
     

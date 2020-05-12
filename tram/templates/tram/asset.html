@@ -82,10 +82,10 @@
             {% endif %}
         </div>
         <div class="row">
-            {% if asset.configuratie == "ELL-Standaard" or  asset.configuratie == "Amstelveen"  %}
+            {% if asset.configuratie.naam == "ELL-Standaard" or  asset.configuratie.naam == "Amstelveen"  %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a1' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}
-            {% if  asset.configuratie == "ELL-Standaard" or  asset.configuratie == "Amstelveen" %}
+            {% if  asset.configuratie.naam == "ELL-Standaard" or  asset.configuratie.naam == "Amstelveen" %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a2' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}
             {% if laatste_polling.druk_b1 > 100 %}
