@@ -73,11 +73,12 @@ class LogoPolling:
             self.vorige_ad = None
         if self.asset.pollbaar == False:
             self.asset.pollbaar = True
+
+
+    def insert_absolute_data(self):
         self.asset.omloop_a += self.record.omloop_a
         self.asset.omloop_b += self.record.omloop_b
 
-    def insert_absolute_data(self):
-        #TODO ruis 
         self.ad = AbsoluteData(
             assetnummer_id=self.asset.assetnummer,
             storing_beschrijving=self.storing_beschrijving,

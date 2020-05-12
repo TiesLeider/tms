@@ -82,11 +82,10 @@
             {% endif %}
         </div>
         <div class="row">
-            <!--TODO druk aanpassen-->
-            {% if laatste_polling.druk_a1 > 100 %}
+            {% if asset.configuratie == "ELL-Standaard" or  asset.configuratie == "Amstelveen"  %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a1' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}
-            {% if laatste_polling.druk_a2 > 100 %}
+            {% if  asset.configuratie == "ELL-Standaard" or  asset.configuratie == "Amstelveen" %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a2' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}
             {% if laatste_polling.druk_b1 > 100 %}
