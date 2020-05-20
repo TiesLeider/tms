@@ -8,6 +8,8 @@ logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
 
 def livesign(request):
     pass
+
+
 @csrf_exempt
 def error(request):
     data = str(request.body)[2:-1]
