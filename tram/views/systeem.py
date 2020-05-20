@@ -14,5 +14,5 @@ def livesign(request):
 def error(request):
     data = str(request.body)[2:-1]
     json_data = json.loads(data).get("ojson")
-    logging.error(f"{error}")
+    logging.error(f"{json_data}")
     return JsonResponse({"response": True, "error": None})
