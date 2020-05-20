@@ -26,15 +26,15 @@
         <table id="tabel">
             <tr>
                 <th style="max-width: 5px;"><label><input id="selectAlle" type="checkbox" class="filled-in" onclick="selecteerAlle(this)"/><span></span></label></th>
-                <th>ID</th>
-                <th id=assetTh>Assetnummer</th>
-                <th id=storingTh>Storing</th>
-                <th>Count</th>
-                <th>Score</th>
-                <th id="omloopTh">Omlopen</th>
-                <th id="tijdstipTh">Tijdstip</th>
-                <th>Negeren</th>
-                <th>Herstellen</th>
+                <th class="th_selectable">ID</th>
+                <th class="th_selectable" id=assetTh>Assetnummer</th>
+                <th class="th_selectable" id=storingTh>Storing</th>
+                <th class="th_selectable" >Count</th>
+                <th class="th_selectable" >Score</th>
+                <th class="th_selectable" id="omloopTh">Omlopen</th>
+                <th class="th_selectable" id="tijdstipTh">Tijdstip</th>
+                <th class="th_selectable" >Negeren</th>
+                <th class="th_selectable" >Herstellen</th>
             </tr>
             <tbody id="tabelInhoud">
             </tbody>
@@ -230,7 +230,7 @@
                 }
             }
         }
-        document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        document.querySelectorAll('.th_selectable').forEach(th => th.addEventListener('click', (() => {
             if (selectedTh == th){
                 sorteerTabel(th)
             }
