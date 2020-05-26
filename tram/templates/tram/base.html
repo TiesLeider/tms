@@ -48,7 +48,9 @@
         <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard (W.I.P.)</a></li>
           <li><a href="{% url 'admin:index' %}" class="blue lighten-2  white-text"><i class="material-icons left">settings</i>Adminpaneel</a></li>
         {% endif %}
+      <li><a href="{% url 'change_password' %}" class="grey white-text"><i class="small material-icons left">more_horiz</i>Wachtwoord veranderen</a></li>
       <li><a href="{% url 'logout' %}" class="red lighten-2  white-text"><i class="small material-icons left">exit_to_app</i>Log uit</a></li>
+      
     </ul>
     <div id="niet_verbonden_modal" class="modal red lighten-1">
       <div class="modal-content" id="niet_verbonden_modal_content">

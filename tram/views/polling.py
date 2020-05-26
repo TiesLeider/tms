@@ -157,7 +157,6 @@ class LogoPolling:
                         logging.info(f'{self.assetnummer}: aggregate: {vorige_storingen.aggregate(Sum("som"))["som__sum"]}')
                         for s in vorige_storingen.exclude(id=vorige_storing.id):
                             s.delete()
-                    logging.info(f"{self.assetnummer}: vorige storingen: {vorige_storingen}")
                     if (vorige_storing.gezien == False):
                         # De storing is niet gezien gemeld
                         vorige_storing.som += 1
