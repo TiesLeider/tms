@@ -123,6 +123,11 @@
        }
     </script>
     {%endif%}
+    {% if message %}
+    <script>
+      Swal.fire(`{{message}}`)
+    </script>
+    {%endif%}
       {% block javascript %} {% endblock %}
   </body>
 </html>
