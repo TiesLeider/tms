@@ -36,10 +36,6 @@
                             <td>Bak A: {{laatste_polling.omloop_a}}<br>Bak B: {{laatste_polling.omloop_b}}<br>{{druk_a1}}</td>
                         </tr>
                         <tr>
-                            <td>Gemiddeld aantal omlopen:<br>(per 5 minuten)</td>
-                            <td>Afgelopen 24 uur: {{asset.gem_dag_omloop_a_freq}} <br>Afgelopen week: {{asset.gem_week_omloop_a_freq}}<br> Afgelopen maand: {{asset.gem_maand_omloop_a_freq}} </td>
-                        </tr>
-                        <tr>
                             <td>Laatste data ontvangen op:</td>
                             <td>{{laatste_polling.tijdstip}}</td>
                         </tr>
@@ -48,7 +44,7 @@
                 </div>
             </div>
             <div class="col l7">
-                <div class="card-panel  red lighten-2">
+                <div class="card-panel  red lighten-2" style="max-height: 600px; overflow-y: auto">
                     <h3>Laatste storingen:</h3>
                     <table>
                         <tr>
@@ -82,10 +78,10 @@
             {% endif %}
         </div>
         <div class="row">
-            {% if asset.configuratie.naam == "ELL-Standaard" or  asset.configuratie.naam == "Amstelveen"  %}
+            {% if asset.configuratie.naam == "ELL-Standaard" or  asset.configuratie.naam == "Amstelveen" or laatste_polling.druk_a1 > 0 %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a1' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}
-            {% if  asset.configuratie.naam == "ELL-Standaard" or  asset.configuratie.naam == "Amstelveen" %}
+            {% if  asset.configuratie.naam == "ELL-Standaard" or  asset.configuratie.naam == "Amstelveen" or laatste_polling.druk_a2 > 0 %}
                 <iframe src="{% url 'asset_analyse' asset.assetnummer 'druk_a2' %}" id="iframe" frameborder="0" height="450px" width="48%"></iframe>
             {% endif%}
             {% if laatste_polling.druk_b1 > 100 %}

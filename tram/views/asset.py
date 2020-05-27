@@ -14,7 +14,7 @@ def asset_index(request, assetnummer):
         laatste_polling = AbsoluteData.objects.filter(assetnummer=asset).latest("tijdstip")
     except ObjectDoesNotExist:
         laatste_polling = None
-    laatste_data = AbsoluteData.objects.filter(assetnummer=asset).exclude(storing_beschrijving=[]).order_by("-tijdstip")[:15]
+    laatste_data = AbsoluteData.objects.filter(assetnummer=asset).exclude(storing_beschrijving=[]).order_by("-tijdstip")[:255]
 
         
 

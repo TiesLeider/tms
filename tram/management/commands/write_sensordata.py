@@ -15,6 +15,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        druk_configs =  ["Amstelveen", "ELL-Standaard"]
         
         def schrijf_data(assetnummer, veld):
             vandaag = datetime.date.today()
@@ -24,10 +25,10 @@ class Command(BaseCommand):
             response = []
             for item in data:
                 response.append( [round((item["tijdstip"].timestamp()) * 1000), item[veld]] )
-                path = os.getcwd() + f'\\tram\\templates\\tram\\data\\{assetnummer}\\'  if platform.system().lower() == 'windows' else os.getcwd() + f'/tram/templates/tram/data/{assetnummer}/'
+            path = os.getcwd() + f'\\tram\\templates\\tram\\data\\{assetnummer}\\'  if platform.system().lower() == 'windows' else os.getcwd() + f'/tram/templates/tram/data/{assetnummer}/'
 
-                if not os.path.exists(path):
-                    os.makedirs(path)
+            if not os.path.exists(path):
+                os.makedirs(path)
 
             # try:
             #     with open(path + f'{veld}.json', 'r+') as outfile:
@@ -52,16 +53,16 @@ class Command(BaseCommand):
                 if ad.omloop_b > 0:
                     schrijf_data(asset, "omloop_b")
 
-                if ad.druk_a1 > 0:
+                if ad.druk_a1 > 0 or asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_a1")
 
-                if ad.druk_a2 > 0:
+                if ad.druk_a2 > 0 or asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_a2")
 
-                if ad.druk_b1 > 0:
+                if ad.druk_b1 > 0 or asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_b1")
                 
-                if ad.druk_b2 > 0:
+                if ad.druk_b2 > 0 or asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_b2")
                 
                 if ad.kracht_a > 0:

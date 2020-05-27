@@ -216,9 +216,17 @@ def get_sensor_waarden_oud(request, assetnummer, veld):
     return JsonResponse(response, safe=False)
 
 def get_sensor_waarden(request, assetnummer, veld):
-    #TODO append met de database_data
+    qs =  AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__gte=datetime.date.today()).order_by("tijdstip")
+    with open(f"./tram/templates/tram/data/{assetnummer}/{veld}.json") as json_file:
+        data = json.load(json_file)
+        data_vandaag = list(qs.values(veld, "tijdstip"))
+        for item in data_vandaag:
+            data.append([round((item["tijdstip"].timestamp()) * 1000), item[veld]])
+    print(data)
+        
 
-    return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
+    # return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
+    return JsonResponse(data, safe=False)
 
 def get_maand_gemiddelde(request, assetnummer, veld):
     nu = datetime.datetime.now()
