@@ -96,7 +96,7 @@ class Storing(models.Model):
     bericht = models.CharField(max_length=100, default="")
     som = models.IntegerField(default=1)
     score = models.IntegerField(default=1)
-    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.DO_NOTHING, null=True, editable=False)
+    laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.SET_NULL, null=True, editable=False)
 
     class Meta:
         verbose_name_plural = "storingen"
