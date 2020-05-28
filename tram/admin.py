@@ -16,6 +16,7 @@ class UrgentieniveauResource(resources.ModelResource):
         skip_unchanged = True
         report_skipped = True
         model = Urgentieniveau
+        import_id_fields = ["niveau"]
 
 class ConfiguratieElementResource(resources.ModelResource):
     class Meta:
@@ -34,7 +35,7 @@ class AssetResource(resources.ModelResource):
         report_skipped = True
         model = Asset
         import_id_fields = ["assetnummer"]
-        exclude = ("storing_beschrijving",)
+        exclude = ("storing_beschrijving", "absolute_data")
 
 class StoringResource(resources.ModelResource):
     class Meta:
