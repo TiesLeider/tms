@@ -1,0 +1,18 @@
+{% extends "tram/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <div class="card-panel white">
+            <h3>Inloggen</h3>
+            <div class="divider"></div>
+            <br>
+            <div class="col s12 m6 l6">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn blue right-align" type="submit"><i class="small material-icons right">lock_open</i>Log in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

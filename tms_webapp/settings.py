@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+import sys
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -25,12 +25,14 @@ SECRET_KEY = '%i5rimpb-9z$%u2@*k(=f%t)%@95v6z@ujvu!=7u-^b0530uxj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
+ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1", "192.168.1.73"]
 
 # Application definition
 
 INSTALLED_APPS = [
     'import_export',
+    'crispy_forms',
+    'crispy_forms_materialize',
     'tram.apps.TramConfig',
     'pomp.apps.PompConfig',
     'django.contrib.admin',
@@ -38,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', 
 ]
 
 MIDDLEWARE = [
@@ -74,13 +76,32 @@ WSGI_APPLICATION = 'tms_webapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
+if sys.argv[1] == 'test':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+if sys.platform == "linux":
+    DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'tms',
     }
 }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'TMS',
+            'USER': 'postgres',
+            'PASSWORD': 'admin',
+            'HOST': '127.0.0.1',
+            'PORT': '5432'
+        }
+    }
+
 
 
 # Password validation
@@ -124,3 +145,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/var/www/tms/static/'
 
 IMPORT_EXPORT_USE_TRANSACTIONS = False
+
+LOGIN_REDIRECT_URL = "index"
+
+LOGIN_URL = "login"
+
+CRISPY_TEMPLATE_PACK = "materialize_css_forms"

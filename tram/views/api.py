@@ -3,9 +3,9 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Sum
+from django.db.models import Sum, Avg, Count
 from ..models import *
-from .polling import LogoPolling, SmsPolling
+from .polling import LogoPolling, SmsPolling, LogoData
 from requests.exceptions import Timeout
 import requests
 import traceback
@@ -15,6 +15,7 @@ import logging
 import subprocess
 import platform
 import os
+from django.template import Context, loader
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
@@ -27,6 +28,9 @@ def requesthandler(request):
         return request
 
 
+def api_docs(request):
+    return render(request, "tram/api_docs.html", {})
+
 @csrf_exempt
 def insert_logo_data(request):
     try:
@@ -36,31 +40,42 @@ def insert_logo_data(request):
         json_data = json.loads(data).get("ojson")
         assetnummer = json_data.get("assetnummer").upper() if json_data.get(
             "assetnummer").startswith("w") else json_data.get("assetnummer")
-        if len(assetnummer) > 4 and assetnummer.startswith("W"):
+        if assetnummer == "W2641" or assetnummer == "W2642":
             assetnummer = assetnummer[1:]
-
+        asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
         # Maak record Logodata:
-        record = LogoData(
-            assetnummer_id=assetnummer,
-            storing=json_data.get("storing"),
-            druk_a1=json_data.get("druk_a1"),
-            druk_a2=json_data.get("druk_a2"),
-            druk_b1=json_data.get("druk_b1"),
-            druk_b2=json_data.get("druk_b2"),
-            kracht_a=json_data.get("kracht_a"),
-            kracht_b=json_data.get("kracht_b"),
-            omloop_a=json_data.get("omloop_a"),
-            omloop_b=json_data.get("omloop_b"),
-        )
-        record.save()
+        record = LogoData(json_data, asset)
+        if asset.laatste_data:
+            if ( record.storing == 0 and  
+                asset.druk_a1 == record.druk_a1 and
+                asset.druk_a2 == record.druk_a2 and
+                asset.druk_b1 == record.druk_b1 and
+                asset.druk_b2 == record.druk_b2 and
+                asset.kracht_a == record.kracht_a and
+                asset.kracht_b == record.kracht_b and
+                record.omloop_a == 0 and 
+                record.omloop_b == 0
+                ):
+                asset.laatste_data.save()
+                return JsonResponse({"response": True, "error": None})
+                logging.error(f"{assetnummer}: polling overgeslagen. Identieke polling.")
+            elif (asset.laatste_data.omloop_a_toegevoegd > 25 and asset.laatste_data.omloop_a_toegevoegd == record.omloop_a and
+                asset.laatste_data.omloop_b_toegevoegd == record.omloop_b):
+                asset.laatste_data.save()
+                return JsonResponse({"response": True, "error": None})
+                logging.error(f"{assetnummer}: polling overgeslagen. Identieke polling.")
+            else:
+                pass
 
-        polling = LogoPolling(record)
+
+        polling = LogoPolling(logo_data=record, asset=asset)
         polling.insert_absolute_data()
         polling.storing_algoritme()
 
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         traceback.print_exc()
+        logging.info(f"==================={str(request.body)[2:-1]}=================")
         logging.error("%s", traceback.format_exc())
         return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
@@ -72,7 +87,7 @@ def insert_sms_data(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         sms_polling = SmsPolling(json_data)
-        sms_polling.insert_sms_data()
+        #sms_polling.insert_sms_data()
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         traceback.print_exc()
@@ -80,67 +95,23 @@ def insert_sms_data(request):
         return JsonResponse({"response": False, "error": str(ex), "type": str(type(ex))})
 
 
-@csrf_exempt
-def insert_logo_online(request):
-    try:
-        requesthandler(request)
-        data = str(request.body)[2:-1]
-        json_data = json.loads(data).get("ojson")
-        assetnummer = json_data.get("assetnummer").upper() if (json_data.get(
-            "assetnummer").startswith("w")) else json_data.get("assetnummer")
-        asset = Asset.objects.get(assetnummer=assetnummer)
-        asset.logo_online = False
-        asset.disconnections += 1
-        asset.save()
-
-        return JsonResponse({"response": True, "error": None})
-    except Exception as ex:
-        return JsonResponse({"response": False, "error": str(ex)})
-
-
-def get_omlopen_totaal(request, assetnummer, van_datum, tot_datum):
-    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
-    eind_datum = datetime.datetime.strptime(
-        tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
-    ad_qs = AbsoluteData.objects.filter(
-        assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
-    data = list(ad_qs.values("tijdstip", "omloop_a", "omloop_b"))
-    response = {
-        "labels": list(ad_qs.values_list("tijdstip", flat=True)),
-        "data": [
-            list(ad_qs.values_list("omloop_a", flat=True)),
-            list(ad_qs.values_list("omloop_b", flat=True))
-        ]
-    }
-    return JsonResponse(response, safe=False)
-
-
-def get_omlopen_freq(request, assetnummer, van_datum, tot_datum):
-    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
-    eind_datum = datetime.datetime.strptime(
-        tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
-    ld_qs = LogoData.objects.filter(
-        assetnummer=assetnummer, tijdstip__range=(start_datum, eind_datum))
-    data = list(ld_qs.values("tijdstip", "omloop_a", "omloop_b"))
-    response = {
-        "labels": list(ld_qs.values_list("tijdstip", flat=True)),
-        "data": [
-            list(ld_qs.values_list("omloop_a", flat=True)),
-            list(ld_qs.values_list("omloop_b", flat=True))
-        ]
-    }
-    return JsonResponse(response, safe=False)
-
-
 def get_actieve_storingen(request):
     storingen_qs = Storing.objects.filter(
-        actief=True, gezien=False).order_by("-laatste_data__tijdstip")
-    data = list(storingen_qs.values("id", "laatste_data__assetnummer__beschrijving", "laatste_data__assetnummer__assetnummer",
+        actief=True, gezien=False)
+    data = list(storingen_qs.values("id", "assetnummer__beschrijving", "assetnummer__assetnummer",
                                     "bericht", "som", "score", "laatste_data__omloop_a", "laatste_data__omloop_b", "laatste_data__tijdstip"))
+
     for item in data:
-        item["laatste_data__isotijdstip"] = item["laatste_data__tijdstip"].isoformat()
-        item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime(
-            "%d %b %Y, %H:%M")
+        try:
+            item["laatste_data__isotijdstip"] = item["laatste_data__tijdstip"].isoformat() 
+            item["laatste_data__tijdstip"] = item["laatste_data__tijdstip"].strftime(   
+                "%d %b %Y, %H:%M")
+        except AttributeError:
+            item["laatste_data__isotijdstip"] = ""
+            item["laatste_data__tijdstip"] = "<i>Tijdstip en omlopen worden geüpdatet bij een nieuw alarm</i>"
+            item["laatste_data__omloop_a"] = "-"
+            item["laatste_data__omloop_b"] = 0
+
     return JsonResponse(data, safe=False)
 
 
@@ -185,40 +156,139 @@ def check_assets_online_oud(request):
     return JsonResponse(offline_assets, safe=False)
 
 
+# def check_online_assets(request):
+#     def ping(host):
+#         FNULL = open(os.devnull, 'w')
+#         param = '-n' if platform.system().lower() == 'windows' else '-c'
+#         return subprocess.call(
+#             ["ping", param, "1", host], stdout=FNULL) == 0
+
+#     try:
+#         logo_assets = Asset.objects.exclude(ip_adres_logo=None)
+#         offline_assets = []
+#         for asset in logo_assets:
+#             # if ping(asset.ip_adres_logo) != 0:
+#             try:
+#                 r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
+#             except Timeout:
+#                 try:
+#                     ad = AbsoluteData.objects.filter(
+#                         assetnummer=asset).latest()
+#                     tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
+#                 except ObjectDoesNotExist:
+#                     tijdstip = "Nooit"
+#                 offline_assets.append(
+#                     {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
+#     except Exception as ex:   
+#         traceback.print_exc()
+#         logging.error("%s", traceback.format_exc())
+
+#     return JsonResponse(offline_assets, safe=False)
+
 def check_online_assets(request):
-    def ping(host):
-        FNULL = open(os.devnull, 'w')
-        param = '-n' if platform.system().lower() == 'windows' else '-c'
-        return subprocess.call(
-            ["ping", param, "1", host], stdout=FNULL) == 0
-
-    try:
-        logo_assets = Asset.objects.exclude(ip_adres_logo=None)
-        offline_assets = []
-        for asset in logo_assets:
-            # if ping(asset.ip_adres_logo) != 0:
-            try:
-                r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
-            except Timeout:
-                try:
-                    ad = AbsoluteData.objects.filter(
-                        assetnummer=asset).latest()
-                    tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
-                except ObjectDoesNotExist:
-                    tijdstip = "Nooit"
-                offline_assets.append(
-                    {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
-    except Exception as ex:
-        traceback.print_exc()
-        logging.error("%s", traceback.format_exc())
-
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+    offline_assets = []
+    for asset in r.json():
+            for key, value in asset.items():
+                if value == False:
+                    assetnummer = key.upper() if key.startswith("w") else key
+                    if len(assetnummer) > 4 and assetnummer.startswith("W"):
+                        assetnummer = assetnummer[1:]
+                    asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
+                    try:
+                        tijdstip = asset.laatste_data.tijdstip.strftime("%d %b %Y, %H:%M")
+                    except:
+                        tijdstip = "Nooit"
+                    if asset.pollbaar == True:
+                        offline_assets.append(
+                            {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
     return JsonResponse(offline_assets, safe=False)
 
 
-def get_sensor_waarden(request, assetnummer, veld):
+def get_sensor_waarden_oud(request, assetnummer, veld):
     qs = AbsoluteData.objects.filter(assetnummer=assetnummer).order_by("tijdstip")
     data = list(qs.values(veld, "tijdstip"))
     response = []
     for item in data:
         response.append( [round(item["tijdstip"].timestamp()) * 1000, item[veld]])
+
+
     return JsonResponse(response, safe=False)
+
+def get_sensor_waarden(request, assetnummer, veld):
+    qs =  AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__gte=datetime.date.today()).order_by("tijdstip")
+    with open(f"./tram/templates/tram/data/{assetnummer}/{veld}.json") as json_file:
+        data = json.load(json_file)
+        data_vandaag = list(qs.values(veld, "tijdstip"))
+        for item in data_vandaag:
+            data.append([round((item["tijdstip"].timestamp()) * 1000), item[veld]])
+    print(data)
+        
+
+    # return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
+    return JsonResponse(data, safe=False)
+
+def get_maand_gemiddelde(request, assetnummer, veld):
+    nu = datetime.datetime.now()
+    vorige_maand = nu - datetime.timedelta(days=30)
+    vorige_week = nu - datetime.timedelta(days=7)
+    gister = nu - datetime.timedelta(days=1)
+    maand_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_maand, nu))
+    week_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(vorige_week, nu))
+    dag_qs = AbsoluteData.objects.filter(assetnummer=assetnummer, tijdstip__range=(gister, nu))
+    maand_gemiddelde = maand_qs.aggregate(Avg(veld)).get(veld + "__avg") if maand_qs.count() > 0 else 0
+    week_gemiddelde = week_qs.aggregate(Avg(veld)).get(veld + "__avg") if week_qs.count() > 0 else 0
+    dag_gemiddelde = dag_qs.aggregate(Avg(veld)).get(veld + "__avg") if dag_qs.count() > 0 else 0
+    
+
+
+    response = {
+        "maand_gemiddelde": round(maand_gemiddelde),
+        "week_gemiddelde": round(week_gemiddelde),
+        "dag_gemiddelde": round(dag_gemiddelde)
+    }
+    return JsonResponse(response)
+
+def get_ipnummers(request):
+    qs = Asset.objects.exclude(ip_adres_logo=None)
+    return JsonResponse(list(qs.values("assetnummer", "ip_adres_logo")) , safe=False)
+
+def dashboard_omlopen(request):
+    assets = Asset.objects.all()
+    totale_omlopen = assets.aggregate(Sum("omloop_a"))["omloop_a__sum"] + assets.aggregate(Sum("omloop_b"))["omloop_b__sum"]
+    asset_array = []
+
+    def get_key(elem):
+        return elem["y"]
+
+    for asset in assets:
+        asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+    asset_array.sort(key=get_key, reverse=True) 
+
+    return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
+
+def dashboard_storingen(request, storing):
+    if storing == "Tong failure A+B":
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"])
+    else:   
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing])
+    assets = Asset.objects.all()
+    totale_storingen = qs.count()
+    asset_array = []
+
+    def get_key(elem):
+        return elem["y"]
+
+    for asset in assets:
+        if storing == "Tong failure A+B":
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"], assetnummer=asset).count()
+        else:
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
+        if aantal == 0:
+            continue
+        percentage = (aantal / totale_storingen)*100
+
+        asset_array.append(dict(name=asset.assetnummer, y= percentage))
+    asset_array.sort(key=get_key, reverse=True) 
+
+    return JsonResponse(dict(totale_storingen=totale_storingen, asset_array=asset_array))

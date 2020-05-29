@@ -26,15 +26,15 @@
         <table id="tabel">
             <tr>
                 <th style="max-width: 5px;"><label><input id="selectAlle" type="checkbox" class="filled-in" onclick="selecteerAlle(this)"/><span></span></label></th>
-                <th>ID</th>
-                <th id=assetTh>Assetnummer</th>
-                <th id=storingTh>Storing</th>
-                <th>Count</th>
-                <th>Score</th>
-                <th id="omloopTh">Omlopen</th>
-                <th id="tijdstipTh">Tijdstip</th>
-                <th>Negeren</th>
-                <th>Herstellen</th>
+                <th class="th_selectable">ID</th>
+                <th class="th_selectable" id=assetTh>Assetnummer</th>
+                <th class="th_selectable" id=storingTh>Storing</th>
+                <th class="th_selectable" >Count</th>
+                <th class="th_selectable" >Score</th>
+                <th class="th_selectable" id="omloopTh">Omlopen</th>
+                <th class="th_selectable" id="tijdstipTh">Tijdstip</th>
+                <th class="th_selectable" >Negeren</th>
+                <th class="th_selectable" >Herstellen</th>
             </tr>
             <tbody id="tabelInhoud">
             </tbody>
@@ -104,7 +104,7 @@
                 if(score >= 120 || melding == "No Fail Save" || melding == "Opengereden"){
                     return "purple lighten-2"
                 }
-                else if(score >= 80 && score < 100 || melding == "WSA Defect"){
+                else if(score >= 80 && score < 100 || melding == "WSA Defect" || melding == "Druklimiet overschreden"){
                     return "red lighten-2"
                 }
                 else if(score >= 100 && score < 120){
@@ -132,7 +132,7 @@
                 regel = `<tr class="${color(storing.score, storing.bericht)}">` +
                 `<td class="white"><label><input id="select_${storing.id}" value="${storing.id}" name="storingCheckbox" type="checkbox" class="filled-in" onclick="addToSelectedList(${storing.id})"/><span></span></label></td>` +
                 `<td>${storing.id}</td>`+
-                `<td><span title="${storing.laatste_data__assetnummer__beschrijving}"><a href="/tram/asset/${storing.laatste_data__assetnummer__assetnummer}" class="white blue-text btn waves-effect waves-light">${storing.laatste_data__assetnummer__assetnummer}</a></span></td>` +
+                `<td><span title="${storing.assetnummer__beschrijving}"><a href="/tram/asset/${storing.assetnummer__assetnummer}" class="white blue-text btn waves-effect waves-light">${storing.assetnummer__assetnummer}</a></span></td>` +
                 `<td>${storing.bericht}</td>` +
                 `<td>${storing.som}</td>` +
                 `<td>${storing.score}</td>` +
@@ -230,7 +230,7 @@
                 }
             }
         }
-        document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        document.querySelectorAll('.th_selectable').forEach(th => th.addEventListener('click', (() => {
             if (selectedTh == th){
                 sorteerTabel(th)
             }

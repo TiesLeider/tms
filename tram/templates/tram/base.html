@@ -16,31 +16,46 @@
       You can delete these styles or move it to your custom css file -->
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
       <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+      {% block head %}{% endblock%}
   </head>
   <body>
     <header>
       <nav class="cyan">
         <div class="nav-wrapper">
-          <div class="container" style="margin-left: 30px">
+          <div class="container" style="margin-left: 30px; width: auto">
             <ul class="left">
               <li style="height: 50px;"><img src="{% static 'tram/img/tms_logo_87_transparant.png' %}" class="round" style="position: relative; ; margin-right: 10px; margin-top: 6px;" alt=""></li>
-              <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
-              <li>
-                <a href="#" id="checken" class="grey hoverable btn-large round"><i class="large material-icons left">autorenew</i>Checken op offline assets...</a>
-                <a href="#" id="alle_verbonden" onclick="checkOnlineAssets()" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
-                <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
-              </li>
-              <li><a href="#" class="grey hoverable btn-large round"><i class="material-icons left">timeline</i>Analyse</a></li>
+              {% if user.is_authenticated%}
+                <li><a href="{% url 'index' %}" class="grey hoverable btn-large round"><i class="small material-icons left">view_headline</i>Storingen</a></li>
+                <li>
+                  <a href="#" id="checken" class="grey hoverable btn-large round"><i class="large material-icons left">autorenew</i>Checken op offline assets...</a>
+                  <a href="#" id="alle_verbonden" onclick="checkOnlineAssets()" class="grey hoverable btn-large round"><i class="large material-icons left">check</i>Alle logos verbonden</a>
+                  <a href="#niet_verbonden_modal" id="niet_verbonden" class="waves-effect waves-light btn-large red round modal-trigger"><i class="large material-icons left">warning</i>logos niet verbonden</a>
+                </li>
+                <li><a href="{% url 'asset_lijst' %}" class="grey hoverable btn-large round"><i class="material-icons left">dns</i>Asset lijst</a></li>
+                <li id="dropdownUserBtn" class="dropdown-trigger" data-target='dropdown1'><a  href="#" class="red lighten-2 hoverable btn-large round " ><i class="small material-icons left">account_box</i>{{user.username}}</a></li>
+              {% else %}
+                <li><a href="{% url 'login' %}" class="grey hoverable btn-large round"><i class="small material-icons left">vpn_key</i>Log in</a></li>
+              {% endif %}
             </ul>
             <img class="brand-logo right" src="{% static 'tram/img/gvb_logo.png' %}" height="65px" style="padding-right: 20px;" alt=""/>
           </div>
         </div>
       </nav>
     </header>
+    <ul id='dropdown1' class='dropdown-content' style="background-color: rgba(255, 255, 255, 0);">
+        {%if user.is_superuser %}
+        <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard (W.I.P.)</a></li>
+          <li><a href="{% url 'admin:index' %}" class="blue lighten-2  white-text"><i class="material-icons left">settings</i>Adminpaneel</a></li>
+        {% endif %}
+      <li><a href="{% url 'change_password' %}" class="grey white-text"><i class="small material-icons left">more_horiz</i>Wachtwoord veranderen</a></li>
+      <li><a href="{% url 'logout' %}" class="red lighten-2  white-text"><i class="small material-icons left">exit_to_app</i>Log uit</a></li>
+      
+    </ul>
     <div id="niet_verbonden_modal" class="modal red lighten-1">
       <div class="modal-content" id="niet_verbonden_modal_content">
       </div>
-    </div>
+    </div>  
     <main>
         {% block content %}{% endblock%}
     </main>
@@ -49,16 +64,21 @@
       </div>
       <div class="footer-copyright">
         <div class="container">
-          © 2019 TMS
+          © 2020 TMS
         </div>
       </div>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
     <!-- The jQuery file path -->
       <script src="{% static 'tram/js/jquery.min.js' %}"></script>
     <!-- Path of the materialize.min.js file -->
       <script src="{% static 'tram/js/materialize.min.js' %}"></script>
+      {% if user.is_authenticated %}
     <script>
       $("document").ready(function(){
+        var dropdownUser = $("#dropdownUserBtn")
+        dropdownUser.dropdown({"constrainWidth": false});
         $('#alle_verbonden').hide();
         $('#niet_verbonden').hide();
         $('.modal').modal();
@@ -102,6 +122,12 @@
          }
        }
     </script>
+    {%endif%}
+    {% if message %}
+    <script>
+      Swal.fire(`{{message}}`)
+    </script>
+    {%endif%}
       {% block javascript %} {% endblock %}
   </body>
 </html>
