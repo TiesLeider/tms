@@ -18,6 +18,7 @@ urlpatterns = [
     path("api/check_online_assets", views.check_online_assets, name="check_online_assets"),
     path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data"),
     path("api/get_sensor_waarden/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden, name="get_sensor_waarden"),
+    path("api/get_sensor_waarden_oud/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden_oud, name="get_sensor_waarden"),
     path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
     path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
     path("api/dashboard_omlopen", views.dashboard_omlopen, name="dashboard_omlopen"),
