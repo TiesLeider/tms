@@ -20,13 +20,11 @@ from django.template import Context, loader
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
 
-
 def requesthandler(request):
     if (request.body == "" or not request.body):
         return JsonResponse({"response": False, "error":  "POST inhoud niet aangekomen."})
     else:
         return request
-
 
 def api_docs(request):
     return render(request, "tram/api_docs.html", {})
@@ -156,35 +154,6 @@ def check_assets_online_oud(request):
     return JsonResponse(offline_assets, safe=False)
 
 
-# def check_online_assets(request):
-#     def ping(host):
-#         FNULL = open(os.devnull, 'w')
-#         param = '-n' if platform.system().lower() == 'windows' else '-c'
-#         return subprocess.call(
-#             ["ping", param, "1", host], stdout=FNULL) == 0
-
-#     try:
-#         logo_assets = Asset.objects.exclude(ip_adres_logo=None)
-#         offline_assets = []
-#         for asset in logo_assets:
-#             # if ping(asset.ip_adres_logo) != 0:
-#             try:
-#                 r = requests.get(f"http://{asset.ip_adres_logo}/", timeout=3)
-#             except Timeout:
-#                 try:
-#                     ad = AbsoluteData.objects.filter(
-#                         assetnummer=asset).latest()
-#                     tijdstip = ad.tijdstip.strftime("%d %b %Y, %H:%M")
-#                 except ObjectDoesNotExist:
-#                     tijdstip = "Nooit"
-#                 offline_assets.append(
-#                     {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
-#     except Exception as ex:   
-#         traceback.print_exc()
-#         logging.error("%s", traceback.format_exc())
-
-#     return JsonResponse(offline_assets, safe=False)
-
 def check_online_assets(request):
     r = requests.get("http://10.165.2.10:1810/api/getLive")
     offline_assets = []
@@ -263,6 +232,24 @@ def dashboard_omlopen(request):
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
 
+def dashboard_omlopen_timerange(request, van_datum, tot_datum):
+    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
+    eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
+    assets = Asset.objects.all()
+    totale_omlopen_qs = AbsoluteData.objects.filter(tijdstip__range=(start_datum, eind_datum))
+    totale_omlopen = totale_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] + totale_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
+    asset_array = []
+
+    def get_key(elem):
+        return elem["y"]
+
+    for asset in assets:
+        asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(start_datum, eind_datum))
+        asset_array.append(dict(name=asset.assetnummer, omlopen=asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]+asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"], y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+    asset_array.sort(key=get_key, reverse=True) 
+
+    return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
+
 def dashboard_storingen(request, storing):
     if storing == "Tong failure A+B":
         qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"])
@@ -280,6 +267,34 @@ def dashboard_storingen(request, storing):
             aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"], assetnummer=asset).count()
         else:
             aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
+        if aantal == 0:
+            continue
+        percentage = (aantal / totale_storingen)*100
+
+        asset_array.append(dict(name=asset.assetnummer, y= percentage))
+    asset_array.sort(key=get_key, reverse=True) 
+
+    return JsonResponse(dict(totale_storingen=totale_storingen, asset_array=asset_array))
+
+def dashboard_storingen_timerange(request, storing, van_datum, tot_datum):
+    start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
+    eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
+    if storing == "Tong failure A+B":
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"],  tijdstip__range=(start_datum, eind_datum))
+    else:   
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing],  tijdstip__range=(start_datum, eind_datum))
+    assets = Asset.objects.all()
+    totale_storingen = qs.count()
+    asset_array = []
+
+    def get_key(elem):
+        return elem["y"]
+
+    for asset in assets:
+        if storing == "Tong failure A+B":
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"], assetnummer=asset,  tijdstip__range=(start_datum, eind_datum)).count()
+        else:
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset,  tijdstip__range=(start_datum, eind_datum)).count()
         if aantal == 0:
             continue
         percentage = (aantal / totale_storingen)*100

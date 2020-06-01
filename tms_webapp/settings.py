@@ -94,7 +94,7 @@ if os.environ.get('GITHUB_WORKFLOW'):
 
 #Configuratie applicatie-server
 elif socket.gethostname() == "tms.nl":
-    ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1", "192.168.1.73"]
+    ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
 
     DATABASES = {
     'default': {

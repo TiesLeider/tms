@@ -22,7 +22,9 @@ urlpatterns = [
     path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
     path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
     path("api/dashboard_omlopen", views.dashboard_omlopen, name="dashboard_omlopen"),
-     path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
+    path("api/dashboard_omlopen/<str:van_datum>/<str:tot_datum>", views.dashboard_omlopen_timerange, name="dashboard_storingen_timerange"),
+    path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
+    path("api/dashboard/storing/<str:storing>/<str:van_datum>/<str:tot_datum>", views.dashboard_storingen_timerange, name="dashboard_storingen_timerange"),
 
     #Asset
     path("insertlogodata",views.insert_logo_data, name="insert_logo_data"),
@@ -36,7 +38,6 @@ urlpatterns = [
     path("asset_dashboard/", views.dashboard, name="dashboard"),
 
     #User Account Control
-    #TODO Wachtwoord veranderen na eerste keer inloggen
     path("login", auth_views.LoginView.as_view(template_name="tram/login.html"), name="login"),
     path("logout", auth_views.LogoutView.as_view(template_name="tram/logout.html"), name="logout"),
     path("change_password", views.change_password, name="change_password"),
