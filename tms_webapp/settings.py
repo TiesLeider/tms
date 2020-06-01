@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import sys
 import os
+import socket
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,7 +77,10 @@ WSGI_APPLICATION = 'tms_webapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
+#Configuratie github
 if os.environ.get('GITHUB_WORKFLOW'):
+    ALLOWED_HOSTS = ["127.0.0.1"]
     DATABASES = {
         'default': {
            'ENGINE': 'django.db.backends.postgresql',
@@ -86,15 +90,23 @@ if os.environ.get('GITHUB_WORKFLOW'):
            'HOST': '127.0.0.1',
            'PORT': '5432',
         }
+    }
 
-elif sys.platform == "linux":
+#Configuratie applicatie-server
+elif socket.gethostname() == "tms.nl":
+    ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1", "192.168.1.73"]
+
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'tms',
     }
 }
+
+#Anders
 else:
+    ALLOWED_HOSTS = ["127.0.0.1", "192.168.1.73"]
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

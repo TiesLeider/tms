@@ -222,10 +222,6 @@ def get_sensor_waarden(request, assetnummer, veld):
         data_vandaag = list(qs.values(veld, "tijdstip"))
         for item in data_vandaag:
             data.append([round((item["tijdstip"].timestamp()) * 1000), item[veld]])
-    print(data)
-        
-
-    # return HttpResponse(loader.get_template(f"tram/data/{assetnummer}/{veld}.json").render())
     return JsonResponse(data, safe=False)
 
 def get_maand_gemiddelde(request, assetnummer, veld):

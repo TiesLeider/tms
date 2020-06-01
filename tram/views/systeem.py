@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
+import os
+from tms_webapp.settings import BASE_DIR
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p', filename="systeem.log", level=logging.INFO)
@@ -39,3 +41,10 @@ def change_password(request):
         return render(request, 'tram/change_password.html', {
             'form': form
         })
+
+def show_api_log(request):
+    response = None
+    with open(os.path.join(BASE_DIR, "api.log"), "r") as logfile:
+        response = logfile.readlines()
+    return HttpResponse(response)
+
