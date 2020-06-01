@@ -45,6 +45,6 @@ def change_password(request):
 def show_api_log(request):
     response = None
     with open(os.path.join(BASE_DIR, "api.log"), "r") as logfile:
-        response = logfile.readlines()
+        response = logfile.readlines().replace("\n", "<br>")
     return HttpResponse(response)
 
