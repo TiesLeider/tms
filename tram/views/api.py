@@ -85,7 +85,7 @@ def insert_sms_data(request):
         data = str(request.body)[2:-1]
         json_data = json.loads(data).get("ojson")
         sms_polling = SmsPolling(json_data)
-        #sms_polling.insert_sms_data()
+        sms_polling.insert_sms_data()
         return JsonResponse({"response": True, "error": None})
     except Exception as ex:
         traceback.print_exc()
@@ -215,7 +215,7 @@ def get_maand_gemiddelde(request, assetnummer, veld):
     return JsonResponse(response)
 
 def get_ipnummers(request):
-    qs = Asset.objects.exclude(ip_adres_logo=None)
+    qs = Asset.objects.exclude(ip_adres_logo=None).exclude(pollbaar=False)
     return JsonResponse(list(qs.values("assetnummer", "ip_adres_logo")) , safe=False)
 
 def dashboard_omlopen(request):

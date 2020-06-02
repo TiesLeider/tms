@@ -18,11 +18,10 @@ urlpatterns = [
     path("api/check_online_assets", views.check_online_assets, name="check_online_assets"),
     path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data"),
     path("api/get_sensor_waarden/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden, name="get_sensor_waarden"),
-    path("api/get_sensor_waarden_oud/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden_oud, name="get_sensor_waarden"),
-    path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
+    path("api/get_sensor_waarden_oud/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden_oud, name="get_sensor_waarden_oud"),
     path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
     path("api/dashboard_omlopen", views.dashboard_omlopen, name="dashboard_omlopen"),
-    path("api/dashboard_omlopen/<str:van_datum>/<str:tot_datum>", views.dashboard_omlopen_timerange, name="dashboard_storingen_timerange"),
+    path("api/dashboard_omlopen/<str:van_datum>/<str:tot_datum>", views.dashboard_omlopen_timerange, name="dashboard_omlopen_timerange"),
     path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
     path("api/dashboard/storing/<str:storing>/<str:van_datum>/<str:tot_datum>", views.dashboard_storingen_timerange, name="dashboard_storingen_timerange"),
 
@@ -32,8 +31,6 @@ urlpatterns = [
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
     path("asset/<str:assetnummer>/corrigeer_omlopen", views.asset.corrigeer_omlopen, name="asset_corrigeer_omlopen"),
-    path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
-    path("analyse/<str:assetnummer>/<str:veld>", views.asset_analyse, name="asset_analyse"),
     path("asset_lijst", views.asset_lijst, name="asset_lijst"),
     path("asset_dashboard/", views.dashboard, name="dashboard"),
 
