@@ -53,12 +53,12 @@ class TestApi(TestCase):
         response = self.client.post(reverse("insert_logo_data"),
         json.dumps({"ojson": {"assetnummer":"w001","storing":0,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":0,"omloop_b":0,"kracht_a":0,"kracht_b":0}}),
         content_type="application/json"
-        )# <----- Wel want 1e polling
+        )# <----- Object zou niet niet in de database geplaatst moeten worden want: 1e polling
         
         response2 = self.client.post(reverse("insert_logo_data"),
         json.dumps({"ojson": {"assetnummer":"w001","storing":0,"druk_b1":0,"druk_b2":0,"druk_a1":0,"druk_a2":0,"omloop_a":0,"omloop_b":0,"kracht_a":0,"kracht_b":0}}),
         content_type="application/json"
-        )# <----- Niet want gelijk aan 1e polling
+        )# <----- Polling zou niet niet in de database geplaatst moeten worden want gelijk aan 1e polling
         
         self.assertEquals(AbsoluteData.objects.all().count(), 1)#Verwachting 1 regel aan data
 
@@ -91,7 +91,7 @@ class TestApi(TestCase):
             )
         
         #Verwachtingen:
-        self.assertIn("Tongen failure A+B", AbsoluteData.objects.first().storing_beschrijving) #Eeste regel van de datatabel bevat een melding van de storing
+        self.assertIn("Tongen failure A+B", AbsoluteData.objects.first().storing_beschrijving) #Eeste regel in de datatabel bevat een melding van het alarm
         self.assertEquals(Storing.objects.all().count(), 0) #Geen storingen aanwezig
     
     def test_api_storing_aangemaakt_timeout(self):
@@ -109,7 +109,7 @@ class TestApi(TestCase):
         self.assertEquals(Storing.objects.first().assetnummer, self.asset) #eerste regel van de storingstabel is van de asset
         self.assertIn("Tongen failure A+B", AbsoluteData.objects.first().storing_beschrijving) #Eeste regel van de datatabel bevat een melding van de storing
         self.assertEquals(Storing.objects.first().bericht, "Tongen failure A+B") #Storing is aangemaakt met deze melding
-        self.assertEquals(Storing.objects.first().som, 2) #Storing is inmiddels twee keer voor gekomen, want 2 meldingen
+        self.assertEquals(Storing.objects.first().som, 2) #Storing is inmiddels twee keer voor gekomen, want 2 alarmen
     
     def test_api_storing_geupdated(self):
         #Test of de data van dezelfde storing geupdate wordt
@@ -195,9 +195,10 @@ class TestApi(TestCase):
         #Returned alleen assets met een IP-adres EN die pollbaar zijn
         #W001 heeft geen IP-Adres dus <---- X
         self.asset = Asset.objects.create(assetnummer="W002", pollbaar=True, ip_adres_logo="1.1.1.1", configuratie=self.configuratie) #<---- V
-        self.asset = Asset.objects.create(assetnummer="W003", pollbaar=True, ip_adres_logo=None, configuratie=self.configuratie) #<----- X
+        self.asset = Asset.objects.create(assetnummer="W003", pollbaar=None, ip_adres_logo=None, configuratie=self.configuratie) #<----- X
         self.asset = Asset.objects.create(assetnummer="W004", pollbaar=False, ip_adres_logo="1.1.1.1", configuratie=self.configuratie)#<---- X
 
+        #Verwachting is dat er 1 object gereturned zal worden
         response = self.client.get(reverse("get_ipnummers"))
         self.assertAlmostEquals(len(response.json()), 1)
 
