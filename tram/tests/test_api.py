@@ -195,7 +195,7 @@ class TestApi(TestCase):
         #Returned alleen assets met een IP-adres EN die pollbaar zijn
         #W001 heeft geen IP-Adres dus <---- X
         self.asset = Asset.objects.create(assetnummer="W002", pollbaar=True, ip_adres_logo="1.1.1.1", configuratie=self.configuratie) #<---- V
-        self.asset = Asset.objects.create(assetnummer="W003", pollbaar=None, ip_adres_logo=None, configuratie=self.configuratie) #<----- X
+        self.asset = Asset.objects.create(assetnummer="W003", pollbaar=False, ip_adres_logo=None, configuratie=self.configuratie) #<----- X
         self.asset = Asset.objects.create(assetnummer="W004", pollbaar=False, ip_adres_logo="1.1.1.1", configuratie=self.configuratie)#<---- X
 
         #Verwachting is dat er 1 object gereturned zal worden
