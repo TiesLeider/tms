@@ -21,7 +21,16 @@
                         </tr>
                         <tr>
                             <td>Wordt gepolled:</td>
-                            <td>{{asset.pollbaar}}{%if perms.tram.toggle_pollbaar_status%}<a style="margin-left: 10%;" href="{%url 'toggle_pollbaar' asset.assetnummer%}" class="waves-effect waves-light btn-small grey "> {%if asset.pollbaar%}<i class="material-icons left">toggle_off</i>{%else%}<i class="material-icons left">toggle_on</i>{%endif%} Wijzig</a>{%endif%}</td>
+                            <td>
+                            <div class="switch">
+                                <label class="black-text">
+                                  Uit
+                                  <input type="checkbox" {%if asset.pollbaar%} checked {%else%} {%endif%} onclick="togglePollbaar()" {%if perms.tram.toggle_pollbaar_status%} {%else%} disabled {%endif%}>
+                                  <span class="lever"></span>
+                                  Aan
+                                </label>
+                              </div>
+                            </td>
                         </tr>
                         <tr>
                             <td>Configuratie:</td>
@@ -97,3 +106,36 @@
         </div> -->
     </div>
 {% endblock %}
+{% block javascript %}
+<script>
+    var url_pollbaar = `{%url 'toggle_pollbaar' asset.assetnummer%}`
+
+    function togglePollbaar(){
+        $.ajax({
+            method: "GET",
+            url: url_pollbaar,
+            error: function(response){
+                console.log(response)
+            },
+            success: function (response) {
+                if (response.waarde == true){
+                    title = "Pollen van {{asset.assetnummer}} is ingeschakeld"
+                }
+                else{
+                    title = "Pollen van {{asset.assetnummer}} is uitgeschakeld"
+                }
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: title,
+                    showConfirmButton: false,
+                    timer: 2500
+                  })
+            }
+        })
+    }
+
+</script>
+
+
+{% endblock%}

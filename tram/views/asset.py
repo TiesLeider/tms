@@ -75,4 +75,4 @@ def toggle_pollbaar(request, assetnummer):
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.pollbaar = not asset.pollbaar
         asset.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return JsonResponse({"waarde": asset.pollbaar}, safe=False)
