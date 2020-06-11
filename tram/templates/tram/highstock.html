@@ -23,6 +23,8 @@
     var asset = `{{asset.assetnummer}}`
     var veld = `{{veld}}`
 
+    var get_sensor_waarden_url = `{%url 'get_sensor_waarden' asset.assetnummer veld%}`
+
     $('document').ready(
         get_gemiddelde(asset, veld)
     )
@@ -30,18 +32,18 @@
     function get_gemiddelde(assetnummer, veld){
         $.ajax({
             method: "GET",
-            url: `/tram/api/get_maand_gemiddelde/{{asset.assetnummer}}/{{veld}}`,
+            url: get_sensor_waarden_url,
             error: function(response){
                 console.log(response)
             },
             success: function (response) {
-                highStock(response)
+                highStock()
                 
             } ,
         })
     }
 
-    function highStock(gemiddelde){
+    function highStock(){
 
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/${asset}/${veld}`, function (data) {
         // Create the chart

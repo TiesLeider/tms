@@ -75,4 +75,6 @@ def toggle_pollbaar(request, assetnummer):
         asset = Asset.objects.get(assetnummer=assetnummer)
         asset.pollbaar = not asset.pollbaar
         asset.save()
-    return JsonResponse({"waarde": asset.pollbaar}, safe=False)
+        return JsonResponse({"waarde": asset.pollbaar}, safe=False)
+    else:
+        return HttpResponse(status=403)
