@@ -28,6 +28,7 @@ class Asset(models.Model):
 
     class Meta:
         ordering = ['assetnummer',]
+        permissions = [("toggle_pollbaar_status", "Kan de pollbaarstatus aanpassen")]
 
     def __str__(self):  
         return self.assetnummer

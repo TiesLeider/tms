@@ -31,8 +31,10 @@ urlpatterns = [
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
     path("asset/<str:assetnummer>/corrigeer_omlopen", views.asset.corrigeer_omlopen, name="asset_corrigeer_omlopen"),
+    path("analyse/<str:assetnummer>/<str:veld>", views.asset_analyse, name="asset_analyse"),
     path("asset_lijst", views.asset_lijst, name="asset_lijst"),
     path("asset_dashboard/", views.dashboard, name="dashboard"),
+    path("asset/<str:assetnummer>/toggle_pollbaar", views.toggle_pollbaar, name="toggle_pollbaar"),
 
     #User Account Control
     path("login", auth_views.LoginView.as_view(template_name="tram/login.html"), name="login"),

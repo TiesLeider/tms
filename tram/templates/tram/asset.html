@@ -21,7 +21,7 @@
                         </tr>
                         <tr>
                             <td>Wordt gepolled:</td>
-                            <td>{{asset.pollbaar}}</td>
+                            <td>{{asset.pollbaar}}{%if perms.tram.toggle_pollbaar_status%}<a style="margin-left: 10%;" href="{%url 'toggle_pollbaar' asset.assetnummer%}" class="waves-effect waves-light btn-small grey "> {%if asset.pollbaar%}<i class="material-icons left">toggle_off</i>{%else%}<i class="material-icons left">toggle_on</i>{%endif%} Wijzig</a>{%endif%}</td>
                         </tr>
                         <tr>
                             <td>Configuratie:</td>

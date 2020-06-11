@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from ..models import *
 from django.db.models import Sum, Avg
+import django.contrib.auth
 import json
 
 
@@ -67,3 +68,11 @@ def dashboard(request):
     storingen = ["No Fail Save", "Tong failure A+B", "WSA Defect", "Timeout L of R point A of Point B", "Verzamelmelding deksels, water in bak", "Druklimiet overschreden"]
         
     return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen)})
+
+@login_required
+def toggle_pollbaar(request, assetnummer):
+    if request.user.has_perm("tram.toggle_pollbaar_status"):
+        asset = Asset.objects.get(assetnummer=assetnummer)
+        asset.pollbaar = not asset.pollbaar
+        asset.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
