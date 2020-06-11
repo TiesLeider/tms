@@ -161,7 +161,7 @@ def check_online_assets(request):
         for asset in r.json():
                 for key, value in asset.items():
                     if value == False:
-                        assetnummer = key.upper() if key.startswith("w") else key
+                        assetnummer = key.capitalize()
                         if len(assetnummer) > 4 and assetnummer.startswith("W"):
                             assetnummer = assetnummer[1:]
                         asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)

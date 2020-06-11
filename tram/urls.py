@@ -44,5 +44,6 @@ urlpatterns = [
     #Systeem
     path("livesign", views.livesign, name="livesign"),
     path("error", views.error, name="error"),
-    path("logfile", views.show_api_log, name="logfile")
+    path("logfile", views.show_api_log, name="logfile"),
+    path("logfile/delete", views.delete_log, name="delete_log")
 ]  

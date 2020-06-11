@@ -49,3 +49,11 @@ def show_api_log(request):
             response += line
     return HttpResponse(response, content_type='text/plain')
 
+@login_required
+def delete_log(request):
+    with open(os.path.join(BASE_DIR, "api.log"), "w") as logfile:
+        logfile.write("")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
