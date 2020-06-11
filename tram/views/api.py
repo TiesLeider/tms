@@ -157,20 +157,23 @@ def check_assets_online_oud(request):
 def check_online_assets(request):
     r = requests.get("http://10.165.2.10:1810/api/getLive")
     offline_assets = []
-    for asset in r.json():
-            for key, value in asset.items():
-                if value == False:
-                    assetnummer = key.upper() if key.startswith("w") else key
-                    if len(assetnummer) > 4 and assetnummer.startswith("W"):
-                        assetnummer = assetnummer[1:]
-                    asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
-                    try:
-                        tijdstip = asset.laatste_data.tijdstip.strftime("%d %b %Y, %H:%M")
-                    except:
-                        tijdstip = "Nooit"
-                    if asset.pollbaar == True:
-                        offline_assets.append(
-                            {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
+    try:
+        for asset in r.json():
+                for key, value in asset.items():
+                    if value == False:
+                        assetnummer = key.upper() if key.startswith("w") else key
+                        if len(assetnummer) > 4 and assetnummer.startswith("W"):
+                            assetnummer = assetnummer[1:]
+                        asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
+                        try:
+                            tijdstip = asset.laatste_data.tijdstip.strftime("%d %b %Y, %H:%M")
+                        except:
+                            tijdstip = "Nooit"
+                        if asset.pollbaar == True:
+                            offline_assets.append(
+                                {"assetnummer": asset.assetnummer, "tijdstip": tijdstip})
+    except:
+        pass
     return JsonResponse(offline_assets, safe=False)
 
 
