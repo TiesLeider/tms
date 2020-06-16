@@ -164,6 +164,8 @@ IMPORT_EXPORT_USE_TRANSACTIONS = False
 
 LOGIN_REDIRECT_URL = "index"
 
+AUTH_PROFILE_MODULE = "tram.Account"
+
 LOGIN_URL = "login"
 
 CRISPY_TEMPLATE_PACK = "materialize_css_forms"

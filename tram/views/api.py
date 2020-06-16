@@ -306,3 +306,26 @@ def dashboard_storingen_timerange(request, storing, van_datum, tot_datum):
     asset_array.sort(key=get_key, reverse=True) 
 
     return JsonResponse(dict(totale_storingen=totale_storingen, asset_array=asset_array))
+
+@csrf_exempt
+def storing_filter(request):
+    if request.method == 'POST':
+        post_key = request.POST["key"]
+        post_value = request.POST["value"]
+        print(post_key)
+        print(post_value)
+        account_filter = request.user.account.storings_pagina_filter
+        if post_value == "false":
+            if post_key not in account_filter:
+                account_filter.append(post_key)
+        if post_value == "true":
+            if post_key in account_filter:
+                account_filter.remove(post_key)
+        request.user.account.save()
+        print(request.user.account.storings_pagina_filter)
+
+        return HttpResponse(status=200)
+    
+    elif request.method == 'GET':
+        return JsonResponse(json.dumps(request.user.account.storings_pagina_filter), safe=False)
+

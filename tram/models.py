@@ -1,8 +1,23 @@
 from django.db import models
 from django.db.models.signals import post_save, pre_save
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.contrib.postgres.fields import JSONField, ArrayField
 import datetime
+
+class Account(models.Model):
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    storings_pagina_filter = ArrayField(models.CharField(max_length=200), default=list, null=True)
+
+from django.contrib.auth.signals import user_logged_in
+
+
+def login_signal_method(sender, user, request, **kwargs):
+    obj, created = Account.objects.get_or_create(
+    user=user
+)
+    
+user_logged_in.connect(login_signal_method)
 
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True, help_text="Het unieke nummer van deze asset")

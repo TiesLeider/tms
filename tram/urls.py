@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/dashboard_omlopen/<str:van_datum>/<str:tot_datum>", views.dashboard_omlopen_timerange, name="dashboard_omlopen_timerange"),
     path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
     path("api/dashboard/storing/<str:storing>/<str:van_datum>/<str:tot_datum>", views.dashboard_storingen_timerange, name="dashboard_storingen_timerange"),
+    path("account/storing_filter", views.storing_filter, name="storing_filter"),
 
     #Asset
     path("insertlogodata",views.insert_logo_data, name="insert_logo_data"),
@@ -45,5 +46,6 @@ urlpatterns = [
     path("livesign", views.livesign, name="livesign"),
     path("error", views.error, name="error"),
     path("logfile", views.show_api_log, name="logfile"),
-    path("logfile/delete", views.delete_log, name="delete_log")
+    path("logfile/delete", views.delete_log, name="delete_log"),
+
 ]  
