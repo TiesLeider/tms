@@ -160,8 +160,6 @@ def check_online_assets(request):
                 for key, value in asset.items():
                     if value == False:
                         assetnummer = key.capitalize()
-                        if len(assetnummer) > 4 and assetnummer.startswith("W"):
-                            assetnummer = assetnummer[1:]
                         asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
                         try:
                             tijdstip = asset.laatste_data.tijdstip.strftime("%d %b %Y, %H:%M")
