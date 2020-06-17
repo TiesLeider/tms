@@ -201,15 +201,22 @@
         $.ajax({
             method: "GET",
             url: `/tram/api/dashboard_omlopen/${vanDatum}/${totDatum}`,
+            beforeSend: function () {
+            },
             success: function (response) {
+                $("#datumText").text(`Laden...`)
                 highchartOmlopen(response)
             },
             error: function (error_data) {
                 console.log(error_data)
+            },
+            complete: function(){
+                $("#datumText").text(`Data van ${vanDatum} tot en met ${totDatum}`)
+
             }
         })
 
-        $("#datumText").text(`Data van ${vanDatum} tot ${totDatum}`)
+        
 
     }
 </script>
