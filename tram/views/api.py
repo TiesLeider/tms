@@ -250,14 +250,13 @@ def dashboard_omlopen_timerange(request, van_datum, tot_datum):
         return elem["y"]
 
     for asset in assets:
-        try:
-            asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(eind_datum, start_datum))
-            som_asset_a_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]
-            som_asset_b_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
-            omlopen = som_asset_a_omlopen + som_asset_b_omlopen
-            asset_array.append(dict(name=asset.assetnummer, omlopen=0 if omlopen == None else omlopen, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
-        except:
+        asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(eind_datum, start_datum))
+        som_asset_a_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]
+        som_asset_b_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
+        omlopen = som_asset_a_omlopen + som_asset_b_omlopen
+        if omlopen == 0:
             continue
+        asset_array.append(dict(name=asset.assetnummer, omlopen=0 if omlopen == None else omlopen, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
     asset_array.sort(key=get_key, reverse=True) 
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
@@ -287,7 +286,7 @@ def dashboard_storingen(request, storing):
             percentage = (aantal / totale_storingen)*100 if totale_storingen > 0 else 0
 
             asset_array.append(dict(name=asset.assetnummer, y= percentage))
-        except:
+        except ZeroDivisionError:
             continue
     asset_array.sort(key=get_key, reverse=True) 
 
