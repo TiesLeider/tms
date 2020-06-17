@@ -239,23 +239,34 @@ def dashboard_omlopen_timerange(request, van_datum, tot_datum):
     start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
     eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
     assets = Asset.objects.all()
-    totale_omlopen_qs = AbsoluteData.objects.filter(tijdstip__range=(start_datum, eind_datum))
-    totale_omlopen = totale_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] + totale_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
+    totale_omlopen_qs = AbsoluteData.objects.filter(tijdstip__range=(eind_datum, start_datum))
+    som_a_omlopen = 0 if totale_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] == None else totale_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]
+    som_b_omlopen = 0 if totale_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"] == None else totale_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
+
+    totale_omlopen = som_a_omlopen + som_b_omlopen
     asset_array = []
 
     def get_key(elem):
         return elem["y"]
 
     for asset in assets:
-        asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(start_datum, eind_datum))
-        asset_array.append(dict(name=asset.assetnummer, omlopen=asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]+asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"], y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+        try:
+            asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(eind_datum, start_datum))
+            som_asset_a_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]
+            som_asset_b_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
+            omlopen = som_asset_a_omlopen + som_asset_b_omlopen
+            asset_array.append(dict(name=asset.assetnummer, omlopen=0 if omlopen == None else omlopen, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
+        except:
+            continue
     asset_array.sort(key=get_key, reverse=True) 
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
 
 def dashboard_storingen(request, storing):
+    tong_failure_synoniemen = ["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B", "Tong failure A+B (H&K)", "Tongen failure A+B (ELL)"]
+
     if storing == "Tong failure A+B":
-        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"])
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen)
     else:   
         qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing])
     assets = Asset.objects.all()
@@ -266,24 +277,28 @@ def dashboard_storingen(request, storing):
         return elem["y"]
 
     for asset in assets:
-        if storing == "Tong failure A+B":
-            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"], assetnummer=asset).count()
-        else:
-            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
-        if aantal == 0:
-            continue
-        percentage = (aantal / totale_storingen)*100
+        try:
+            if storing == "Tong failure A+B":
+                aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen, assetnummer=asset).count()
+            else:
+                aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
+            if aantal == 0:
+                continue
+            percentage = (aantal / totale_storingen)*100 if totale_storingen > 0 else 0
 
-        asset_array.append(dict(name=asset.assetnummer, y= percentage))
+            asset_array.append(dict(name=asset.assetnummer, y= percentage))
+        except:
+            continue
     asset_array.sort(key=get_key, reverse=True) 
 
     return JsonResponse(dict(totale_storingen=totale_storingen, asset_array=asset_array))
 
 def dashboard_storingen_timerange(request, storing, van_datum, tot_datum):
+    tong_failure_synoniemen = ["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B", "Tong failure A+B (H&K)", "Tongen failure A+B (ELL)"]
     start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
     eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
     if storing == "Tong failure A+B":
-        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"],  tijdstip__range=(start_datum, eind_datum))
+        qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen,  tijdstip__range=(start_datum, eind_datum))
     else:   
         qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing],  tijdstip__range=(start_datum, eind_datum))
     assets = Asset.objects.all()
@@ -295,12 +310,12 @@ def dashboard_storingen_timerange(request, storing, van_datum, tot_datum):
 
     for asset in assets:
         if storing == "Tong failure A+B":
-            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B"], assetnummer=asset,  tijdstip__range=(start_datum, eind_datum)).count()
+            aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen, assetnummer=asset,  tijdstip__range=(start_datum, eind_datum)).count()
         else:
             aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset,  tijdstip__range=(start_datum, eind_datum)).count()
         if aantal == 0:
             continue
-        percentage = (aantal / totale_storingen)*100
+        percentage = (aantal / totale_storingen)*100  if totale_storingen > 0 else 0
 
         asset_array.append(dict(name=asset.assetnummer, y= percentage))
     asset_array.sort(key=get_key, reverse=True) 

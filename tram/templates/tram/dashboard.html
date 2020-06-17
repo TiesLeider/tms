@@ -7,7 +7,7 @@
 {%endblock%}
 {% block content %}
 <div class="card-panel white">
-    <h1>WIP Dashboard</h1>
+    <h1>Dashboard</h1>
     <div class="row">
         <div class="input-field col s6">
             <input id="van_datum" type="text" class="datepicker">
@@ -17,6 +17,9 @@
             <input id="tot_datum" type="text" class="datepicker">
             <label for="tot_datum">Tot en met datum</label>
         </div>
+    </div>
+    <div class="row">
+        <h4 id="datumText">Alle data tot vandaag.</h4>
     </div>
     <div class="row">
         <div class="col s12 m6 l6">
@@ -205,6 +208,8 @@
                 console.log(error_data)
             }
         })
+
+        $("#datumText").text(`Data van ${vanDatum} tot ${totDatum}`)
 
     }
 </script>
