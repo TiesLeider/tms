@@ -239,7 +239,8 @@ def dashboard_omlopen_timerange(request, van_datum, tot_datum):
     start_datum = datetime.datetime.strptime(van_datum, "%d-%m-%Y")
     eind_datum = datetime.datetime.strptime(tot_datum, "%d-%m-%Y") + datetime.timedelta(days=1)
     assets = Asset.objects.all()
-    totale_omlopen_qs = AbsoluteData.objects.filter(tijdstip__range=(eind_datum, start_datum))
+    totale_omlopen_qs = AbsoluteData.objects.filter(tijdstip__range=(start_datum, eind_datum))
+    print(totale_omlopen_qs)
     som_a_omlopen = 0 if totale_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] == None else totale_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]
     som_b_omlopen = 0 if totale_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"] == None else totale_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
 
@@ -250,7 +251,7 @@ def dashboard_omlopen_timerange(request, van_datum, tot_datum):
         return elem["y"]
 
     for asset in assets:
-        asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(eind_datum, start_datum))
+        asset_omlopen_qs = AbsoluteData.objects.filter(assetnummer=asset, tijdstip__range=(start_datum, eind_datum))
         som_asset_a_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_a_toegevoegd"))["omloop_a_toegevoegd__sum"]
         som_asset_b_omlopen = 0 if asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"] == None else asset_omlopen_qs.aggregate(Sum("omloop_b_toegevoegd"))["omloop_b_toegevoegd__sum"]
         omlopen = som_asset_a_omlopen + som_asset_b_omlopen
