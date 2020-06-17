@@ -37,7 +37,7 @@ class AssetResource(resources.ModelResource):
         report_skipped = True
         model = Asset
         import_id_fields = ["assetnummer"]
-        exclude = ("storing_beschrijving", "absolute_data")
+        exclude = ("storing_beschrijving", "laatste_data", "omloop_a", "omloop_b")
 
 class StoringResource(resources.ModelResource):
     class Meta:
