@@ -38,8 +38,6 @@ def insert_logo_data(request):
         json_data = json.loads(data).get("ojson")
         assetnummer = json_data.get("assetnummer").upper() if json_data.get(
             "assetnummer").startswith("w") else json_data.get("assetnummer")
-        if assetnummer == "W2641" or assetnummer == "W2642":
-            assetnummer = assetnummer[1:]
         asset = Asset.objects.select_related("laatste_data").get(assetnummer=assetnummer)
         # Maak record Logodata:
         record = LogoData(json_data, asset)
