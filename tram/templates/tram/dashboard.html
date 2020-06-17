@@ -202,9 +202,9 @@
             method: "GET",
             url: `/tram/api/dashboard_omlopen/${vanDatum}/${totDatum}`,
             beforeSend: function () {
+                $("#datumText").text(`Laden...`)
             },
             success: function (response) {
-                $("#datumText").text(`Laden...`)
                 highchartOmlopen(response)
             },
             error: function (error_data) {
