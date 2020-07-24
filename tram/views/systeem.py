@@ -45,14 +45,14 @@ def change_password(request):
 
 def show_api_log(request):
     response = ""
-    with open(os.path.join(BASE_DIR, f'api-week-{datetime.datetime.now().strftime("%V")}.log'), "r") as logfile:
+    with open(os.path.join(BASE_DIR, f'logfiles/api-week-{datetime.datetime.now().strftime("%V")}.log'), "r") as logfile:
         for line in logfile.readlines():
             response += line
     return HttpResponse(response, content_type='text/plain')
 
 @login_required
 def delete_log(request):
-    with open(os.path.join(BASE_DIR, f'api-week-{datetime.datetime.now().strftime("%V")}.log'), "w") as logfile:
+    with open(os.path.join(BASE_DIR, f'logfiles/api-week-{datetime.datetime.now().strftime("%V")}.log'), "w") as logfile:
         logfile.write("")
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
