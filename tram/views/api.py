@@ -17,8 +17,7 @@ import platform
 import os
 from django.template import Context, loader
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=f'logfiles/api-week-{datetime.datetime.now().strftime("%V")}.log', level=logging.INFO)
 
 def requesthandler(request):
     if (request.body == "" or not request.body):
