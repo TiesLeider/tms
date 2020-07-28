@@ -3,4 +3,5 @@ api.log
 tram/templates/tram/data
 tms_webapp/settings.py
 tram/data
+logfiles/
 .vscode/
