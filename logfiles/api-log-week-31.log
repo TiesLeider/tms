@@ -3464,3 +3464,737 @@ Traceback (most recent call last):
 requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002C1366A3438>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
 07/28/2020 08:54:19 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
 07/28/2020 08:54:30 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
+07/28/2020 08:55:40 PM WARNING:Not Found: /favicon.ico
+07/28/2020 08:56:01 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C3AF3C8>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C3AF3C8>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C3AF3C8>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 08:57:06 PM WARNING:Not Found: /favicon.ico
+07/28/2020 08:57:27 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C01F160>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C01F160>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C01F160>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 08:57:46 PM WARNING:Not Found: /favicon.ico
+07/28/2020 08:58:08 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C003A20>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C003A20>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C003A20>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 08:59:12 PM WARNING:Not Found: /favicon.ico
+07/28/2020 08:59:33 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C02AE10>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C02AE10>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C02AE10>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:00:14 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C35E6D8>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C35E6D8>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C35E6D8>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:00:15 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C012748>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C012748>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C012748>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:05:15 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C202470>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C202470>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C202470>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:06:48 PM WARNING:Not Found: /favicon.ico
+07/28/2020 09:07:09 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C01AD68>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C01AD68>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C01AD68>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:10:46 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C02A320>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C02A320>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C02A320>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:11:41 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C4E0B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C4E0B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C4E0B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:14:26 PM WARNING:Not Found: /favicon.ico
+07/28/2020 09:14:47 PM ERROR:Internal Server Error: /tram/api/check_online_assets
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 160, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 80, in create_connection
+    raise err
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\connection.py", line 70, in create_connection
+    sock.connect(sa)
+TimeoutError: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 603, in urlopen
+    chunked=chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 355, in _make_request
+    conn.request(method, url, **httplib_request_kw)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1229, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1275, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1224, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 1016, in _send_output
+    self.send(msg)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\http\client.py", line 956, in send
+    self.connect()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 183, in connect
+    conn = self._new_conn()
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connection.py", line 169, in _new_conn
+    self, "Failed to establish a new connection: %s" % e)
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000002198C4F3B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 449, in send
+    timeout=timeout
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\connectionpool.py", line 641, in urlopen
+    _stacktrace=sys.exc_info()[2])
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\urllib3\util\retry.py", line 399, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C4F3B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\exception.py", line 34, in inner
+    response = get_response(request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\django\core\handlers\base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Ties\Desktop\tms\tram\views\api.py", line 156, in check_online_assets
+    r = requests.get("http://10.165.2.10:1810/api/getLive")
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 75, in get
+    return request('get', url, params=params, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\Ties\AppData\Local\Programs\Python\Python37\lib\site-packages\requests\adapters.py", line 516, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C4F3B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
+07/28/2020 09:21:34 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
+07/28/2020 09:22:07 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.

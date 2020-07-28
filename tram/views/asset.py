@@ -74,6 +74,7 @@ def dashboard(request):
     for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
         for file in files:
             if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
+                print(os.path.join(root, file))
                 path = os.path.join(root, file).split("/")[-1].split("\\")
                 druk_assets.append({"assetnummer": path[1], "veld": path[2].replace(".json", "")})
         
