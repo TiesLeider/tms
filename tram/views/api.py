@@ -16,15 +16,14 @@ import subprocess
 import platform
 import os
 from django.template import Context, loader
+from tms_webapp.settings import API_LOGFILE_NAME
 
-filename = f'api-week-{datetime.datetime.now().strftime("%V")}.log'
-
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=filename, level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=API_LOGFILE_NAME, level=logging.INFO)
 
 def requesthandler(request):
     if (request.body == "" or not request.body):
         return JsonResponse({"response": False, "error":  "POST inhoud niet aangekomen."})
-    else:
+    else: 
         return request
 
 def api_docs(request):

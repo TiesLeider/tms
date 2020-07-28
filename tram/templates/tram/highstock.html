@@ -18,10 +18,13 @@
 <script src="https://code.highcharts.com/stock/modules/data.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/draggable-points.js"></script>
 
 <script>
     var asset = `{{asset.assetnummer}}`
     var veld = `{{veld}}`
+    var alarmwaarde_druk_a = parseInt(`{asset.alarmwaarde_druk_a}`)
+    var alarmwaarde_druk_b = parseInt(`{asset.alarmwaarde_druk_a}`)
 
     var get_sensor_waarden_url = `{%url 'get_sensor_waarden' asset.assetnummer veld%}`
 
@@ -60,6 +63,7 @@
                     title: {
                         text: '{{veld}}'
                     },
+                    softMin: 730,
                 },
         
                 rangeSelector: {
@@ -111,7 +115,19 @@
                     tooltip: {
                         valueDecimals: 0
                     }
-                }]
+                },
+                {
+                    type: "line",
+                    name: "Alarmwaarde",
+                    data: [[data[data.length-2][0], 730]],
+                    dragDrop: {
+                        draggableY: true,
+                        dragPrecisionY: 1,
+                        dragMaxY: 32767 ,
+                        dragMinY: 30,
+                    }
+                }
+                ]
     
             });
         }

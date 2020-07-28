@@ -79,6 +79,7 @@ class AbsoluteData(models.Model):
         verbose_name = "data"
         verbose_name_plural = "data"
         get_latest_by = "tijdstip"
+        permissions = [("dashboard_access", "Heeft toegang tot het dasboard")]
 
     def __str__(self):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"

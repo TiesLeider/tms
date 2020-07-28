@@ -1,11 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from ..models import *
 from django.db.models import Sum, Avg
+from tms_webapp.settings import BASE_DIR
 import django.contrib.auth
 import json
+import os
 
 
 @login_required
@@ -64,10 +66,18 @@ def asset_analyse(request, assetnummer, veld):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     return render(request, "tram/highstock.html", {"asset": asset, "veld" : veld})
 
+@permission_required('tram.dashboard_access')
 def dashboard(request):
     storingen = ["No Fail Save", "Tong failure A+B", "WSA Defect", "Timeout L of R point A of Point B", "Verzamelmelding deksels, water in bak", "Druklimiet overschreden"]
+    druk_assets = []
+
+    for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
+        for file in files:
+            if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
+                path = os.path.join(root, file).split("/")[-1].split("\\")
+                druk_assets.append({"assetnummer": path[1], "veld": path[2].replace(".json", "")})
         
-    return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen)})
+    return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen), "druk_assets_serz": json.dumps(druk_assets)})
 
 @login_required
 def toggle_pollbaar(request, assetnummer):

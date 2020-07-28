@@ -44,8 +44,10 @@
       </nav>
     </header>
     <ul id='dropdown1' class='dropdown-content' style="background-color: rgba(255, 255, 255, 0);">
+        {%if perms.tram.dashboard_access%}
+          <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+        {%endif%}
         {%if user.is_superuser %}
-        <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard</a></li>
           <li><a href="{% url 'admin:index' %}" class="blue lighten-2  white-text"><i class="material-icons left">settings</i>Adminpaneel</a></li>
         {% endif %}
       <li><a href="{% url 'change_password' %}" class="grey white-text"><i class="small material-icons left">more_horiz</i>Wachtwoord veranderen</a></li>

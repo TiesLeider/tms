@@ -5,9 +5,9 @@ from django.db import IntegrityError
 from ..models import *
 import datetime
 from django.db.models import Sum
-filename = f'logfiles/api-week-{datetime.datetime.now().strftime("%V")}.log'
+from tms_webapp.settings import API_LOGFILE_NAME
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=filename, level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=API_LOGFILE_NAME, level=logging.INFO)
 
 STRING_DRUK_OVERSCHREDEN = "Druklimiet overschreden"
 

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import sys
 import os
 import socket
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -169,3 +170,7 @@ AUTH_PROFILE_MODULE = "tram.Account"
 LOGIN_URL = "login"
 
 CRISPY_TEMPLATE_PACK = "materialize_css_forms"
+
+API_LOGFILE_NAME = f'logfiles/api-log-week-{datetime.datetime.now().strftime("%V")}.log'
+
+SYSTEM_LOGFILE_NAME = f'logfiles/sytem-log-week-{datetime.datetime.now().strftime("%V")}.log'

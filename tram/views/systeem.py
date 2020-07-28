@@ -10,10 +10,10 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 import os
-from tms_webapp.settings import BASE_DIR
+from tms_webapp.settings import BASE_DIR, SYSTEM_LOGFILE_NAME
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p', filename="systeem.log", level=logging.INFO)
+                    datefmt='%m/%d/%Y %I:%M:%S %p', filename=SYSTEM_LOGFILE_NAME, level=logging.INFO)
 
 def livesign(request):
     pass
@@ -32,7 +32,7 @@ def change_password(request):
             form = PasswordChangeForm(request.user, request.POST)
             if form.is_valid():
                 user = form.save()
-                update_session_auth_hash(request, user)  # Important!
+                update_session_auth_hash(request, user) 
                 messages.success(request, 'Your password was successfully updated!')
                 return redirect('index')
             else:
