@@ -4199,3 +4199,4 @@ requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port
 07/28/2020 09:21:34 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
 07/28/2020 09:22:07 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
 07/28/2020 09:40:40 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
+07/28/2020 10:20:35 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
