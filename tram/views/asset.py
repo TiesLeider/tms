@@ -77,7 +77,6 @@ def dashboard(request):
         for file in files:
             if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
                 path = os.path.join(root, file).split("/")
-                print(path[-2])
                 if Asset.objects.get(assetnummer=path[-2]).laatste_data.druk_a1 > 0:
                     druk_assets.append({"assetnummer": path[-2], "veld": "druk_a1"})
                 if Asset.objects.get(assetnummer=path[-2]).laatste_data.druk_b1 > 0:

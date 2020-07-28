@@ -53,16 +53,16 @@ class Command(BaseCommand):
                 if ad.omloop_b > 0:
                     schrijf_data(asset, "omloop_b")
 
-                if ad.druk_a1 > 0 or asset.configuratie.naam in druk_configs:
+                if ad.druk_a1 > 0 and asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_a1")
 
-                if ad.druk_a2 > 0 or asset.configuratie.naam in druk_configs:
+                if ad.druk_a2 > 0 and asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_a2")
 
-                if ad.druk_b1 > 0 or asset.configuratie.naam in druk_configs:
+                if ad.druk_b1 > 0 and asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_b1")
                 
-                if ad.druk_b2 > 0 or asset.configuratie.naam in druk_configs:
+                if ad.druk_b2 > 0 and asset.configuratie.naam in druk_configs:
                     schrijf_data(asset, "druk_b2")
                 
                 if ad.kracht_a > 0:
