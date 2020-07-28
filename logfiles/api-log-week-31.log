@@ -4198,3 +4198,4 @@ Traceback (most recent call last):
 requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.165.2.10', port=1810): Max retries exceeded with url: /api/getLive (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002198C4F3B38>: Failed to establish a new connection: [WinError 10060] Een verbindingspoging is mislukt omdat de verbonden party niet correct heeft geantwoord na een bepaalde tijd, of de gemaakte verbinding is mislukt omdat de verbonden host niet heeft geantwoord'))
 07/28/2020 09:21:34 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
 07/28/2020 09:22:07 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.
+07/28/2020 09:40:40 PM INFO:C:\Users\Ties\Desktop\tms\tram\views\asset.py changed, reloading.

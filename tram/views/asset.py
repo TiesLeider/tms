@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from ..models import *
+import socket
 from django.db.models import Sum, Avg
 from tms_webapp.settings import BASE_DIR
 import django.contrib.auth
@@ -70,13 +71,20 @@ def asset_analyse(request, assetnummer, veld):
 def dashboard(request):
     storingen = ["No Fail Save", "Tong failure A+B", "WSA Defect", "Timeout L of R point A of Point B", "Verzamelmelding deksels, water in bak", "Druklimiet overschreden"]
     druk_assets = []
-
-    for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
+    
+    if socket.gethostname() == "tms.nl":
+       for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
         for file in files:
             if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
-                print(os.path.join(root, file))
-                path = os.path.join(root, file).split("/")[-1].split("\\")
-                druk_assets.append({"assetnummer": path[1], "veld": path[2].replace(".json", "")})
+                path = os.path.join(root, file).split("/")
+                druk_assets.append({"assetnummer": path[-2], "veld": path[-1].replace(".json", "")})
+    
+    else:
+        for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
+            for file in files:
+                if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
+                    path = os.path.join(root, file).split("/")[-1].split("\\")
+                    druk_assets.append({"assetnummer": path[1], "veld": path[2].replace(".json", "")})
         
     return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen), "druk_assets_serz": json.dumps(druk_assets)})
 
