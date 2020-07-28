@@ -77,6 +77,7 @@ def dashboard(request):
         for file in files:
             if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
                 path = os.path.join(root, file).split("/")
+                print(path[-2])
                 if Asset.objects.get(assetnummer=path[-2]).laatste_data.druk_a1 > 0:
                     druk_assets.append({"assetnummer": path[-2], "veld": "druk_a1"})
                 if Asset.objects.get(assetnummer=path[-2]).laatste_data.druk_b1 > 0:
@@ -89,9 +90,9 @@ def dashboard(request):
                     path = os.path.join(root, file).split("/")[-1].split("\\")
                     druk_assets.append({"assetnummer": path[1], "veld": path[2].replace(".json", "")})
                     if Asset.objects.get(assetnummer=path[1]).laatste_data.druk_a1 > 0:
-                        druk_assets.append({"assetnummer": path[-2], "veld": "druk_a1"})
+                        druk_assets.append({"assetnummer": path[1], "veld": "druk_a1"})
                     if Asset.objects.get(assetnummer=path[1]).laatste_data.druk_b1 > 0:
-                        druk_assets.append({"assetnummer": path[-2], "veld": "druk_b1"})
+                        druk_assets.append({"assetnummer": path[1], "veld": "druk_b1"})
         
     return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen), "druk_assets_serz": json.dumps(druk_assets)})
 
