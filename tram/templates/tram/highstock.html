@@ -23,8 +23,8 @@
 <script>
     var asset = `{{asset.assetnummer}}`
     var veld = `{{veld}}`
-    var alarmwaarde_druk_a = parseInt(`{{asset.alarmwaarde_druk_a}}`)
-    var alarmwaarde_druk_b = parseInt(`{{asset.alarmwaarde_druk_b}}`)
+    var alarmwaarde_druk_a = parseInt(`{{asset.alarm_waarde_druk_a}}`)
+    var alarmwaarde_druk_b = parseInt(`{{asset.alarm_waarde_druk_b}}`)
 
     var get_sensor_waarden_url = `{%url 'get_sensor_waarden' asset.assetnummer veld%}`
 
@@ -64,7 +64,7 @@
                         text: '{{veld}}'
                     },
                     plotLines: [{
-                        value: alarmwaarde_druk_a,
+                        value: alarmwaarde_druk_a + 10,
                         color: 'red',
                         dashStyle: 'shortdash',
                         width: 2,
