@@ -45,7 +45,7 @@
         <div class="col s12 m12 l12">
             <div class="card-panel white">
                 <figure class="highcharts-figure">
-                    <div id="container"></div>
+                    <div id="container" style="height: 600px;"></div>
                     <p class="highcharts-description">
                     </p>
                 </figure>
@@ -58,7 +58,7 @@
     const druk_assets = JSON.parse("{{druk_assets_serz|escapejs}}");
  </script>
 {% endblock %}
-{% block javascript %}
+{% block javascript %}  
 
 <script>
     $(document).ready(function() {
