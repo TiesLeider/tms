@@ -273,7 +273,14 @@ function createChart() {
             shadow: true
         },
         rangeSelector: {
-            selected: 1
+            selected: 0
+        },
+        plotOptions: {
+            line: {
+                dataGrouping: {
+                    enabled: false
+                }
+            }
         },
         tooltip: {
             valueDecimals: 2,
