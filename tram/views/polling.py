@@ -63,12 +63,11 @@ class LogoPolling:
         self.asset = asset
         self.assetnummer = self.asset.assetnummer
         self.storing_beschrijving = self.record.get_storing_beschrijvingen()
+        print(self.storing_beschrijving)
         try:
             self.vorige_ad = self.asset.laatste_data
         except ObjectDoesNotExist:
             self.vorige_ad = None
-        if self.asset.pollbaar == False:
-            self.asset.pollbaar = True
 
 
     def insert_absolute_data(self):

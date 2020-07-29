@@ -42,7 +42,8 @@ def insert_logo_data(request):
         # Maak record Logodata:
         record = LogoData(json_data, asset)
         if asset.laatste_data:
-            if ( record.storing == 0 and  
+            if ( record.storing == 0 and
+                asset.laatste_data.storing_beschrijving == [] and
                 asset.druk_a1 == record.druk_a1 and
                 asset.druk_a2 == record.druk_a2 and
                 asset.druk_b1 == record.druk_b1 and
