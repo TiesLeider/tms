@@ -63,7 +63,15 @@
                     title: {
                         text: '{{veld}}'
                     },
-                    softMin: 730,
+                    plotLines: [{
+                        value: alarmwaarde_druk_a,
+                        color: 'red',
+                        dashStyle: 'shortdash',
+                        width: 2,
+                        label: {
+                            text: 'Alarmwaarde' }
+                        }],
+                    softMax: 730,
                 },
         
                 rangeSelector: {
