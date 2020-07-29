@@ -16,26 +16,20 @@
 {% block content %}
 <div class="card-panel white">
     <h1>Dashboard</h1>
-    <div class="row">
-        <div class="input-field col s6">
-            <input id="van_datum" type="text" class="datepicker">
-            <label for="van_datum">Vanaf datum</label>
-        </div>
-        <div class="input-field col s5">
-            <input id="tot_datum" type="text" class="datepicker">
-            <label for="tot_datum">Tot en met datum</label>
-        </div>
-    </div>
-    <div class="row">
-        <h4 id="datumText">Alle data tot vandaag.</h4>
-    </div>
-    <div class="card-panel blue white">
+    <div class="card-panel white">
         <p>
-            <label for="amount">Date range:</label>
+            <label for="amount">Data:</label>
             <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" size="100"/>
           </p>
            
           <div id="slider-range"></div>
+          <div class="right-align">
+              <br>
+            <a href="#" class="waves-effect waves-light btn-large" onclick="getAjaxDataTimerangeInit()">Selecteer Data</a>
+          </div>
+    </div>
+    <div class="row">
+        <h4 id="datumText">Alle data tot vandaag.</h4>
     </div>
     <div class="row">
         <div class="col s12 m6 l6">
@@ -77,29 +71,7 @@
 {% block javascript %}  
 
 <script>
-    $(document).ready(function() {
-        var vanDatumPicker = $('#van_datum').datepicker({
-            maxDate: new Date(),
-            format: "dd-mm-yyyy",
-            onClose: function () {
-                for (s of storingen){
-                    getAjaxDataTimerange(storingType=s);
-                }
-            }
-        });
-
-        var totDatumPicker = $('#tot_datum').datepicker({
-            maxDate: new Date(),
-            defaultDate: new Date(),
-            setDefaultDate: true,
-            format: "dd-mm-yyyy",
-            onClose: function () {
-                for (s of storingen){
-                    getAjaxDataTimerange(storingType=s);
-                }
-            }
-        });
-    
+    $(document).ready(function() {    
         $(function() {
             opties = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
             $( "#slider-range").slider({
@@ -116,11 +88,24 @@
               " - " + (new Date($( "#slider-range" ).slider( "values", 1 )*1000)).toLocaleDateString('nl-NL', opties));
           });
 
-          setInterval(function(){}, 10000)
-        
 
 
     });
+
+    function returnBackendFormat(sliderRange){
+        var dd = sliderRange.getDate();
+        var mm = sliderRange.getMonth() + 1;
+        var yyyy = sliderRange.getFullYear();
+
+        return dd + "-" + mm + "-" + yyyy
+
+    }
+
+    function getAjaxDataTimerangeInit(){
+        for (s of storingen){
+            getAjaxDataTimerange(s, returnBackendFormat(new Date($( "#slider-range" ).slider( "values", 0 )*1000)), returnBackendFormat(new Date($( "#slider-range" ).slider( "values", 1 )*1000)))
+        }
+    }
 
     function getAjaxData(){
         $.ajax({
