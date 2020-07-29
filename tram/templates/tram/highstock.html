@@ -64,14 +64,14 @@
                         text: '{{veld}}'
                     },
                     plotLines: [{
-                        value: alarmwaarde_druk_a + 10,
+                        value: alarmwaarde_druk_a,
                         color: 'red',
                         dashStyle: 'shortdash',
                         width: 2,
                         label: {
-                            text: 'Alarmwaarde' }
+                            text: `Alarmwaarde (${alarmwaarde_druk_a})` }
                         }],
-                    softMax: 730,
+                    softMax: alarmwaarde_druk_a + 10,
                 },
                 plotOptions: {
                     line: {
