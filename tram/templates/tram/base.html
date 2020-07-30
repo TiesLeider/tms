@@ -44,8 +44,10 @@
       </nav>
     </header>
     <ul id='dropdown1' class='dropdown-content' style="background-color: rgba(255, 255, 255, 0);">
+        {%if perms.tram.dashboard_access%}
+          <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+        {%endif%}
         {%if user.is_superuser %}
-        <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard (W.I.P.)</a></li>
           <li><a href="{% url 'admin:index' %}" class="blue lighten-2  white-text"><i class="material-icons left">settings</i>Adminpaneel</a></li>
         {% endif %}
       <li><a href="{% url 'change_password' %}" class="grey white-text"><i class="small material-icons left">more_horiz</i>Wachtwoord veranderen</a></li>
@@ -74,11 +76,16 @@
       <script src="{% static 'tram/js/jquery.min.js' %}"></script>
     <!-- Path of the materialize.min.js file -->
       <script src="{% static 'tram/js/materialize.min.js' %}"></script>
+      <script
+      src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+      integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+      crossorigin="anonymous"></script>
       {% if user.is_authenticated %}
     <script>
       $("document").ready(function(){
         var dropdownUser = $("#dropdownUserBtn")
-        dropdownUser.dropdown({"constrainWidth": false});
+        
+        .dropdown({"constrainWidth": false});
         $('#alle_verbonden').hide();
         $('#niet_verbonden').hide();
         $('.modal').modal();
@@ -101,7 +108,7 @@
        }
        function updateVerbondenKnop(data){
          if (data.length > 0){
-           content = "Geen data ontvangen van deze assets in het afgelopen halfuur: <br><br>" 
+           content = "Geen connectie met de volgende assets: <br><br>" 
            $('#alle_verbonden').hide();
            $("#checken").hide();
            $('#niet_verbonden').show();

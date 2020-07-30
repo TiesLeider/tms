@@ -1,11 +1,18 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from ..models import *
+import socket
 from django.db.models import Sum, Avg
+from tms_webapp.settings import BASE_DIR
+import django.contrib.auth
 import json
+import os
 
+
+def hallo_wereld(request):
+    return render(request, "tram/test.html", {})
 
 @login_required
 def asset_index(request, assetnummer):
@@ -63,7 +70,33 @@ def asset_analyse(request, assetnummer, veld):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)
     return render(request, "tram/highstock.html", {"asset": asset, "veld" : veld})
 
+@permission_required('tram.dashboard_access')
 def dashboard(request):
     storingen = ["No Fail Save", "Tong failure A+B", "WSA Defect", "Timeout L of R point A of Point B", "Verzamelmelding deksels, water in bak", "Druklimiet overschreden"]
+    druk_assets = []
+    
+    if socket.gethostname() == "tms.nl":
+       for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
+        for file in files:
+            if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
+                path = os.path.join(root, file).split("/")
+                druk_assets.append({"assetnummer": path[-2], "veld": path[-1].replace(".json", "")})
+    
+    else:
+        for root, dirs, files in os.walk(os.path.join(BASE_DIR, 'tram/templates/tram/data')):
+            for file in files:
+                if file.endswith("druk_a1.json") or file.endswith("druk_b1.json"):
+                    path = os.path.join(root, file).split("/")[-1].split("\\")
+                    druk_assets.append({"assetnummer": path[1], "veld": path[2].replace(".json", "")})
         
-    return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen)})
+    return render(request, "tram/dashboard.html", {"storingen": storingen, "storingen_serz": json.dumps(storingen), "druk_assets_serz": json.dumps(druk_assets)})
+
+@login_required
+def toggle_pollbaar(request, assetnummer):
+    if request.user.has_perm("tram.toggle_pollbaar_status"):
+        asset = Asset.objects.get(assetnummer=assetnummer)
+        asset.pollbaar = not asset.pollbaar
+        asset.save()
+        return JsonResponse({"waarde": asset.pollbaar}, safe=False)
+    else:
+        return HttpResponse(status=403)

@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from tram.views import *
+from django.contrib.auth import views as auth_views
 
 class TestUrls(SimpleTestCase):
 
@@ -22,17 +23,13 @@ class TestUrls(SimpleTestCase):
         self.assertEquals(resolve(url).func, sms_lijst)
 
 #API
+    def api_docs_url_resolves(self):
+        url = reverse("url_docs")
+        self.assertEquals(resolve(url).func, api_docs)
+
     def test_asset_reset_alle_url_resolves(self):
         url = reverse("asset_reset_alle",  args=["W001"])
         self.assertEquals(resolve(url).func, reset_teller_alle)
-
-    def test_get_omlopen_totaal_url_resolves(self):
-        url = reverse("get_omlopen_totaal",  args=["W001", "12-12-2019", "13-12-2019"])
-        self.assertEquals(resolve(url).func, get_omlopen_totaal)
-
-    def test_get_omlopen_freq_url_resolves(self):
-        url = reverse("get_omlopen_freq", args=["W001", "12-12-2019", "13-12-2019"])
-        self.assertEquals(resolve(url).func, get_omlopen_freq)
 
     def test_alle_actieve_storingen_url_resolves(self):
         url = reverse("alle_actieve_storingen")
@@ -53,6 +50,26 @@ class TestUrls(SimpleTestCase):
     def test_get_sensor_waarden_url_resolves(self):
         url = reverse("get_sensor_waarden", args=["W001", "omloop_a"])
         self.assertEquals(resolve(url).func, get_sensor_waarden)
+    
+    def test_get_ip_nummers_url_resolves(self):
+        url = reverse("get_ipnummers")
+        self.assertEquals(resolve(url).func, get_ipnummers)
+    
+    def test_dashboard_omlopen_url_resolves(self):
+        url = reverse("dashboard_omlopen")
+        self.assertEquals(resolve(url).func, dashboard_omlopen)
+    
+    def test_dashboard_omlopen_timerange_url_resolves(self):
+        url = reverse("dashboard_omlopen_timerange", args=["01-05-2020", "20-05-2020"])
+        self.assertEquals(resolve(url).func, dashboard_omlopen_timerange)
+    
+    def test_dashboard_storingen_url_resolves(self):
+        url = reverse("dashboard_storingen", args=["omloop_a"])
+        self.assertEquals(resolve(url).func, dashboard_storingen)
+    
+    def test_dashboard_storingen_timerange_url_resolves(self):
+        url = reverse("dashboard_storingen_timerange",  args=["omloop_a", "01-05-2020", "20-05-2020"])
+        self.assertEquals(resolve(url).func, dashboard_storingen_timerange)
 
 #Asset
     def test_insert_logo_data_resolves(self):
@@ -79,10 +96,28 @@ class TestUrls(SimpleTestCase):
         url = reverse("asset_corrigeer_omlopen", args=["W001"])
         self.assertEquals(resolve(url).func, corrigeer_omlopen)
     
-    def test_asset_chart_url_resolves(self):
-        url = reverse("asset_chart", args=["W001"])
-        self.assertEquals(resolve(url).func, asset_chart)
+    def test_asset_lijst_url_resolves(self):
+        url = reverse("asset_lijst")
+        self.assertEquals(resolve(url).func, asset_lijst)
     
-    def test_asset_analyse_url_resolves(self):
-        url = reverse("asset_analyse", args=["W001", "omloop_a"])
-        self.assertEquals(resolve(url).func, asset_analyse)
+    def test_dashboard_url_resolves(self):
+        url = reverse("dashboard")
+        self.assertEquals(resolve(url).func, dashboard)
+
+#User Account Control
+    def test_change_password_url_resolves(self):
+        url = reverse("change_password")
+        self.assertEquals(resolve(url).func, change_password)
+
+#Systeem
+    def test_livesign_url_resolves(self):
+        url = reverse("livesign")
+        self.assertEquals(resolve(url).func, livesign)
+
+    def test_error_url_resolves(self):
+        url = reverse("error")
+        self.assertEquals(resolve(url).func, error)
+    
+    def test_logfile_url_resolves(self):
+        url = reverse("logfile")
+        self.assertEquals(resolve(url).func, show_api_log)

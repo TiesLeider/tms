@@ -5,9 +5,9 @@ from django.db import IntegrityError
 from ..models import *
 import datetime
 from django.db.models import Sum
+from tms_webapp.settings import API_LOGFILE_NAME
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p', filename="api.log", level=logging.INFO)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=API_LOGFILE_NAME, level=logging.INFO)
 
 STRING_DRUK_OVERSCHREDEN = "Druklimiet overschreden"
 
@@ -63,12 +63,11 @@ class LogoPolling:
         self.asset = asset
         self.assetnummer = self.asset.assetnummer
         self.storing_beschrijving = self.record.get_storing_beschrijvingen()
+        print(self.storing_beschrijving)
         try:
             self.vorige_ad = self.asset.laatste_data
         except ObjectDoesNotExist:
             self.vorige_ad = None
-        if self.asset.pollbaar == False:
-            self.asset.pollbaar = True
 
 
     def insert_absolute_data(self):

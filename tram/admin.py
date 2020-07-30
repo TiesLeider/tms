@@ -7,6 +7,8 @@ admin.site.site_header = "TMS Beheer"
 
 #TODO Verzenden gebruiker gegevens naar Email.
 
+
+
 class AbsoluteDataResource(resources.ModelResource):
     class Meta:
         model = AbsoluteData
@@ -35,7 +37,7 @@ class AssetResource(resources.ModelResource):
         report_skipped = True
         model = Asset
         import_id_fields = ["assetnummer"]
-        exclude = ("storing_beschrijving", "absolute_data")
+        exclude = ("storing_beschrijving", "laatste_data", "omloop_a", "omloop_b")
 
 class StoringResource(resources.ModelResource):
     class Meta:
@@ -55,6 +57,10 @@ class AssetAdmin(ImportExportActionModelAdmin):
 class AbsoluteDataAdmin(admin.ModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing_beschrijving", "omloop_a", "omloop_b", "druk_a1", "druk_a2", "druk_b1", "druk_b2")
     list_filter=("assetnummer_id"),
+
+@admin.register(Account)
+class AccountAdmin(admin.ModelAdmin):
+    list_display=("id",)
 
 @admin.register(SmsData)
 class SmsDataAdmin(admin.ModelAdmin):

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import sys
 import os
+import socket
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,21 +78,36 @@ WSGI_APPLICATION = 'tms_webapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-if sys.argv[1] == 'test':
+
+#Configuratie github
+if os.environ.get('GITHUB_WORKFLOW'):
+    ALLOWED_HOSTS = ["127.0.0.1"]
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': 'github_actions',
+           'USER': 'postgres',
+           'PASSWORD': 'postgres',
+           'HOST': '127.0.0.1',
+           'PORT': '5432',
         }
     }
-if sys.platform == "linux":
+
+#Configuratie applicatie-server
+elif socket.gethostname() == "tms.nl":
+    ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1"]
+
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'tms',
     }
 }
+
+#Anders
 else:
+    ALLOWED_HOSTS = ["127.0.0.1", "192.168.1.73"]
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -148,6 +165,12 @@ IMPORT_EXPORT_USE_TRANSACTIONS = False
 
 LOGIN_REDIRECT_URL = "index"
 
+AUTH_PROFILE_MODULE = "tram.Account"
+
 LOGIN_URL = "login"
 
 CRISPY_TEMPLATE_PACK = "materialize_css_forms"
+
+API_LOGFILE_NAME = f'logfiles/api-log-week-{datetime.datetime.now().strftime("%V")}.log'
+
+SYSTEM_LOGFILE_NAME = f'logfiles/sytem-log-week-{datetime.datetime.now().strftime("%V")}.log'

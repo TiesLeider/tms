@@ -1,8 +1,23 @@
 from django.db import models
 from django.db.models.signals import post_save, pre_save
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.contrib.postgres.fields import JSONField, ArrayField
 import datetime
+
+class Account(models.Model):
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    storings_pagina_filter = ArrayField(models.CharField(max_length=200), default=list, null=True)
+
+from django.contrib.auth.signals import user_logged_in
+
+
+def login_signal_method(sender, user, request, **kwargs):
+    obj, created = Account.objects.get_or_create(
+    user=user
+)
+    
+user_logged_in.connect(login_signal_method)
 
 class Asset(models.Model):
     assetnummer = models.CharField(max_length=10, primary_key=True, help_text="Het unieke nummer van deze asset")
@@ -25,9 +40,10 @@ class Asset(models.Model):
     kracht_b = models.IntegerField(blank=True, default=0, help_text="De krachtwaarde van de afgelopen polling.")
     omloop_a = models.IntegerField(blank=True, default=0, help_text="Het aantal omlopen van de A-bak van deze asset.")
     omloop_b = models.IntegerField(blank=True, default=0, help_text="Het aantal omlopen van de B-bak deze asset.")
-
+    
     class Meta:
         ordering = ['assetnummer',]
+        permissions = [("toggle_pollbaar_status", "Kan de pollbaarstatus aanpassen")]
 
     def __str__(self):  
         return self.assetnummer
@@ -63,6 +79,7 @@ class AbsoluteData(models.Model):
         verbose_name = "data"
         verbose_name_plural = "data"
         get_latest_by = "tijdstip"
+        permissions = [("dashboard_access", "Heeft toegang tot het dasboard")]
 
     def __str__(self):
         return f"{self.assetnummer} @ {self.tijdstip.strftime('%m/%d/%Y - %H:%M:%S')}"

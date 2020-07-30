@@ -28,7 +28,7 @@
                 <th style="max-width: 5px;"><label><input id="selectAlle" type="checkbox" class="filled-in" onclick="selecteerAlle(this)"/><span></span></label></th>
                 <th class="th_selectable">ID</th>
                 <th class="th_selectable" id=assetTh>Assetnummer</th>
-                <th class="th_selectable" id=storingTh>Storing</th>
+                <th class="th_selectable" id=storingTh>Storing<a href="#filterModel" class="modal-trigger" id="FilterTrigger"><i class="material-icons right">filter_alt</i></a>
                 <th class="th_selectable" >Count</th>
                 <th class="th_selectable" >Score</th>
                 <th class="th_selectable" id="omloopTh">Omlopen</th>
@@ -36,6 +36,18 @@
                 <th class="th_selectable" >Negeren</th>
                 <th class="th_selectable" >Herstellen</th>
             </tr>
+            <div id="filterModel" class="modal blue lighten-2" >
+                <div class="modal-content">
+                    <h3 class="white-text">Filter storingen</h3>
+                    <div class="card-panel white">
+                        <form action="#" id="filterForm">
+                        </form>
+                        <div class="right-align">
+                            <a href="#" class="grey waves-effect waves-light btn" onclick="location.reload()"><i class="material-icons right">replay</i>herlaad pagina</a>
+                        </div>
+                    </div>
+                </div>
+              </div> 
             <tbody id="tabelInhoud">
             </tbody>
         </table>
@@ -70,6 +82,21 @@
             )
         }
 
+        function updateFilterSetting(key, value){
+            console.log(key, value)
+            var url_filter = `{%url 'storing_filter' %}`
+            $.ajax({
+                method: "POST",
+                data: {key, value},
+                url: url_filter,
+                success: function(response){
+                },
+                error: function(error_data){
+                    console.log(error_data)
+                },
+            })
+        }
+
         function pauzeerAnimatie(){
             document.getElementById("afteller").style.animationPlayState = "paused";
             document.getElementById("zbIcon").style.animationPlayState = "paused";
@@ -78,7 +105,7 @@
 
     
         function hervatAnimatie(){
-            if ($('input:checkbox').is(':checked') == false && $('#zoekBalk').val().toLowerCase() == ""){
+            if ($('.filled-in').is(':checked') == false && $('#zoekBalk').val().toLowerCase() == ""){
                 document.getElementById("afteller").style.animationPlayState = "running";
                 document.getElementById("zbIcon").style.animationPlayState = "running";
                 document.getElementById("zoekBalk").style.animationPlayState = "running";
@@ -124,7 +151,8 @@
                 }
 
             }
-
+            var unique_storingen = []
+            var account_storing_filter = JSON.parse(`{{user.account.storings_pagina_filter|escapejs}}`.split("'").join('"'))
             var inhoud = ""
             var omloop_cel
             for (storing of data){
@@ -140,8 +168,36 @@
                 `<td value=${storing.laatste_data__isotijdstip}>${storing.laatste_data__tijdstip}</td>` +
                 `<td><a href="tram/storing/${storing.id}/gezien"><i class="material-icons small">visibility_off</i></a></td>` +
                 `<td><a href="#" onclick="swalDeactiveerStoring('${storing.id}')"><i class="material-icons small red-text">offline_pin</i></a></td>`
-                inhoud += regel
+                
+                if (!account_storing_filter.includes(storing.bericht)){
+                    inhoud += regel
+                }
+                
+                if (!unique_storingen.includes(storing.bericht)){
+                    unique_storingen.push(storing.bericht)
+                }
             }
+            document.getElementById("filterForm").innerHTML = ""
+            for(us of unique_storingen){
+                if (!account_storing_filter.includes(us)){
+                    document.getElementById("filterForm").innerHTML += `<p>
+                        <label>
+                          <input type="checkbox" class="" checked="checked" onclick='updateFilterSetting("`+ us +`", this.checked)'/>
+                          <span>${us}</span>
+                        </label>
+                      </p>`
+                }
+                else {
+                    document.getElementById("filterForm").innerHTML += `<p>
+                        <label>
+                          <input type="checkbox" class=""  onclick='updateFilterSetting("`+ us +`", this.checked)'/>
+                          <span>${us}</span>
+                        </label>
+                      </p>`
+                }
+
+            }
+
             $('#tabelInhoud').html(inhoud);
             if (selectedTh){
                 sorteerTabel(selectedTh, "laatse_modus")
@@ -152,6 +208,9 @@
         }
 
         $(document).ready(function(){
+            var filterModalElem = $("#filterModel")
+            filterModalElem.modal({onCloseEnd: getAjaxData()})
+
           $("#zoekBalk").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             pauzeerAnimatie();
@@ -166,9 +225,12 @@
           getAjaxData();
           document.getElementById("afteller").addEventListener("animationiteration", getAjaxData);
 
+        
+
 
         });
         var geselecteerde_storingen = []
+
 
         function addToSelectedList(storing_ID){
             if (document.getElementById(`select_${storing_ID}`).checked == true){
@@ -301,8 +363,9 @@
 
         }
 
+
         window.onclick = () => {
-            isChecked =  $('input:checkbox').is(':checked')
+            isChecked =  $('.filled-in').is(':checked')
             if (isChecked){
                 $('#actieknoppen').show()
                 pauzeerAnimatie();

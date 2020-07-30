@@ -18,10 +18,15 @@
 <script src="https://code.highcharts.com/stock/modules/data.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/draggable-points.js"></script>
 
 <script>
     var asset = `{{asset.assetnummer}}`
     var veld = `{{veld}}`
+    var alarmwaarde_druk_a = parseInt(`{{asset.alarm_waarde_druk_a}}`)
+    var alarmwaarde_druk_b = parseInt(`{{asset.alarm_waarde_druk_b}}`)
+
+    var get_sensor_waarden_url = `{%url 'get_sensor_waarden' asset.assetnummer veld%}`
 
     $('document').ready(
         get_gemiddelde(asset, veld)
@@ -30,18 +35,18 @@
     function get_gemiddelde(assetnummer, veld){
         $.ajax({
             method: "GET",
-            url: `/tram/api/get_maand_gemiddelde/{{asset.assetnummer}}/{{veld}}`,
+            url: get_sensor_waarden_url,
             error: function(response){
                 console.log(response)
             },
             success: function (response) {
-                highStock(response)
+                highStock()
                 
             } ,
         })
     }
 
-    function highStock(gemiddelde){
+    function highStock(){
 
     Highcharts.getJSON(`/tram/api/get_sensor_waarden/${asset}/${veld}`, function (data) {
         // Create the chart
@@ -58,8 +63,24 @@
                     title: {
                         text: '{{veld}}'
                     },
+                    plotLines: [{
+                        value: alarmwaarde_druk_a,
+                        color: 'red',
+                        dashStyle: 'shortdash',
+                        width: 2,
+                        label: {
+                            text: `Alarmwaarde (${alarmwaarde_druk_a})` }
+                        }],
+                    softMax: alarmwaarde_druk_a + 10,
                 },
-        
+                plotOptions: {
+                    line: {
+                        dataGrouping: {
+                            enabled: false
+                        }
+                    }
+                }
+                ,
                 rangeSelector: {
     
                     buttons: [
@@ -109,7 +130,19 @@
                     tooltip: {
                         valueDecimals: 0
                     }
-                }]
+                },
+                {
+                    type: "line",
+                    name: "Alarmwaarde",
+                    data: [[data[data.length-2][0], 730]],
+                    dragDrop: {
+                        draggableY: true,
+                        dragPrecisionY: 1,
+                        dragMaxY: 32767 ,
+                        dragMinY: 30,
+                    }
+                }
+                ]
     
             });
         }

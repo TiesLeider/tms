@@ -18,11 +18,13 @@ urlpatterns = [
     path("api/check_online_assets", views.check_online_assets, name="check_online_assets"),
     path("api/get_sms_storingen", views.get_sms_data, name="get_sms_data"),
     path("api/get_sensor_waarden/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden, name="get_sensor_waarden"),
-    path("api/get_sensor_waarden_oud/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden_oud, name="get_sensor_waarden"),
-    path("api/get_maand_gemiddelde/<str:assetnummer>/<str:veld>", views.api.get_maand_gemiddelde, name="get_maand_gemiddelde"),
+    path("api/get_sensor_waarden_oud/<str:assetnummer>/<str:veld>", views.api.get_sensor_waarden_oud, name="get_sensor_waarden_oud"),
     path("api/get_ipnummers", views.get_ipnummers, name="get_ipnummers"),
     path("api/dashboard_omlopen", views.dashboard_omlopen, name="dashboard_omlopen"),
-     path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
+    path("api/dashboard_omlopen/<str:van_datum>/<str:tot_datum>", views.dashboard_omlopen_timerange, name="dashboard_omlopen_timerange"),
+    path("api/dashboard/storing/<str:storing>", views.dashboard_storingen, name="dashboard_storingen"),
+    path("api/dashboard/storing/<str:storing>/<str:van_datum>/<str:tot_datum>", views.dashboard_storingen_timerange, name="dashboard_storingen_timerange"),
+    path("account/storing_filter", views.storing_filter, name="storing_filter"),
 
     #Asset
     path("insertlogodata",views.insert_logo_data, name="insert_logo_data"),
@@ -30,18 +32,21 @@ urlpatterns = [
     path("asset/<str:assetnummer>", views.asset_index, name="asset_index"),
     path("asset/<str:assetnummer>/resetteller", views.asset.reset_teller_standen, name="asset_reset_teller"),
     path("asset/<str:assetnummer>/corrigeer_omlopen", views.asset.corrigeer_omlopen, name="asset_corrigeer_omlopen"),
-    path("asset_chart/<str:assetnummer>", views.asset_chart, name="asset_chart"),
     path("analyse/<str:assetnummer>/<str:veld>", views.asset_analyse, name="asset_analyse"),
     path("asset_lijst", views.asset_lijst, name="asset_lijst"),
     path("asset_dashboard/", views.dashboard, name="dashboard"),
+    path("asset/<str:assetnummer>/toggle_pollbaar", views.toggle_pollbaar, name="toggle_pollbaar"),
+    path("hallo_wereld", views.hallo_wereld, name="hallo_wereld"),
 
     #User Account Control
-    #TODO Wachtwoord veranderen na eerste keer inloggen
     path("login", auth_views.LoginView.as_view(template_name="tram/login.html"), name="login"),
     path("logout", auth_views.LogoutView.as_view(template_name="tram/logout.html"), name="logout"),
     path("change_password", views.change_password, name="change_password"),
 
     #Systeem
     path("livesign", views.livesign, name="livesign"),
-    path("error", views.error, name="error")
+    path("error", views.error, name="error"),
+    path("logfile", views.show_api_log, name="logfile"),
+    path("logfile/delete", views.delete_log, name="delete_log"),
+
 ]  

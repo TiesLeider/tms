@@ -1,6 +1,13 @@
 {% extends "tram/base.html" %}
 {% block content %}
 <div class="card-panel white">
+    <div class="row">
+        <div class="input-field col s3 m6 l6">
+            <i id="zbIcon" class="material-icons prefix zoekBalkClass">search</i>
+            <input id="zoekBalk" type="text" class="validate zoekBalkClass">
+            <label for="zoekBalk">Zoeken</label>
+        </div>
+    </div>
     <table>
         <thead>
             <th>Assetnummer</th>
@@ -10,7 +17,7 @@
             <th>IP-adres (modem)</th>
             <th>Configuratie</th>
         </thead>
-        <tbody>
+        <tbody id="tabelInhoud">
             {%for asset in assets %}
             <tr>
                 <td><span title="{{asset.beschrijving}}"><a href="{% url 'asset_index'  asset.assetnummer %}" class="white blue-text btn waves-effect waves-light">{{asset.assetnummer}}</a></span></td>
@@ -26,3 +33,17 @@
 
 </div>
 {% endblock %}
+{% block javascript %}
+
+<script>
+    $("document").ready(function(){
+        $("#zoekBalk").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#tabelInhoud tr").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+{% endblock%}
