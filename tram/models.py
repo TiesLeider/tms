@@ -40,7 +40,7 @@ class Asset(models.Model):
     kracht_b = models.IntegerField(blank=True, default=0, help_text="De krachtwaarde van de afgelopen polling.")
     omloop_a = models.IntegerField(blank=True, default=0, help_text="Het aantal omlopen van de A-bak van deze asset.")
     omloop_b = models.IntegerField(blank=True, default=0, help_text="Het aantal omlopen van de B-bak deze asset.")
-
+    
     class Meta:
         ordering = ['assetnummer',]
         permissions = [("toggle_pollbaar_status", "Kan de pollbaarstatus aanpassen")]

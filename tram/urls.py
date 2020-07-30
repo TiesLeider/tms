@@ -36,6 +36,7 @@ urlpatterns = [
     path("asset_lijst", views.asset_lijst, name="asset_lijst"),
     path("asset_dashboard/", views.dashboard, name="dashboard"),
     path("asset/<str:assetnummer>/toggle_pollbaar", views.toggle_pollbaar, name="toggle_pollbaar"),
+    path("hallo_wereld", views.hallo_wereld, name="hallo_wereld"),
 
     #User Account Control
     path("login", auth_views.LoginView.as_view(template_name="tram/login.html"), name="login"),

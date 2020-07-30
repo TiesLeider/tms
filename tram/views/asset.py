@@ -11,6 +11,9 @@ import json
 import os
 
 
+def hallo_wereld(request):
+    return render(request, "tram/test.html", {})
+
 @login_required
 def asset_index(request, assetnummer):
     asset = get_object_or_404(Asset, assetnummer=assetnummer)

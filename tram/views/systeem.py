@@ -26,6 +26,7 @@ def error(request):
     logging.error(f"{json_data}")
     return JsonResponse({"response": True, "error": None})
 
+
 @login_required
 def change_password(request):
         if request.method == 'POST':
