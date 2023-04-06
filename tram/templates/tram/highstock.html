@@ -26,7 +26,7 @@
     var alarmwaarde_druk_a = parseInt(`{{asset.alarm_waarde_druk_a}}`)
     var alarmwaarde_druk_b = parseInt(`{{asset.alarm_waarde_druk_b}}`)
 
-    var get_sensor_waarden_url = `{%url 'get_sensor_waarden' asset.assetnummer veld%}`
+    var get_sensor_waarden_url = `{%url 'get_sensor_waarden_oud' asset.assetnummer veld%}`
 
     $('document').ready(
         get_gemiddelde(asset, veld)
@@ -48,7 +48,7 @@
 
     function highStock(){
 
-    Highcharts.getJSON(`/tram/api/get_sensor_waarden/${asset}/${veld}`, function (data) {
+    Highcharts.getJSON(`/tram/api/get_sensor_waarden_oud/${asset}/${veld}`, function (data) {
         // Create the chart
 
         Highcharts.setOptions({

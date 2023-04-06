@@ -25,7 +25,7 @@
           <div id="slider-range"></div>
           <div class="right-align">
               <br>
-            <a href="#" class="waves-effect waves-light btn-large grey" onclick="getAjaxDataTimerangeInit()">Selecteer Data</a>
+            <a href="#" id='btnSelectTimeRange' class="waves-effect waves-light btn-large grey">Selecteer Data</a>
           </div>
     </div>
     <div class="row">
@@ -71,7 +71,7 @@
 {% block javascript %}  
 
 <script>
-    $(document).ready(function() {    
+    $(document).ready(function(){    
         $(function() {
             opties = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
             $( "#slider-range").slider({
@@ -88,10 +88,9 @@
               " - " + (new Date($( "#slider-range" ).slider( "values", 1 )*1000)).toLocaleDateString('nl-NL', opties));
           });
 
-
-
-    });
-
+	$('#btnSelectTimeRange').on('click', function(){
+		getAjaxDataTimerangeInit();
+	});
     function returnBackendFormat(sliderRange){
         var dd = sliderRange.getDate();
         var mm = sliderRange.getMonth() + 1;
@@ -119,17 +118,23 @@
             },
         })
     }
-
+	let iStoring
     function getAjaxDataStoring(storing){
+	    console.log(storingen.length);
+	    console.log('getAjaxDataStoring ' + storing);
         $.ajax({
             method: "GET",
+            processData: false,
             url: `/tram/api/dashboard/storing/${storing}`,
             success: function(response){
+	            console.log('getAjaxDataStoring succes: ' + response);
+	            console.log(response);
                 highchartStoring(response, storing)
             },
             error: function(error_data){
-                console.log(error_data)
-            },
+                console.error(error_data)
+                highchartStoring('error', storing)
+            },timeout: (3*60)*1000 
         })
     }
 
@@ -174,6 +179,7 @@
     }
 
     function highchartStoring(data, storing){
+	    console.log('highchartStoring ' + storing);
         Highcharts.chart(`${storing}`, {
             chart: {
                 plotBackgroundColor: null,
@@ -188,7 +194,7 @@
                 text: `Totaal aantal storingen alle assets: ${data.totale_storingen}`
             },
             tooltip: {
-                pointFormat: '<b>{point.percentage:.1f}%</b>'
+                pointFormat: '<b>{point.percentage:.1f}% (= Totaal: {point.totaal})</b>'
             },
             accessibility: {
                 point: {
@@ -215,6 +221,7 @@
 
     getAjaxData();
     
+    //getAjaxDataStoring(storingen[0])
     for (s of storingen){
         getAjaxDataStoring(s);
     }
@@ -258,84 +265,85 @@
         names.push(druk_asset["assetnummer"] +" - " + druk_asset["veld"])
     }
 
-function createChart() {
+	function createChart() {
+	
+	    Highcharts.stockChart('container', {
+	
+	        legend: {
+	            enabled: true,
+	            align: 'right',
+	            backgroundColor: '#FCFFC5',
+	            borderColor: 'black',
+	            borderWidth: 2,
+	            layout: 'vertical',
+	            verticalAlign: 'top',
+	            shadow: true
+	        },
+	        rangeSelector: {
+	            buttons: [
+	            {
+	                type: 'day',
+	                count: 1,
+	                text: '1d'
+	            },
+	            {
+	                type: 'day',
+	                count: 3,
+	                text: '3d'
+	            }, {
+	                type: 'week',
+	                count: 1,
+	                text: '1w'
+	            }, {
+	                type: 'month',
+	                count: 1,
+	                text: '1m'
+	            }, {
+	                type: 'all',
+	                text: 'All'
+	            }],
+	            selected: 0
+	        },
+	        plotOptions: {
+	            line: {
+	                dataGrouping: {
+	                    enabled: false
+	                }
+	            }
+	        },
+	        tooltip: {
+	            valueDecimals: 2,
+	            split: false
+	        },
+	
+	        series: seriesOptions
+	    });
+	}
 
-    Highcharts.stockChart('container', {
-
-        legend: {
-            enabled: true,
-            align: 'right',
-            backgroundColor: '#FCFFC5',
-            borderColor: 'black',
-            borderWidth: 2,
-            layout: 'vertical',
-            verticalAlign: 'top',
-            shadow: true
-        },
-        rangeSelector: {
-            buttons: [
-            {
-                type: 'day',
-                count: 1,
-                text: '1d'
-            },
-            {
-                type: 'day',
-                count: 3,
-                text: '3d'
-            }, {
-                type: 'week',
-                count: 1,
-                text: '1w'
-            }, {
-                type: 'month',
-                count: 1,
-                text: '1m'
-            }, {
-                type: 'all',
-                text: 'All'
-            }],
-            selected: 0
-        },
-        plotOptions: {
-            line: {
-                dataGrouping: {
-                    enabled: false
-                }
-            }
-        },
-        tooltip: {
-            valueDecimals: 2,
-            split: false
-        },
-
-        series: seriesOptions
-    });
-}
-
-function success(data) {
-    var urlpatern = this.url.split("/")
-    var name = urlpatern[4].toUpperCase() + " - " + urlpatern[5];
-    var i = names.indexOf(name);
-    seriesOptions[i] = {
-        name: name,
-        data: data
-    };
-
-    // As we're loading the data asynchronously, we don't know what order it
-    // will arrive. So we keep a counter and create the chart when all the data is loaded.
-    seriesCounter += 1;
-
-    if (seriesCounter === names.length) {
-        createChart();
-    }
-}
-
-for (druk_asset of druk_assets){
-    Highcharts.getJSON(
-    `/tram/api/get_sensor_waarden/${druk_asset["assetnummer"]}/${druk_asset["veld"]}`,
-    success
-);
-}
+	function success(data) {
+	    var urlpatern = this.url.split("/")
+	    var name = urlpatern[4].toUpperCase() + " - " + urlpatern[5];
+	    var i = names.indexOf(name);
+	    seriesOptions[i] = {
+	        name: name,
+	        data: data
+	    };
+	
+	    // As we're loading the data asynchronously, we don't know what order it
+	    // will arrive. So we keep a counter and create the chart when all the data is loaded.
+	    seriesCounter += 1;
+	
+	    if (seriesCounter === names.length) {
+	        createChart();
+	    }
+	}
+	
+	for (druk_asset of druk_assets){
+	    Highcharts.getJSON(
+	    `/tram/api/get_sensor_waarden/${druk_asset["assetnummer"]}/${druk_asset["veld"]}`,
+	    success
+	);
+	}
+});
 </script>
 {% endblock %}

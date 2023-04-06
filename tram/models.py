@@ -29,6 +29,8 @@ class Asset(models.Model):
     weging = models.IntegerField(default=1, help_text="De zwaarte van deze asset, deze waarde wordt gebruikt voor het berekenen van de prioriteitsscore.")
     alarm_waarde_druk_a = models.IntegerField(default=750, help_text="Geef de waarde op die het 'Druklimiet'-alarm triggert voor de A-bak")
     alarm_waarde_druk_b = models.IntegerField(default=750, help_text="Geef de waarde op die het 'Druklimiet'-alarm triggert voor de B-bak")
+    alarm_onder_druk_a  = models.IntegerField(default=200, help_text="Geef hier de onder waarde op die het 'Onderdruk'-alarm triggert voor de A-bak")
+    alarm_onder_druk_b  = models.IntegerField(default=200, help_text="Geef hier de onder waarde op die het 'Onderdruk'-alarm triggert voor de A-bak")
     laatste_data = models.ForeignKey("AbsoluteData", on_delete=models.SET_NULL, null=True, editable=False)
 
     storing_beschrijving = ArrayField(models.CharField(max_length=200), null=True, blank=True, default=list, help_text="De storing die gemeld is tijdens de afgelopen polling.")
@@ -40,7 +42,7 @@ class Asset(models.Model):
     kracht_b = models.IntegerField(blank=True, default=0, help_text="De krachtwaarde van de afgelopen polling.")
     omloop_a = models.IntegerField(blank=True, default=0, help_text="Het aantal omlopen van de A-bak van deze asset.")
     omloop_b = models.IntegerField(blank=True, default=0, help_text="Het aantal omlopen van de B-bak deze asset.")
-    
+   
     class Meta:
         ordering = ['assetnummer',]
         permissions = [("toggle_pollbaar_status", "Kan de pollbaarstatus aanpassen")]

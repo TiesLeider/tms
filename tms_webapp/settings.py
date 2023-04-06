@@ -30,13 +30,13 @@ DEBUG = True
 ALLOWED_HOSTS = ["10.165.2.10", "127.0.0.1", "192.168.1.73"]
 
 # Application definition
-
+#  
 INSTALLED_APPS = [
     'import_export',
     'crispy_forms',
     'crispy_forms_materialize',
     'tram.apps.TramConfig',
-    'pomp.apps.PompConfig',
+    'ups.apps.UpsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

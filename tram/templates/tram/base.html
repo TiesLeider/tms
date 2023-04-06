@@ -45,7 +45,8 @@
     </header>
     <ul id='dropdown1' class='dropdown-content' style="background-color: rgba(255, 255, 255, 0);">
         {%if perms.tram.dashboard_access%}
-          <li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+          <li><a href="https://emails.azure.microsoft.com/redirect/?destination=https%3A%2F%2Fapp.powerbi.com%2FRedirect%3Faction%3DOpenLink%26linkId%3DB8qihiPPaw%26ctid%3D92042f78-2a58-4407-b076-d7271143bb9b%26pbi_source%3DlinkShare&p=bT04OWU3Yjc4ZC1iYTEyLTRmOGMtYWM5Yi1hY2MzMjQyOTY0YzEmdT1hZW8mbD1SZWRpcmVjdA%3D%3D" target="_blank"class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+          <!--li><a href="{% url 'dashboard' %}" class="grey white-text"><i class="material-icons left">dashboard</i>Dashboard</a></li-->
         {%endif%}
         {%if user.is_superuser %}
           <li><a href="{% url 'admin:index' %}" class="blue lighten-2  white-text"><i class="material-icons left">settings</i>Adminpaneel</a></li>

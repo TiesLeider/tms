@@ -10,6 +10,7 @@ from tms_webapp.settings import API_LOGFILE_NAME
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', filename=API_LOGFILE_NAME, level=logging.INFO)
 
 STRING_DRUK_OVERSCHREDEN = "Druklimiet overschreden"
+STRING_DRUK_ONDERSCHREDEN = "Druk is laag"
 
 class LogoData():
     
@@ -108,7 +109,7 @@ class LogoPolling:
             som=counter,
             score=0,
         )
-        new_storing.score = 4 if bericht == STRING_DRUK_OVERSCHREDEN else new_storing.get_score()
+        new_storing.score = 4 if bericht == STRING_DRUK_OVERSCHREDEN or bericht == STRING_DRUK_ONDERSCHREDEN else new_storing.get_score()
         new_storing.laatste_data = self.ad
         new_storing.save()
 
@@ -130,11 +131,34 @@ class LogoPolling:
 
             except ObjectDoesNotExist:
                 self.maak_nieuwe_storing(STRING_DRUK_OVERSCHREDEN)
+                
+        # Druk is onderschreden.
+        if ( self.record.omloop_a > 0 or self.record.omloop_b > 0): # If there are any switch movements
+            print(self.assetnummer + ' Er zijn omlopen geweest a: ' + str(self.record.omloop_a) + ' b: ' + str(self.record.omloop_b))
+            print('Druk a1+2:' + str(self.ad.druk_a1 + self.ad.druk_a2) + ' druk b1+2: ' + str(self.ad.druk_b1 + self.ad.druk_b2))
+            if(
+                (self.ad.druk_a1 + self.ad.druk_a2) < self.asset.alarm_onder_druk_a or
+                (self.ad.druk_b1 + self.ad.druk_b2) < self.asset.alarm_onder_druk_b ):
+                
+                self.ad.storing_beschrijving.append(STRING_DRUK_ONDERSCHREDEN)
+                self.ad.save()
+                try:
+                    qs =  Storing.objects.get(assetnummer=self.assetnummer, bericht=STRING_DRUK_ONDERSCHREDEN, actief=True)
+                    qs.laatste_data = self.ad
+                    qs.gezien = False
+                    qs.som += 1
+                    qs.score = 4 * qs.som
+                    qs.save()
+    
+                except ObjectDoesNotExist:
+                    print(self.assetnummer + ' Onderdruk omloop a: ' + str(self.record.omloop_a) + ' b: ' + str(self.record.omloop_b) + ' Druk -> a1: ' + str(self.ad.druk_a1) + ' < ' + str(self.asset.alarm_onder_druk_a) + ' b1: ' + str(self.ad.druk_b1) + ' < ' + str(self.asset.alarm_onder_druk_b)  + ' a2: ' + str(self.ad.druk_a2) + ' < ' + str(self.asset.alarm_onder_druk_a) + ' b2: ' + str(self.ad.druk_b2)+ ' < ' + str(self.asset.alarm_onder_druk_b ));   
+                    self.maak_nieuwe_storing(STRING_DRUK_ONDERSCHREDEN)
+                    
         # Er is een vorige polling geweest van deze asset
         if len(self.storing_beschrijving) > 0:
             # Bij deze polling is een storing vastgelegd
             for sb in self.storing_beschrijving:
-                if sb == STRING_DRUK_OVERSCHREDEN:
+                if sb == STRING_DRUK_OVERSCHREDEN or sb == STRING_DRUK_ONDERSCHREDEN:
                     continue
                 # Check of dezelfde storing actief is
                 # Zo ja: kijk huidige procedure

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 from import_export import resources
-from import_export.admin import ImportExportActionModelAdmin, ExportActionModelAdmin
+from import_export.admin import ImportExportActionModelAdmin, ExportActionModelAdmin, ImportExportModelAdmin
 
 admin.site.site_header = "TMS Beheer"
 
@@ -54,7 +54,8 @@ class AssetAdmin(ImportExportActionModelAdmin):
 
 
 @admin.register(AbsoluteData)
-class AbsoluteDataAdmin(admin.ModelAdmin):
+#class AbsoluteDataAdmin(admin.ModelAdmin):
+class AbsoluteDataAdmin(ImportExportModelAdmin):
     list_display=("assetnummer_id", "tijdstip", "storing_beschrijving", "omloop_a", "omloop_b", "druk_a1", "druk_a2", "druk_b1", "druk_b2")
     list_filter=("assetnummer_id"),
 

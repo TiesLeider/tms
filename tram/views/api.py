@@ -7,6 +7,7 @@ from django.db.models import Sum, Avg, Count
 from ..models import *
 from .polling import LogoPolling, SmsPolling, LogoData
 from requests.exceptions import Timeout
+from collections import Counter
 import requests
 import traceback
 import datetime
@@ -14,7 +15,7 @@ import json
 import logging
 import subprocess
 import platform
-import os
+import os 
 from django.template import Context, loader
 from tms_webapp.settings import API_LOGFILE_NAME
 
@@ -229,6 +230,9 @@ def dashboard_omlopen(request):
     for asset in assets:
         asset_array.append(dict(name=asset.assetnummer, omlopen=asset.omloop_a+asset.omloop_b, y=((asset.omloop_a+asset.omloop_b) / totale_omlopen)*100))
     asset_array.sort(key=get_key, reverse=True) 
+    
+    print("Request omlopen dashboard: ")
+    print(request)
 
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
 
@@ -260,7 +264,10 @@ def dashboard_omlopen_timerange(request, van_datum, tot_datum):
     return JsonResponse(dict(totale_omlopen=totale_omlopen, asset_array=asset_array))
 
 def dashboard_storingen(request, storing):
+	
     tong_failure_synoniemen = ["Tong failure A+B", "Tongen failure A+B", "Tongen Failure A+B", "Tong failure A+B (H&K)", "Tongen failure A+B (ELL)"]
+    storing = storing.replace("%20", " ")
+    print("Dashboard: " + storing)
 
     if storing == "Tong failure A+B":
         qs = AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen)
@@ -269,24 +276,47 @@ def dashboard_storingen(request, storing):
     assets = Asset.objects.all()
     totale_storingen = qs.count()
     asset_array = []
+    aAssets = []
+    #print(totale_storingen)
+    aAssets = qs.values_list('assetnummer', flat=True)
+    #for i in qs:
+    	#aAssets.append(i.assetnummer)
+    	#print(i.assetnummer)
+    #print(list(aAssets))
+    iAssets = Counter(aAssets)
+    #print(iAssets['W127'])
+    
+    print('klaar')
+    #print(aAssets)
+    #print(Counter(aAssets))
+    #for data in qs:
+    	#if str(data.assetnummer) == "W535":
+    		#print(data.assetnummer)
+    	#else:
+    		#print("Niet" + str(data.assetnummer))
 
     def get_key(elem):
         return elem["y"]
-
-    for asset in assets:
+    iCounter = 0
+    
+    for k,v in iAssets.items():
         try:
-            if storing == "Tong failure A+B":
-                aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen, assetnummer=asset).count()
-            else:
-                aantal = AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
+            #if storing == "Tong failure A+B":
+            #    aantal = 100 #AbsoluteData.objects.filter(storing_beschrijving__overlap=tong_failure_synoniemen, assetnummer=asset).count()
+            #else:
+            #    aantal = 100 # AbsoluteData.objects.filter(storing_beschrijving__overlap=[storing], assetnummer=asset).count()
+            aantal = v
             if aantal == 0:
                 continue
             percentage = (aantal / totale_storingen)*100 if totale_storingen > 0 else 0
+            #print(asset)
+            print(v)
 
-            asset_array.append(dict(name=asset.assetnummer, y= percentage))
+            asset_array.append(dict(name=k, totaal = aantal, y= percentage))
         except ZeroDivisionError:
             continue
-    asset_array.sort(key=get_key, reverse=True) 
+    asset_array.sort(key=get_key, reverse=True)
+    print("Klaar om te versturen")
 
     return JsonResponse(dict(totale_storingen=totale_storingen, asset_array=asset_array))
 
